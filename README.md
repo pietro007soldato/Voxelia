@@ -17,11 +17,11 @@ Tomorrow si fonda un regno proprio, e con l'editor **Voxelia Studio** si costrui
 
 ## La guida completa
 
-> 📖 **In arrivo: la guida di Voxelia su GitHub Pages.**
-> Questo README è il riassunto: dice cos'è il gioco, come si avvia e come è fatto il progetto. La guida spiegherà
-> tutto, passo per passo: comandi, combattimento, missioni, Tomorrow e il tuo regno, Voxelia Studio, il server e i plugin.
-> Il link comparirà qui appena la guida sarà online (l'indirizzo previsto è
-> `https://xvxvxvxvvxvxvvxvxv.github.io/Voxelia/`).
+> 📖 **[Il Codice di Aldoria, la guida completa di Voxelia](https://xvxvxvxvvxvxvvxvxv.github.io/Voxelia/)** (aggiornata alla 7.49.1)
+> Questo README è il riassunto: dice cos'è il gioco, come si avvia e come è fatto il progetto. La guida spiega
+> tutto, passo per passo: storia e vero finale, personaggi, missioni, dungeon, combattimento, Tomorrow e il tuo regno,
+> Thalassa, mestieri, Voxelia Studio, il server e i plugin, con la mappa di Aldoria, le immagini del gioco e la ricerca.
+> È un sito statico pubblicato con GitHub Pages dal ramo `gh-pages`.
 
 Le novità di ogni versione, dalla più recente, sono in [CHANGELOG.md](CHANGELOG.md), e nel gioco nel menu **Novità**.
 
