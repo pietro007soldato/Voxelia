@@ -47,7 +47,9 @@ function crtStart(i){const A=CRTA[i],c=crtFix();if(!A)return;if(crtCount()<5){ms
   CRD.g={a:i,lv:A.lv,bet,ph:crtDraw(c.c,5),fh:crtFoe(A.lv),sc:[0,0],r:0,last:null,log:[],say:A.ln[0]};tone(500,.06,'triangle');hud();pn('carte47')}
 function crtPlay(k){const g=CRD.g;if(!g||g.end)return;const a=g.ph.splice(k,1)[0];if(!a)return;const j=crtAI(g),b=g.fh.splice(j,1)[0],w=crtWin(a,b);g.r++;g.last=[a,b,w];g.log.push([a,b,w]);
   if(w>0)g.sc[0]++;else if(w<0)g.sc[1]++;tone(w>0?720:w<0?220:440,.08,w>0?'triangle':'square',.05);
-  const A2=crtInfo(a),B2=crtInfo(b);g.why=w===0?'Pari: '+crtPow(a,b)+' contro '+crtPow(b,a):(w>0?A2:B2).n+' vince: '+Math.max(crtPow(a,b),crtPow(b,a))+' contro '+Math.min(crtPow(a,b),crtPow(b,a))+((w>0?crtPow(a,b)>A2.v:crtPow(b,a)>B2.v)&&(w>0?A2:B2).s!=='giullare'?' (elemento giusto, +3)':(w>0?A2:B2).s==='giullare'?' (il giullare beffa i grandi)':'');
+  // i numeri della spiegazione: con il giullare di mezzo si mostrano i valori delle carte (non il 99 e lo 0 usati per il confronto)
+  const A2=crtInfo(a),B2=crtInfo(b),dv=(X,Y,x,y)=>X.s==='giullare'||Y.s==='giullare'&&X.v>=9?X.v:crtPow(x,y),pa=dv(A2,B2,a,b),pb=dv(B2,A2,b,a);
+  g.why=w===0?'Pari: '+pa+' contro '+pb:(w>0?A2:B2).n+' vince: '+(w>0?pa+' contro '+pb:pb+' contro '+pa)+((w>0?crtPow(a,b)>A2.v:crtPow(b,a)>B2.v)&&(w>0?A2:B2).s!=='giullare'?' (elemento giusto, +3)':(w>0?A2:B2).s==='giullare'?' (il giullare beffa i grandi)':'');
   if(!g.ph.length)crtEnd();pn('carte47')}
 function crtEnd(){const g=CRD.g,c=crtFix(),A=CRTA[g.a],[x,y]=g.sc;g.end=1;
   if(x>y){c.v=(c.v|0)+1;let s='';const pr=g.bet*2;P.g+=pr;if(pr)goldFly(pr);g.say=A.ln[1];

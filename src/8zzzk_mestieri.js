@@ -76,10 +76,14 @@ function mstMake(r){if(typeof r==='string')r=MSRC47.find(q=>q.id===r);if(!r)retu
 const MSTD=600;
 function mstEat(id){const m=mstFix(),r=MSRC47.find(q=>q.id===id);if(!r||!(m.cib[id]>0))return;const now=Date.now(),lv=mstLv(r.m),dur=MSTD*(1+.05*(lv-1));
   if(r.fx==='ritorno'){m.cib[id]--;if(!m.cib[id])delete m.cib[id];const to=typeof twOn==='function'&&twOn()&&P.tw&&P.tw.set?P.tw.set.k:'town';cl();msg('La Pietra del ritorno brilla…');irisGo(()=>load(to,Zk));save();return}
-  m.cib[id]--;if(!m.cib[id])delete m.cib[id];const slot=r.m==='c'?'meal':'eli';m.fx[slot]={id,u:now+dur*1000};
+  m.cib[id]--;if(!m.cib[id])delete m.cib[id];const slot=r.m==='c'?'meal':'eli';if(slot==='meal')mstBuffEnd(m.fx.meal);m.fx[slot]={id,u:now+dur*1000,t:now,a0:Math.max(0,P.bA||0),d0:Math.max(0,P.bD||0)};
   if(r.fx==='vita'){recalc();P.hp=Math.min(P.mx,P.hp+Math.round(P.mx*.3));flt(P,'❤','#66ff88')}else if(r.fx==='forza'||r.fx==='tutto'){P.bA=Math.max(P.bA||0,dur);if(r.fx==='tutto'){P.bD=Math.max(P.bD||0,dur);recalc()}flt(P,'💪','#ffd84a')}
   else if(r.fx==='difesa'){P.bD=Math.max(P.bD||0,dur);flt(P,'🛡','#cccccc')}else flt(P,r.m==='c'?'🍲':'⚗','#ffe08a');
   msg((r.m==='c'?'Hai mangiato: ':'Hai bevuto: ')+r.n+' · '+r.d);tone(520,.08,'sine',.05);hud();save();if(PM==='mest47')pn('mest47')}
+// la forza e la difesa di un pasto usano i timer P.bA e P.bD: quando il pasto finisce o viene sostituito da un altro, si torna a quello
+// che restava degli altri effetti (gli elisir del Mercante, il tempio…), senza che il pasto vecchio continui a valere
+function mstBuffEnd(f){if(!f||f.e||!P)return;f.e=1;const r=MSRC47.find(q=>q.id===f.id);if(!r)return;const el=Math.max(0,(Date.now()-(f.t||0))/1000);
+  if(r.fx==='forza'||r.fx==='tutto')P.bA=Math.min(P.bA||0,Math.max(0,(f.a0||0)-el));if(r.fx==='difesa'||r.fx==='tutto')P.bD=Math.min(P.bD||0,Math.max(0,(f.d0||0)-el))}
 const mstAct=(slot,fx)=>{const f=P&&P.mest&&P.mest.fx&&P.mest.fx[slot];if(!f||f.u<Date.now())return false;const r=MSRC47.find(q=>q.id===f.id);return r&&(!fx||fx.includes(r.fx))?r:false};
 const mstHas=fx=>!!(mstAct('meal',fx)||mstAct('eli',fx));
 const _gainXP747=gainXP;gainXP=function(x){if(P&&x>0){if(mstHas(['xp2']))x=Math.round(x*1.5);else if(mstHas(['xp']))x=Math.round(x*1.25)}return _gainXP747(x)};
@@ -90,7 +94,7 @@ const _upd747m=upd;upd=function(dt){_upd747m(dt);if(!P||!started||!P.mest)return
   if(mstHas(['rigenera'])&&P.hp>0&&P.hp<P.mx)P.hp=Math.min(P.mx,P.hp+P.mx*.015*dt);
   if(typeof SUB46!=='undefined'){const mx=mstHas(['aria'])?60:30;if(SUB46.mx!==mx){SUB46.mx=mx;SUB46.o=Math.min(SUB46.o,mx)}}
   // il cartellino in alto a sinistra con il pasto e l'elisir
-  MSTV-=dt;if(MSTV>0)return;MSTV=.5;let el=$('mst49');const A=[['meal',mstAct('meal')],['eli',mstAct('eli')]].filter(q=>q[1]);
+  MSTV-=dt;if(MSTV>0)return;MSTV=.5;{const f=P.mest.fx&&P.mest.fx.meal;if(f&&!f.e&&f.u<now)mstBuffEnd(f)}let el=$('mst49');const A=[['meal',mstAct('meal')],['eli',mstAct('eli')]].filter(q=>q[1]);
   if(!A.length){if(el)el.hidden=true;if(P.mest.vv){P.mest.vv=0;recalc()}return}if(!el){el=document.createElement('div');el.id='mst49';el.onclick=()=>{MST47.tab='d';pn('mest47')};document.body.appendChild(el)}el.hidden=false;
   const vv=mstHas(['vita','tutto'])?1:0;if(vv!==(P.mest.vv|0)){P.mest.vv=vv;recalc()}
   el.innerHTML=A.map(([s,r])=>{const q=Math.max(0,Math.round((P.mest.fx[s].u-now)/1000));return`<span>${s==='meal'?'🍲':'⚗'} ${esc(r.n)} · ${Math.floor(q/60)}:${String(q%60).padStart(2,'0')}</span>`}).join('')};
