@@ -271,7 +271,7 @@ const _save714=save;save=function(){if(!P||!started||MODE!=='story'){_save714();
   LS.set=function(k,v){if(k===SAVEK&&v&&v.p){v.p.rep=P.rep||[];if(OW.on){v.p.ow=P.ow;v.p.tw=P.tw;v.ow=1;k=OWK}}return s0.call(LS,k,v)};try{_save714()}finally{LS.set=s0}};
 const _die714o=die;die=function(){if(!OW.on){_die714o();return}const d0=LS.del;LS.del=function(k){return d0.call(LS,k===SAVEK?OWK:k)};try{_die714o()}finally{LS.del=d0}};
 const _toMenu714=toMenu;toMenu=function(){_toMenu714();OW.on=false;document.body.classList.remove('owm');owMenu()};
-function owNew(d){const s=LS.get(OWK,null);if(s&&s.p&&!confirm('Iniziare un nuovo mondo di Tomorrow? L\'eroe '+s.name+' (livello '+s.p.lv+') verrà sovrascritto.'))return;owGo(d,null)}
+function owNew(d){const s=LS.get(OWK,null);if(s&&s.p){ovrOw(s,()=>owGo(d,null));return}owGo(d,null)}
 function owCont(){const s=LS.get(OWK,null);if(!s||!s.p)return;owGo(s.df|0,s)}
 // begin() legge nome e stanza dai campi della storia: li prestiamo per un attimo e poi li rimettiamo come erano
 function owGo(d,s){const a=$('ownm'),b=$('owrc'),n=$('nm'),r=$('rc'),n0=n?n.value:'',r0=r?r.value:'';if(a&&n)n.value=a.value;if(b&&r)r.value=b.value;OW.next=1;try{begin(d,s)}finally{if(n)n.value=n0;if(r)r.value=r0}}

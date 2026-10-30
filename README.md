@@ -4,7 +4,7 @@
 Si gioca da soli o con gli amici. Si esplora la città di Aldoria e il regno intorno e si combatte nei dungeon. In
 Tomorrow si fonda un regno proprio, e con l'editor **Voxelia Studio** si costruiscono mondi da far giocare agli altri.
 
-**Versione attuale: 7.49.2** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
+**Versione attuale: 7.50** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
 [⌨️ Comandi](#comandi) · [🖥 Server](#il-server-multigiocatore) · [🛠 Sviluppo](#sviluppo) ·
 [📝 Novità (CHANGELOG)](CHANGELOG.md)
 
@@ -426,6 +426,8 @@ commenti. Gli admin possono nascondere mondi, rispondere alle segnalazioni e blo
 - **Salvataggi**: tutto resta nel browser (`localStorage`): la partita, Tomorrow a parte, le impostazioni, l'aspetto
   dell'eroe, i mondi di Voxelia Studio e i filmati già visti. Il salvataggio si aggiorna da solo, anche chiudendo la
   pagina, e resta compatibile da una versione all'altra.
+- **Sovrascrivere una partita** chiede due conferme: una schermata nel menu con l'eroe che si perde, poi un avviso in
+  basso da confermare entro 12 secondi. Senza la seconda conferma non si cancella niente.
 
 ---
 
@@ -611,7 +613,7 @@ docker-compose.yml      avvio con Docker Compose
 `build.sh` mette in fila `src/head.html` e i file `src/[numero]_*.js` in ordine alfabetico (`LC_ALL=C`, per cui
 `75_tempo.js` viene prima di `7_net.js`). Tutto il codice condivide un unico ambito globale: i file successivi possono
 estendere o sostituire le funzioni di quelli precedenti. Per questo i file nuovi si aggiungono in fondo, con un nome
-che viene dopo gli altri (`8zzzu_…`, `8zzzv_…`).
+che viene dopo gli altri (`8zzzv_…`, `8zzzw_…`).
 
 <details>
 <summary><b>Che cosa c'è in ogni file di <code>src/</code></b></summary>
@@ -748,6 +750,7 @@ che viene dopo gli altri (`8zzzu_…`, `8zzzv_…`).
 | `8zzzs_oltremare.js` | Thalassa, la Giungla di Smeraldo e il Tempio di Giada |
 | `8zzzt_classifiche.js` | Le classifiche della settimana |
 | `8zzzu_thalassa2.js` | Thalassa più ricca: luoghi, personaggi, Tavolette di Giada, il mistero della Perla |
+| `8zzzv_sovrascrivi.js` | Le due conferme prima di sovrascrivere una partita: la schermata nel menu e l'avviso finale |
 
 </details>
 

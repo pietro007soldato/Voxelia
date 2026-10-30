@@ -13,7 +13,7 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
 
 /* ================= stato globale ================= */
-const GAME_VER='7.49.2';
+const GAME_VER='7.50';
 let GLOW=[],IT=null;const KEYS={};
 let W=0,H=0,DPR=1,S=1,M,N,Zk,ZZ,DEC,BM,ents=[],P=null,fx=[],pop=[],PJ=[],parts=[],t=0,DF,started=0,PM=0,PA=null,camX=0,camY=0,last=0,acc=0,eid=0,inMenu=1,mt0=0,lc=null,FC=null,MC=null,fpsN=0,fpsT=0,bossT=0,saveT=0,TB=[];
 

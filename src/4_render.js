@@ -1113,7 +1113,7 @@ function mode(m){const a=$('msel'),b=$('mstory'),c=$('mdim');if(!a)return;a.hidd
 function dimMenu(){const sv=LS.get(DIMK,null),d=sv&&sv.d,dn=d?ERAK.filter(k=>d.era[k]&&d.era[k].done).length:0,el=$('mdimb');if(!el)return;
   el.innerHTML=(d&&!d.done?`<button class="dcard" onclick="beginDim(false)"><b>▶ Continua il viaggio</b><small>Epoche completate: ${dn}/4</small></button>`:'')+
     (d&&d.done?`<p class="mnote">Hai completato Voxelia Dimension con il finale «${esc(d.end||'')}».</p>`:'')+
-    `<button class="dcard" onclick="if(!LS.get(DIMK,null)||confirm('Iniziare un nuovo viaggio? Il viaggio salvato verrà sovrascritto.'))beginDim(true)"><b>✨ Nuovo viaggio</b><small>Inizia dalla cabina apparsa nella Foresta di Elmwood.</small></button>`+
+    `<button class="dcard" onclick="ovrDim()"><b>✨ Nuovo viaggio</b><small>Inizia dalla cabina apparsa nella Foresta di Elmwood.</small></button>`+
     `<button class="dcard" onclick="playCine(DCI,'dimintro',()=>{$('menu').style.display='flex';music('menu')})"><b>🎬 Cinematica iniziale</b><small>Come siamo finiti dentro la cabina.</small></button>`}
 (function(){const st=document.createElement('style');st.textContent=`
 #dimobj{position:fixed;left:10px;top:150px;z-index:20;max-width:300px;background:rgba(8,14,34,.82);border:1px solid #5a8ad8;border-radius:8px;padding:8px 10px;color:#e8f0ff;font:13px Georgia,serif;display:none}

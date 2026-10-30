@@ -5,6 +5,14 @@ I numeri delle versioni precedenti alla 4.0 sono stati assegnati a posteriori, s
 
 ---
 
+## 7.50 — Due conferme prima di cancellare una partita (30 ottobre 2026)
+
+- **Niente più finestre del browser per sovrascrivere una partita.** Iniziare una nuova partita della Storia, un nuovo mondo di Tomorrow, un nuovo viaggio della Dimension o ricominciare «Da capo» un mondo di Voxelia Studio o della community ora chiede due volte, con schermate del gioco:
+  1. **una schermata nel menu** mostra che cosa si perde: l'eroe, il livello, la difficoltà, l'oro e quando è stato salvato l'ultima volta (per la Dimension le epoche visitate). Il pulsante già scelto è «Annulla, tieni la partita»; Esc o un clic fuori chiudono senza toccare niente;
+  2. **un avviso in basso** chiede l'ultima conferma: «I dati di … verranno cancellati per sempre». Il pulsante «Cancella i dati» si sblocca dopo un secondo e mezzo, così un doppio clic non passa per sbaglio, e se non lo premi entro 12 secondi (la barra si accorcia) l'avviso dice che non è stato cancellato niente e sparisce. Anche «Annulla» lo dice.
+- Se nel frattempo sei entrato in un'altra partita, l'ultima conferma non cancella niente.
+- Mentre si decide, la Corona del menu non gira e non sente i tasti (e non li sente più nemmeno con l'elenco delle versioni precedenti aperto).
+
 ## 7.49.2 — Manutenzione: un pasto alla volta davvero, il giullare spiegato bene (30 ottobre 2026)
 
 - **Un pasto alla volta, davvero.** L'attacco della Torta di mele e la difesa della Frittata di mare (e del Banchetto del cavaliere) restavano attivi per tutti i loro dieci minuti anche dopo aver mangiato un altro pasto, che avrebbe dovuto sostituirli: mangiando tre pasti di fila si sommavano attacco, difesa e vita, più del Banchetto. Ora il pasto nuovo prende il posto di quello vecchio, e restano solo gli altri effetti che avevi già (gli elisir del Mercante, il riposo al tempio…). Anche quando il pasto finisce, o se torni a giocare dopo che è scaduto, la sua forza e la sua difesa finiscono con lui.
