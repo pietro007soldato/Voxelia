@@ -16,10 +16,11 @@ gioco di allora. Cosa cambia in ogni versione è in [CHANGELOG.md](../CHANGELOG.
 
 ## Elenco
 
-78 versioni, dalla più recente.
+79 versioni, dalla più recente.
 
 | Versione | Data | Novità | Peso |
 |---|---|---|---|
+| [7.49.2](voxelia_v7.49.2.html) | 30 ottobre 2026 | Manutenzione: un pasto alla volta davvero, il giullare spiegato bene | 2.853 KB |
 | [7.49.1](voxelia_v7.49.1.html) | 29 ottobre 2026 | Manutenzione: la Torre senza vicoli ciechi, l'elenco delle versioni completo | 2.850 KB |
 | [7.49](voxelia_v7.49.html) | 29 ottobre 2026 | Le rifiniture: carte con i personaggi, modelli nuovi, la Torre vera, la Bottega dei mestieri, Thalassa più ricca | 2.849 KB |
 | [7.48](voxelia_v7.48.html) | 29 ottobre 2026 | Storia e studio: le scelte, la bacheca delle missioni, il regno oltre il mare, le classifiche della settimana | 2.791 KB |

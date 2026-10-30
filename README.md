@@ -4,7 +4,7 @@
 Si gioca da soli o con gli amici. Si esplora la città di Aldoria e il regno intorno e si combatte nei dungeon. In
 Tomorrow si fonda un regno proprio, e con l'editor **Voxelia Studio** si costruiscono mondi da far giocare agli altri.
 
-**Versione attuale: 7.49.1** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
+**Versione attuale: 7.49.2** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
 [⌨️ Comandi](#comandi) · [🖥 Server](#il-server-multigiocatore) · [🛠 Sviluppo](#sviluppo) ·
 [📝 Novità (CHANGELOG)](CHANGELOG.md)
 

@@ -5,6 +5,13 @@ I numeri delle versioni precedenti alla 4.0 sono stati assegnati a posteriori, s
 
 ---
 
+## 7.49.2 — Manutenzione: un pasto alla volta davvero, il giullare spiegato bene (30 ottobre 2026)
+
+- **Un pasto alla volta, davvero.** L'attacco della Torta di mele e la difesa della Frittata di mare (e del Banchetto del cavaliere) restavano attivi per tutti i loro dieci minuti anche dopo aver mangiato un altro pasto, che avrebbe dovuto sostituirli: mangiando tre pasti di fila si sommavano attacco, difesa e vita, più del Banchetto. Ora il pasto nuovo prende il posto di quello vecchio, e restano solo gli altri effetti che avevi già (gli elisir del Mercante, il riposo al tempio…). Anche quando il pasto finisce, o se torni a giocare dopo che è scaduto, la sua forza e la sua difesa finiscono con lui.
+- **Il duello delle carte spiega bene le mani del giullare.** Quando c'era di mezzo l'Attore Fabio la spiegazione diceva «vince: 99 contro 0»: ora mostra i valori delle carte («Attore Fabio vince: 1 contro 10 (il giullare beffa i grandi)»).
+
+---
+
 ## 7.49.1 — Manutenzione: la Torre senza vicoli ciechi, l'elenco delle versioni completo (29 ottobre 2026)
 
 - **Il guardiano della Torre sta sul pavimento.** Ai piani 5 e 10 il guardiano compariva sempre nello stesso punto, anche quando lì la sala aveva una colonna, il vuoto dell'anello o una pozza di lava: in circa un piano 5 su cinque restava dentro il muro o sospeso nel vuoto. Ora, se quel punto non è calpestabile, compare sulla casella libera più vicina.
