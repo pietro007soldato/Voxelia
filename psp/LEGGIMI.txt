@@ -12,6 +12,13 @@ COME SI INSTALLA
 Serve una PSP con il firmware personalizzato (ARK-4, PRO o ME), come per tutti
 i giochi homebrew. Funziona su tutti i modelli (1000, 2000, 3000, Go, Street).
 
+SE NON PARTE
+  All'avvio, per un attimo, compaiono delle righe bianche su sfondo nero (1/7 … 7/7):
+  se il gioco si ferma lì, l'ultima riga dice dove. Le stesse righe finiscono nel file
+  log.txt nella cartella PSP/GAME/VOXELIA.
+  Modalità sicura: tieni premuto L mentre avvii il gioco (niente audio, processore
+  alla velocità normale).
+
 COMANDI
   Levetta o croce ......... muoviti
   X ....................... attacca · parla · apri i forzieri · entra nelle porte

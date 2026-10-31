@@ -148,10 +148,11 @@ int textBox(float x,float y,float w,const char*s,u32 c,int maxL){
   return lines;}
 
 /* minimappa: una texture per zona */
-void miniTex(u32*px,int n){memcpy(MINIT,px,64*64*4);miniN=n;sceKernelDcacheWritebackRange(MINIT,sizeof MINIT);}
+static int miniDirty=0;
+void miniTex(u32*px,int n){memcpy(MINIT,px,64*64*4);miniN=n;sceKernelDcacheWritebackRange(MINIT,sizeof MINIT);miniDirty=1;}
 void miniDraw(float x,float y,float s){VT*v=(VT*)sceGuGetMemory(2*sizeof(VT));
   v[0].u=0;v[0].v=0;v[0].c=0xffffffff;v[0].x=x;v[0].y=y;v[0].z=0;v[1].u=miniN;v[1].v=miniN;v[1].c=0xffffffff;v[1].x=x+miniN*s;v[1].y=y+miniN*s;v[1].z=0;
-  sceGuEnable(GU_TEXTURE_2D);sceGuTexMode(GU_PSM_8888,0,0,0);sceGuTexImage(0,64,64,64,MINIT);sceGuTexFunc(GU_TFX_MODULATE,GU_TCC_RGBA);sceGuTexFilter(GU_NEAREST,GU_NEAREST);
+  sceGuEnable(GU_TEXTURE_2D);sceGuTexMode(GU_PSM_8888,0,0,0);sceGuTexImage(0,64,64,64,MINIT);if(miniDirty){sceGuTexFlush();miniDirty=0;}sceGuTexFunc(GU_TFX_MODULATE,GU_TCC_RGBA);sceGuTexFilter(GU_NEAREST,GU_NEAREST);
   sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_COLOR_8888|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,v);sceGuDisable(GU_TEXTURE_2D);}
 
 /* alone luminoso (somma di luce) e buio con il buco attorno all'eroe */

@@ -30,9 +30,10 @@ static void music(float*l,float*r){if(mZone<0){*l=*r=0;return;}
   float env=1-mT/step;mPh[0]+=fB/SR;mPh[1]+=fC/SR;mPh[2]+=fM/SR;if(mPh[0]>1)mPh[0]-=1;if(mPh[1]>1)mPh[1]-=1;if(mPh[2]>1)mPh[2]-=1;
   float b=wave(1,mPh[0])*.10f,c=wave(3,mPh[1])*.05f*env,m=melOn?wave(0,mPh[2])*.035f*env*env:0;
   *l=b+c+m*.8f;*r=b+c*.8f+m;}
-static int audioThread(SceSize a,void*p){int ch=sceAudioChReserve(PSP_AUDIO_NEXT_CHANNEL,NS,PSP_AUDIO_FORMAT_STEREO);int k=0;
+void dlog(const char*f,...);
+static int audioThread(SceSize a,void*p){int ch=sceAudioChReserve(PSP_AUDIO_NEXT_CHANNEL,NS,PSP_AUDIO_FORMAT_STEREO);int k=0;if(ch<0){dlog("audio: canale non disponibile (%x)",ch);return 0;}
   while(1){short*o=BUF[k];int i,j;for(i=0;i<NS;i++){float l,r;music(&l,&r);for(j=0;j<6;j++){Voice*v=&V[j];if(v->t>=v->d)continue;float q=v->t/v->d,f=v->f0+(v->f1-v->f0)*q;v->ph+=f/SR;if(v->ph>1)v->ph-=1;float s=wave(v->w,v->ph)*v->vol*(1-q);l+=s;r+=s;v->t+=1.f/SR;}
       if(l>1)l=1;if(l<-1)l=-1;if(r>1)r=1;if(r<-1)r=-1;o[i*2]=(short)(l*20000);o[i*2+1]=(short)(r*20000);}
-    sceAudioOutputPannedBlocking(ch,PSP_AUDIO_VOLUME_MAX,PSP_AUDIO_VOLUME_MAX,o);k^=1;}
+    if(sceAudioOutputPannedBlocking(ch,PSP_AUDIO_VOLUME_MAX,PSP_AUDIO_VOLUME_MAX,o)<0)sceKernelDelayThread(20000);k^=1;}
   return 0;}
-void audioInit(void){int i;for(i=0;i<256;i++)SIN[i]=sinf(i*6.2832f/256);for(i=0;i<8;i++){V[i].t=1;V[i].d=0;}int t=sceKernelCreateThread("audio",audioThread,0x12,0x10000,PSP_THREAD_ATTR_USER,0);if(t>=0)sceKernelStartThread(t,0,0);}
+void audioInit(void){int i;for(i=0;i<256;i++)SIN[i]=sinf(i*6.2832f/256);for(i=0;i<8;i++){V[i].t=1;V[i].d=0;}int t=sceKernelCreateThread("audio",audioThread,0x16,0x10000,PSP_THREAD_ATTR_USER,0);if(t>=0)sceKernelStartThread(t,0,0);else dlog("audio: thread non creato (%x)",t);}

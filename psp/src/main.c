@@ -1,12 +1,19 @@
 /* Voxelia per PSP — il ciclo principale, il titolo e i salvataggi */
 #include "vx.h"
 #include <psppower.h>
+#include <pspdebug.h>
+#include <stdarg.h>
 
 PSP_MODULE_INFO("Voxelia",0,1,0);
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER|THREAD_ATTR_VFPU);
-PSP_HEAP_SIZE_KB(-1024);
+PSP_HEAP_SIZE_KB(16*1024);
 
 static int running=1;
+/* registro di avvio: sullo schermo (prima della grafica) e nel file log.txt accanto al gioco */
+static int dbgScr=0;
+void dlog(const char*f,...){char b[160];va_list a;va_start(a,f);vsnprintf(b,sizeof b,f,a);va_end(a);
+  if(dbgScr)pspDebugScreenPrintf("%s\n",b);FILE*o=fopen("log.txt","a");if(o){fprintf(o,"%s\n",b);fclose(o);}}
+static int hasSave=-1;
 int hudOff=0;
 static int exitCb(int a,int b,void*c){running=0;return 0;}
 static int cbThread(SceSize a,void*b){int id=sceKernelCreateCallback("Exit",exitCb,0);sceKernelRegisterExitCallback(id);sceKernelSleepThreadCB();return 0;}
@@ -21,8 +28,8 @@ void padRead(void){SceCtrlData c;sceCtrlPeekBufferPositive(&c,1);pad.prev=pad.no
 typedef struct{int v;Player p;int zone;} Save;
 void saveGame(void){Save s;s.v=SAVEV;s.p=P;s.zone=(Zk==Z_DUNG||Zk==Z_ARENA)?(Zk==Z_ARENA?Z_TOWN:-1):Zk;if(s.zone<0){s.zone=Z_TOWN;}
   if(ZDEF[s.zone].inside){s.zone=s.zone==Z_IN_PAL48||s.zone==Z_IN_SIR48?Z_THAL:Z_TOWN;}
-  FILE*f=fopen("save.dat","wb");if(!f)return;fwrite(&s,sizeof s,1,f);fclose(f);}
-int saveExists(void){FILE*f=fopen("save.dat","rb");if(!f)return 0;Save s;int ok=fread(&s,sizeof s,1,f)==1&&s.v==SAVEV;fclose(f);return ok;}
+  FILE*f=fopen("save.dat","wb");if(!f)return;fwrite(&s,sizeof s,1,f);fclose(f);hasSave=1;}
+int saveExists(void){if(hasSave>=0)return hasSave;FILE*f=fopen("save.dat","rb");if(!f)return 0;Save s;int ok=fread(&s,sizeof s,1,f)==1&&s.v==SAVEV;fclose(f);hasSave=ok;return ok;}
 int loadGame(void){FILE*f=fopen("save.dat","rb");if(!f)return 0;Save s;int ok=fread(&s,sizeof s,1,f)==1&&s.v==SAVEV;fclose(f);if(!ok)return 0;P=s.p;recalc();zoneLoad(s.zone,-1,0,-1);return 1;}
 
 /* ---------- titolo ---------- */
@@ -51,10 +58,19 @@ void hudDraw(void);void dialogDraw(void);void menuDraw(void);void menuUpdate(voi
 extern int dlgAct;
 static void travelShip(int toThal){if(toThal){zoneLoad(Z_THAL,-1,0,-1);banner("Thalassa","Il regno oltre il mare");}else{zoneLoad(Z_PORTO,-1,0,-1);P.x=20.5f;P.y=24.5f;camX=P.x;camY=P.y;}}
 
-int main(void){setupCb();scePowerSetClockFrequency(333,333,166);
-  sceCtrlSetSamplingCycle(0);sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
-  srand(sceKernelGetSystemTimeLow());gfxInit();audioInit();
-  playerInit(1);zoneLoad(Z_TOWN,-1,0,-1);state=S_TITLE;
+int main(void){
+  {FILE*o=fopen("log.txt","w");if(o)fclose(o);}
+  pspDebugScreenInit();dbgScr=1;dlog("Voxelia PSP - avvio (versione %s)",__DATE__);
+  setupCb();dlog("1/7 callback ok");
+  SceCtrlData c0;sceCtrlSetSamplingCycle(0);sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);sceCtrlPeekBufferPositive(&c0,1);int safe=(c0.Buttons&PSP_CTRL_LTRIGGER)!=0;
+  dlog("2/7 controlli ok%s",safe?" - MODALITA' SICURA (L premuto): niente audio, velocita' normale":"");
+  if(!safe){int r=scePowerSetClockFrequency(333,333,166);dlog("3/7 processore a 333 MHz (%d)",r);}else dlog("3/7 processore lasciato com'e'");
+  srand(sceKernelGetSystemTimeLow());
+  dlog("4/7 memoria libera: %d KB",(int)(sceKernelMaxFreeMemSize()/1024));
+  dlog("5/7 avvio grafica...");sceKernelDelayThread(300000);
+  dbgScr=0;gfxInit();dlog("5/7 grafica ok");
+  playerInit(1);zoneLoad(Z_TOWN,-1,0,-1);state=S_TITLE;dlog("6/7 citta' pronta");
+  if(!safe){audioInit();dlog("7/7 audio ok");}else dlog("7/7 audio spento");
   u64 last;sceRtcGetCurrentTick(&last);u32 res=sceRtcGetTickResolution();
   while(running){u64 now;sceRtcGetCurrentTick(&now);dt=(now-last)/(float)res;last=now;if(dt>.05f)dt=.05f;if(dt<=0)dt=1/60.f;
 #ifdef AUTOTEST
@@ -81,5 +97,6 @@ int main(void){setupCb();scePowerSetClockFrequency(333,333,166);
     else{gameDraw();if(!hudOff)hudDraw();
       if(state==S_DIALOG||state==S_CHOICE)dialogDraw();else if(state==S_MENU)menuDraw();else if(state==S_SHOP)shopDraw();else if(state==S_MAP)mapDraw();
       else if(state==S_DEAD){tint(0xa0000020);TSC=2;textC(240,100,"Sei caduto",0xff3a3aff);TSC=1;textC(240,150,"✕ torna al Tempio di Aldoria (perdi il 10% dell'oro)",0xffffffff);}}
-    gfxEnd();}
+    gfxEnd();
+    if(frameNo==1||frameNo==2||frameNo==60||frameNo==600)dlog("fotogramma %d ok",frameNo);}
   saveGame();sceGuTerm();sceKernelExitGame();return 0;}

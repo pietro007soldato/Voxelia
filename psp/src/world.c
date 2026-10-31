@@ -381,6 +381,7 @@ static void placeFrom(int from,int fdata){int i;for(i=0;i<nents;i++){Ent*e=&ents
       for(k=0;k<8;k++){int u=(int)x+dx[k],v=(int)y+dy[k];if(walk(u,v)){int busy=0,j;for(j=0;j<nents;j++)if(ents[j].k==E_PORTAL&&(int)ents[j].x==u&&(int)ents[j].y==v)busy=1;if(busy)continue;
         if(e->sub==1&&dy[k]!=1)continue;P.x=u+.5f;P.y=v+.5f;return;}}}}}
 float spawnT=0;
+void dlog(const char*f,...);
 void zoneLoad(int z,int dung,int fl,int from){int fd=Zdung*16+Zfloor;entsClear();if(z!=Z_ARENA)arenaWave=0;nbl=0;memset(&pal,0,sizeof pal);
   Zk=z;Zdung=dung;Zfloor=fl;zoneLv=ZDEF[z].lv;
   switch(z){case Z_TOWN:srand(1234);genTown();P.x=24;P.y=30;srand(sceKernelGetSystemTimeLow());break;
@@ -401,6 +402,9 @@ void zoneLoad(int z,int dung,int fl,int from){int fd=Zdung*16+Zfloor;entsClear()
   else if(z==Z_DUNG&&fl==1&&from!=Z_DUNG){}
   if(Zk==Z_TOWN&&from==Z_DUNG)placeFrom(Z_DUNG,fd);
   buildMesh();buildMini();camX=P.x;camY=P.y;spawnT=0;musicZone(z);
+#ifndef AUTOTEST
+  {static int nz=0;if(nz++<40)dlog("zona %d caricata (dungeon %d piano %d), memoria libera %d KB",z,dung,fl,(int)(sceKernelMaxFreeMemSize()/1024));}
+#endif
 #ifndef AUTOTEST
   if(state==S_PLAY&&(z==Z_TOWN||z==Z_THAL))saveGame();
 #endif
