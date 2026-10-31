@@ -1,0 +1,48 @@
+VOXELIA – IL REGNO PERDUTO · versione per PSP (dalla 7.50 del gioco)
+====================================================================
+
+COME SI INSTALLA
+1. Collega la PSP al computer con il cavo USB (Impostazioni > Connessione USB),
+   oppure inserisci la Memory Stick nel lettore del computer.
+2. Copia la cartella PSP di questo archivio nella radice della Memory Stick.
+   Il gioco deve finire qui:  PSP/GAME/VOXELIA/EBOOT.PBP
+   (se sulla Memory Stick c'è già la cartella PSP, unisci le cartelle).
+3. Scollega la PSP e apri Gioco > Memory Stick: trovi "Voxelia - Il Regno Perduto".
+
+Serve una PSP con il firmware personalizzato (ARK-4, PRO o ME), come per tutti
+i giochi homebrew. Funziona su tutti i modelli (1000, 2000, 3000, Go, Street).
+
+COMANDI
+  Levetta o croce ......... muoviti
+  X ....................... attacca · parla · apri i forzieri · entra nelle porte
+  O ....................... capriola (per un attimo nessuno ti può colpire)
+  Quadrato ................ pozione (con la vita piena beve la pozione di magia)
+  Triangolo ............... usa l'abilità
+  L ....................... cambia abilità
+  R (tenuto premuto) ...... corri
+  START ................... menu: eroe, zaino, missioni, diario, opzioni, salvataggio
+  SELECT .................. mappa della zona
+  Nei menu: L/R cambiano scheda, X conferma, O esce.
+
+SALVATAGGI
+  Il gioco salva da solo quando torni ad Aldoria o a Thalassa, quando dormi in
+  locanda e quando esci con HOME. Puoi salvare anche dal menu (START > Opzioni).
+  Il salvataggio è il file save.dat nella cartella del gioco.
+
+COSA C'È
+  - Aldoria con il castello del Re, la taverna, la fucina, l'erborista, il tempio,
+    il mercato, il cimitero, la casa di Mamma Rosa e il Colosseo (ondate di nemici).
+  - Foresta di Elmwood, Deserto di Khem, Picchi Gelidi, Porto di Aldoria.
+  - I sette dungeon (Tana dei Goblin, Cripta, Piramide, Caverne di Cristallo,
+    Fucina Infernale, Abisso Sommerso, Cittadella del Vuoto) con i loro boss:
+    ogni volta che ne batti il signore rinascono più forti.
+  - La storia della Corona di Voxel fino a Malakar, e il capitolo di Thalassa:
+    la Capitana Marina, la città bianca, la Giungla di Smeraldo, i Sigilli di Giada,
+    il Tempio e Quetzal, la Regina Nerea.
+  - 31 missioni dei personaggi, armi e armature con rarità, potenziamenti +5,
+    negozi, pozioni, quattro abilità, livelli, giorno e notte, musica e suoni.
+  - Quattro difficoltà (Facile, Normale, Difficile, Incubo).
+
+NON CI SONO (rispetto al gioco per computer)
+  la vista 3D, il gioco in rete, la modalità Tomorrow, l'editor, i cavalli,
+  la pesca, gli animali da compagnia, il casinò e il duello delle carte.
