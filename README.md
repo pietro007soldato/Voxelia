@@ -4,7 +4,7 @@
 Si gioca da soli o con gli amici. Si esplora la città di Aldoria e il regno intorno e si combatte nei dungeon. In
 Tomorrow si fonda un regno proprio, e con l'editor **Voxelia Studio** si costruiscono mondi da far giocare agli altri.
 
-**Versione attuale: 7.52** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
+**Versione attuale: 7.52.1** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
 [⌨️ Comandi](#comandi) · [🖥 Server](#il-server-multigiocatore) · [🛠 Sviluppo](#sviluppo) ·
 [📝 Novità (CHANGELOG)](CHANGELOG.md)
 
@@ -456,7 +456,8 @@ commenti. Gli admin possono nascondere mondi, rispondere alle segnalazioni e blo
 - **Esportare e importare l'eroe**: nel menu della Storia e di Tomorrow (e nel menu di pausa, per esportare) l'eroe si
   scarica in un file `.voxelia-eroe.json` e si ricarica da lì, anche su un altro computer. Il file ha tutto l'eroe tranne
   il codice della stanza; all'importazione il gioco controlla che sia intero e non ritoccato, e se c'è già un eroe chiede
-  le due conferme, con la possibilità di esportarlo prima.
+  le due conferme, con la possibilità di esportarlo prima. Gli eroi in difficoltà Incubo non si esportano e non si
+  importano, perché la loro morte è permanente.
 - **Sovrascrivere una partita** chiede due conferme: una schermata nel menu con l'eroe che si perde, poi un avviso in
   basso da confermare entro 12 secondi. Senza la seconda conferma non si cancella niente.
 

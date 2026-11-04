@@ -5,6 +5,10 @@ I numeri delle versioni precedenti alla 4.0 sono stati assegnati a posteriori, s
 
 ---
 
+## 7.52.1 — Gli eroi Incubo restano con la morte permanente (4 novembre 2026)
+
+- **Niente copie degli eroi Incubo.** In difficoltà Incubo la morte è permanente: con un file esportato si poteva tenere una copia dell'eroe e ricaricarla dopo la morte. Ora gli eroi Incubo (della Storia e di Tomorrow) non si esportano, né dal menu né dal menu di pausa (il pulsante dice perché), e un file con un eroe Incubo non si importa.
+
 ## 7.52 — Esportare e importare l'eroe (4 novembre 2026)
 
 - **L'eroe in un file.** Nel menu della Modalità Storia e in quello di Tomorrow, sotto «Continua», ci sono **📤 Esporta l'eroe** e **📥 Importa un eroe**; nel menu di pausa c'è **Esporta l'eroe**. Serve per tenere una copia dell'eroe, spostarlo su un altro computer o in un altro browser, o passarlo a un amico.
