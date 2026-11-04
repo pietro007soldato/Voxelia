@@ -43,7 +43,7 @@ PORTA=$(node -e "const s=require('net').createServer();s.listen(0,'127.0.0.1',()
 cp -R plugins "$TMP/plugins"   # i plugin scrivono le loro configurazioni: meglio in una copia
 ADMIN_PASSWORD=verifica-$$ PORT=$PORTA DATA_FILE="$TMP/dati.json" MONDI_DIR="$TMP/mondi" PLUGINS_DIR="$TMP/plugins" node server.js >"$TMP/server.log" 2>&1 &
 PID=$!
-trap 'kill $PID 2>/dev/null; rm -rf "$TMP"' EXIT INT TERM
+trap 'kill $PID 2>/dev/null; wait $PID 2>/dev/null; rm -rf "$TMP" 2>/dev/null' EXIT INT TERM
 node -e "
 const http=require('http'),zlib=require('zlib'),fs=require('fs'),P=$PORTA;
 const get=(p,h)=>new Promise((r,j)=>{const q=http.get({host:'127.0.0.1',port:P,path:p,headers:h||{}},res=>{const a=[];res.on('data',d=>a.push(d));res.on('end',()=>r({s:res.statusCode,h:res.headers,b:Buffer.concat(a)}))});q.on('error',j);q.setTimeout(20000,()=>q.destroy(new Error('tempo scaduto')))});
