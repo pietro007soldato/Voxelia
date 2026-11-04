@@ -24,24 +24,6 @@ function zmapData(T){return T.live?{k:T.k,N,M,DEC,TB:BM?TB:[],BM,z:ZZ,RDF,pois:z
 function zmapName(T){const k=T?T.k:Zk;return String(Z[k]?Z[k].n:typeof zname==='function'?zname(k):k)}
 /* ---- la pianta: un'immagine preparata una volta per zona e per tema ---- */
 let ZMBM=null;
-function zmapBitmap(d){const dk=mapDark(),key=d.k+'|'+d.N+'|'+dk+'|'+d.v+'|'+(d.v==='live'?(FC?1:0)+':'+Zk+':'+(ZZ&&ZZ.run):'');if(ZMBM&&ZMBM.key===key&&ZMBM.d===d.M)return ZMBM.c;
-  const p=mpal(),n=d.N,u=n<=24?12:n<=60?8:6,c=document.createElement('canvas');c.width=c.height=n*u;const q=c.getContext('2d'),z=d.z||{},f=dk?.62:1,S=(col,k2)=>shade(col.length===4?'#'+col[1]+col[1]+col[2]+col[2]+col[3]+col[3]:col,f*(k2||1));
-  const ga=z.int?z.fl:z.a||p.grass,gb=z.int?z.fl2:z.b||p.grass2,rd=z.rd||['#aaa294','#a0988a'],water=z.pool||(d.k==='peaks'?'#bfe3f5':p.water),wild=!z.dg&&!z.int&&!z.dist&&(z.th==='forest'||z.th==='desert'||z.th==='peaks');
-  const TREE='rhajYdℸ¥',dot=(x,y,r,col)=>{q.fillStyle=col;q.beginPath();q.arc(x*u+u/2,y*u+u/2,u*r,0,6.3);q.fill()};
-  for(let y=0;y<n;y++)for(let x=0;x<n;x++){const m=d.M[y][x],ch=d.DEC[y][x]||'',X=x*u,Y=y*u;if(m===9)continue;let col=(x+y)&1?ga:gb;
-    if(m===4)col=(ch==='~'||(d.k==='town'&&y>=64))?'#8a6a42':(x+y)&1?rd[0]:rd[1];else if(m===2)col=water;else if(m===8)col='#a8303a';
-    else if(m===6&&d.RDF&&d.RDF.has(y*n+x))col=(x+y)&1?rd[0]:rd[1];
-    else if(m===1){if(z.dg)col=z.o||'#2a2420';else if(z.int)col=z.wall||'#8a8a8a';else if(z.dist)col=z.wl||p.wall;else if(!wild)col=z.o||p.wall}
-    else if(m===3){const b=d.BM&&d.TB[d.BM[y][x]];col=b&&(b.roof||b.wall)||'#a8402f'}
-    if(wild&&(m===0||m===1||m===6)&&ch[0]==='₪'&&typeof bMapFloor==='function'){const fc=bMapFloor(z.th,ch);if(fc)col=fc}
-    q.fillStyle=S(col,m===3?p.roof:1);q.fillRect(X,Y,u,u);
-    if(m===2&&(x*7+y*3)%5===0){q.fillStyle='rgba(255,255,255,.18)';q.fillRect(X+1,Y+u/3,u-2,1)}
-    const bw=m===1&&wild&&typeof bMapWall==='function'?bMapWall(z.th,ch):null;
-    if(bw){if(bw[2]){q.fillStyle=S(bw[0]);q.fillRect(X,Y,u,u)}else dot(x,y,bw[1],S(bw[0]))}
-    else if(m===1&&wild){const h=hh(x,y);if(z.th==='forest')dot(x,y,.44,S(h>.5?'#2f6b2a':'#3a7a32'));else if(z.th==='peaks'){dot(x,y,.42,S(h<.55?'#2f5a4a':'#7a8a9a'));dot(x,y,.16,S('#f4f8fc'))}else dot(x,y,.36,S(h<.5?'#4e9a47':'#a88c5a'))}
-    if(m===6&&ch){if(ch[0]==='₪'||!TREE.includes(ch)){q.fillStyle=S(p.dec);q.fillRect(X+u*.2,Y+u*.2,u*.6,u*.6)}else dot(x,y,.42,S(p.tree))}}
-  if(d.TB&&d.BM){q.strokeStyle=dk?'rgba(0,0,0,.55)':'rgba(40,20,10,.45)';q.lineWidth=1;for(const b of d.TB)q.strokeRect(b.x*u+.5,b.y*u+.5,b.w*u-1,b.h*u-1)}
-  ZMBM={key,d:d.M,c};return c}
 /* ---- il disegno della mappa della zona ---- */
 const ZMICO={po:'#2aa8c8',door:'#8a5a2a',npc:'#f5c542',boss:'#d8283a',ch:'#e8962a',star:'#ffffff',res:'#5aa83a',fish:'#3a7ad8',me:'#e8303a',pl:'#3a8aff'};
 let ZMHIT=[];

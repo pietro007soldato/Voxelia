@@ -4,7 +4,7 @@
 Si gioca da soli o con gli amici. Si esplora la città di Aldoria e il regno intorno e si combatte nei dungeon. In
 Tomorrow si fonda un regno proprio, e con l'editor **Voxelia Studio** si costruiscono mondi da far giocare agli altri.
 
-**Versione attuale: 7.52.2** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
+**Versione attuale: 7.53** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
 [⌨️ Comandi](#comandi) · [🖥 Server](#il-server-multigiocatore) · [🛠 Sviluppo](#sviluppo) ·
 [📝 Novità (CHANGELOG)](CHANGELOG.md)
 
@@ -482,6 +482,10 @@ da `/versioni/<versione>/` con due garanzie:
 PvP** con il suo negozio, la **classifica**, i **cicli dei dungeon** e l'**orologio del mondo** condivisi, i **nemici
 condivisi** (tutti vedono gli stessi), i **Mondi della community** e i **plugin**.
 
+Il gioco, le versioni precedenti e il pannello admin si preparano una volta e restano in memoria **già compressi**
+(brotli o gzip, secondo il browser): il gioco arriva in circa 0,8 MB invece di 3, e chi torna riceve solo la conferma
+che non è cambiato (ETag). `/salute` risponde subito, per i controlli di salute.
+
 ### Variabili d'ambiente
 
 | Variabile | Predefinito | A cosa serve |
@@ -631,7 +635,8 @@ Dopo il push la nuova versione è online in un paio di minuti, e nel registro co
 voxelia.html            il gioco completo, generato da build.sh (non si modifica a mano)
 server.js               server multigiocatore, pannello admin, plugin, mondi e versioni precedenti
 admin.html              interfaccia del pannello admin
-build.sh                unisce i sorgenti in voxelia.html
+build.sh                unisce i sorgenti in voxelia.html e ne controlla la sintassi
+tools/verifica.sh       la verifica prima di pubblicare (build, sintassi, versioni, server di prova)
 CHANGELOG.md            tutte le modifiche, dalla più recente (finisce anche dentro il gioco)
 src/                    i sorgenti del gioco
 plugins/                plugin del server (con LEGGIMI.md e CHANGELOG.md)
@@ -639,7 +644,7 @@ releases/               le build delle versioni pubblicate, con l'elenco in LEGG
 docs/                   immagini di questo README
 Dockerfile              immagine del server
 docker-compose.yml      avvio con Docker Compose
-.github/workflows/      pubblicazione dell'immagine su GitHub Container Registry
+.github/workflows/      la verifica a ogni push e PR, e la pubblicazione dell'immagine su GitHub Container Registry
 ```
 
 `build.sh` mette in fila `src/head.html` e i file `src/[numero]_*.js` in ordine alfabetico (`LC_ALL=C`, per cui
@@ -669,7 +674,10 @@ che viene dopo gli altri (`8zzzz_…`, `8zzzza_…`).
 | `78_aspetto.js` | Aspetto dell'eroe, modelli dell'equipaggiamento indossato, ritratti |
 | `79_hudedit.js` | Editor dell'HUD |
 | `7_net.js` | Multigiocatore (WebSocket verso `server.js`), chat con i link |
-| `8_main.js` | Menu, musiche scritte, storia, personaggi e routine della città, castello, battaglie, Voxelia Studio, abilità, ciclo principale e tastiera |
+| `8_main.js` | Menu animato, musiche scritte, storia, piazza e routine della città, castello, Malakar, animazioni, luoghi, dialoghi, aspetto dei personaggi |
+| `8_main0_attivita.js` | La pesca, Stefano e la Puledra, le battaglie di Ryan il Pelato, Manuel |
+| `8_main1_studio.js` | Voxelia Studio: l'editor, i mondi da giocare, le finestre, le musiche, le cinematiche, le icone, gli strumenti |
+| `8_main2_avvio.js` | Avvio, salvataggi e menu, tastiera, ciclo principale, cursore |
 | `9_changelog.js` | Generato da `build.sh` a partire da `CHANGELOG.md`: non si modifica a mano |
 
 **Storia, Aldoria e filmati**
@@ -794,16 +802,21 @@ che viene dopo gli altri (`8zzzz_…`, `8zzzza_…`).
 
 ### Costruire e provare
 ```sh
-sh build.sh        # rigenera src/9_changelog.js e voxelia.html
-node server.js     # per provarlo con il server (oppure apri voxelia.html nel browser)
+sh build.sh             # rigenera src/9_changelog.js e voxelia.html, e controlla la sintassi
+node server.js          # per provarlo con il server (oppure apri voxelia.html nel browser)
+sh tools/verifica.sh    # la verifica completa: build, sintassi, versioni e un server di prova
 ```
+
+La stessa verifica gira su GitHub a ogni push e a ogni pull request (workflow **Verifica**): una PR che rompe la build,
+la sintassi o i numeri di versione si vede prima del merge.
 
 ### Pubblicare una versione nuova
 1. Aggiorna il numero di versione in tre posti: `GAME_VER` in `src/1_core.js`; `<title>` e `<sup id="ver">` in
    `src/head.html`; `VER` e il commento iniziale in `server.js`.
 2. Scrivi la voce in cima a `CHANGELOG.md`, in italiano.
 3. Esegui `sh build.sh`, copia la build in `releases/voxelia_v<versione>.html` e aggiungi la riga in `releases/LEGGIMI.md`.
-4. Fai commit e push su `main`: Suga ricostruisce e pubblica da solo.
+4. Esegui `sh tools/verifica.sh`: deve finire con «Tutto a posto».
+5. Fai commit e push su `main`: Suga ricostruisce e pubblica da solo.
 
 ### Convenzioni
 - Nessuna dipendenza esterna: niente framework né librerie, solo JavaScript, Canvas 2D, WebGL e Web Audio.

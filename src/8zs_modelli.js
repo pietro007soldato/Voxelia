@@ -142,7 +142,6 @@ const AM718={
     x:[['bd',-.16,-.1,19,.32,.3,1.2,'#6a3a1a'],['bd',-.17,-.08,14,.34,.04,6,'#5a2a14'],['bd',-.17,-.08,14,.04,.04,6,'#5a2a14']]}),
   gallina:(v)=>mBird({s:1,c:v||'#f4f4f0',c2:MS(v||'#f4f4f0',.88),comb:'#d02020',bk:'#e8a020',tlh:5,ani:'peck'}),
   gabbiano:()=>mBird({s:1,c:'#f4f4f4',wc:'#9a9aa4',tip:'#2a2a2a',tlc:'#e8e8ec',bk:'#e8b020',bl:.12,lc:'#e8a020',leg:5,bh:6})};
-const _ANM717={...ANM};
 ANM.mucca=()=>AM718.mucca();ANM.pecora=()=>AM718.pecora();ANM.maiale=()=>AM718.maiale();ANM.gabbiano=()=>AM718.gabbiano();ANM.gallina=()=>AM718.gallina();
 ANM.cavallo=()=>AM718.cavallo('#8a5a32','#2a1a10');ANM.cavallo2=()=>AM718.cavallo('#e8e4dc','#a8a094');ANM.cavallo3=()=>AM718.cavallo('#2a2a2e','#5a5a62');
 // un animale con il modello vecchio (passato a mano) prende quello nuovo, con il suo colore

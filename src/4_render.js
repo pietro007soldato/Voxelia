@@ -571,17 +571,6 @@ function genPorto({R4,D,F,H,gate,N2,AN,RS,FS,scat,n}){
 function gather(e){e.k='resx';e.rt=t+75;P.res[e.r]=(P.res[e.r]||0)+1;flt(e,'+1 '+RESN[e.r],'#ffe08a');tone(660,.06,'triangle');if(cineOK())sparks(e.px,e.py,8,['#ffe08a','#ffffff'],40);
   for(const q of P.q){const T=QT[q.id];if(T.t==='gat'&&T.r===e.r&&!qReady(q)){q.c++;msg(T.ti+': '+q.c+'/'+T.n);if(qReady(q))jingle([67,72])}}npcMarks();hud()}
 let FSH=null,FST=0;
-function fishPick(){const nt=isNight(),rb=(P.rod>=2?1.8:1)*(arguments[0]?1.5:1),L=FISHT.filter(f=>!f.nt||nt).map(f=>[f,f.w*(f.p>=30?rb:1)]);let r=Math.random()*L.reduce((a,b)=>a+b[1],0);for(const[f,w]of L){if((r-=w)<0)return f}return L[0][0]}
-function fishStart(){FSH={ph:'wait',tw:performance.now()+1200+Math.random()*2800,pos:0,dir:1,f:null,z0:0,z1:0,msg:'Hai lanciato la lenza... aspetta che abbocchi.'};clearInterval(FST);FST=setInterval(fishTick,30);pn('fish')}
-function fishTick(){if(PM!=='fish'||!FSH){clearInterval(FST);return}const now=performance.now(),F=FSH;
-  if(F.ph==='wait'&&now>=F.tw){F.f=fishPick();const w=Math.max(.08,(.34-F.f.d*.24)*(P.rod>=2?1.3:1));F.z0=Math.random()*(1-w);F.z1=F.z0+w;F.ph='bite';F.te=now+3200;F.sp=.55+F.f.d*1.5;F.msg='Qualcosa ha abboccato!';tone(880,.08,'triangle');pn('fish');return}
-  if(F.ph==='bite'){F.pos+=F.dir*F.sp*.03;if(F.pos>1){F.pos=1;F.dir=-1}if(F.pos<0){F.pos=0;F.dir=1}const mk2=$('fmk');if(mk2)mk2.style.left=(F.pos*100)+'%';if(now>F.te){F.ph='end';F.msg='Il pesce si è liberato ed è scappato!';tone(150,.2);pn('fish')}}}
-function fishPull(){const F=FSH;if(!F)return;if(F.ph==='wait'){F.ph='end';F.msg='Troppo presto! Hai spaventato i pesci.';tone(150,.2);pn('fish');return}
-  if(F.ph!=='bite')return;const f=F.f;F.ph='end';
-  if(F.pos>=F.z0&&F.pos<=F.z1){P.fish[f.id]=(P.fish[f.id]||0)+1;F.msg=f.id==='stivale'?'Hai pescato... uno stivale vecchio.':'Preso! '+f.n+(f.p>=90?': una rarità!':'');jingle(f.p>=90?[72,76,79,84,88]:[67,72,76],.09,'triangle');
-    for(const q of P.q){const T=QT[q.id];if(T.t==='fish'&&(T.f==='any'?f.id!=='stivale':T.f===f.id)&&!qReady(q)){q.c++;msg(T.ti+': '+q.c+'/'+T.n);if(qReady(q))jingle([67,72])}}npcMarks();hud();save()}
-  else{F.msg='Strattone sbagliato: '+f.n+' è scappato.';tone(150,.2)}pn('fish')}
-const fishList=()=>FISHT.filter(f=>P.fish[f.id]>0).map(f=>f.n+' ×'+P.fish[f.id]).join(', ');
 function buyRod(){const lv=P.rod?2:1,c=px('rod'+lv,lv===1?60:300);if(P.rod>=2)return;if(pay(c)){P.rod=lv;msg(lv===1?'Hai una canna da pesca! Cerca i galleggianti rossi sui moli.':'Canna di quercia: zona di presa più larga e più pesci rari.');jingle([67,72,76]);save();pn('npc')}}
 function sellR(id,one){const fm=FISHT.find(f=>f.id===id),src=fm?P.fish:P.res,b=fm?fm.p:RESP[id],c=src[id]|0;if(!c)return;const k=one?1:c,gd=px('s_'+id,b)*k;src[id]=c-k;P.g+=gd;goldFly(gd);tone(700,.08);hud();save();pn('sellres')}
 
@@ -695,20 +684,11 @@ Object.assign(Z,{mare:{n:'Mare aperto · Battaglia navale',lv:5,N:44,a:'#3b86d6'
   arrembaggio:{n:'La Vedova Nera · Arrembaggio',lv:5,N:30,a:'#8a6a42',b:'#80623e',bg:'#3a6aa8',mus:'boarding',pt:'mote',gen:genArr,dist:1,wl:'#5a3a22',wh:14}});
 function genMare({n}){for(let y=0;y<n;y++)for(let x=0;x<n;x++){M[y][x]=2;DEC[y][x]=''}for(const[x,y]of[[4,4],[38,6],[6,36],[36,38],[20,3],[22,40]])DEC[y][x]='^';
   const me=mkShip('galeone',10,15,'y'),en=mkShip('pirata',29,15,'y');me.nav='me';en.nav='en';en.bx=en.px;en.by=en.py;ents.push(me,en);return[21,21]}
-function genArr({F,EN,n}){for(let y=0;y<n;y++)for(let x=0;x<n;x++){M[y][x]=2;DEC[y][x]=''}
-  for(let y=3;y<=26;y++)for(let x=8;x<=21;x++){M[y][x]=(x===8||x===21||y===3||y===26)?1:0}
-  for(const y of[9,15,21]){F(14,y,'I');F(15,y,'I')}for(const y of[6,10,14,18,22]){F(9,y,'J');F(20,y,'J')}
-  for(const[x,y,c]of[[11,5,'b'],[12,5,'k'],[18,24,'b'],[17,24,'k'],[10,20,'@'],[19,12,'@'],[13,25,'k']])F(x,y,c);
-  for(const[x,y]of[[11,9],[18,9],[12,13],[17,13],[11,18],[18,18],[13,21]])EN('pirata',x,y);for(const[x,y]of[[10,16],[19,16],[16,12]])EN('pirata_pistola',x,y);EN('scarlatto',14,23);
-  return[14,4]}
 function navStart(){if(P.lv<4){msg('L\'Ammiraglio non ti fa salire a bordo: torna al livello 4.');return}cl();const lv=Math.max(4,P.lv);Z.mare.lv=lv;Z.arrembaggio.lv=lv;
   NAV={ph:'cannon',hp:100,ehp:100,pw:0,pd:1,hold:0,rl:0,ecd:3.5,inc:null,mcd:0,ev:-9,balls:[],t:0,sink:0};whoosh();started=0;document.body.classList.remove('ig');PM=0;$('pn').style.display='none';playCine(STORMC,'naval',()=>{started=1;document.body.classList.add('ig');last=performance.now();load('mare','porto');banner('Battaglia navale','Tieni la rotta nella tempesta e rispondi al fuoco della Vedova Nera!','spade')})}
 const navShips=()=>[ents.find(e=>e.nav==='me'),ents.find(e=>e.nav==='en')];
 function navHold(on){if(!NAV||NAV.ph!=='cannon')return;if(on){if(NAV.rl<=0)NAV.hold=1}else if(NAV.hold){NAV.hold=0;navFire()}}
 function navEvade(){if(!NAV||NAV.ph!=='cannon'||NAV.mcd>0)return;NAV.ev=NAV.t;NAV.mcd=1.4;whoosh();msg('Manovra!')}
-function navFire(){const[me,en]=navShips();if(!me||!en)return;const mx=me.px,ecx=en.px-en.ex/2,tp=(ecx-mx)/26,err=Math.abs(NAV.pw-tp),hit=err<=.065,perf=err<.018;
-  NAV.balls.push({x:mx,y:me.py-me.ey/2+(Math.random()-.5)*5,x2:hit?ecx:mx+NAV.pw*26,y2:en.py-en.ey/2+(Math.random()-.5)*5,k:0,T:.9,hit,perf});
-  NAV.rl=1.05;NAV.pw=0;NAV.pd=1;tone(70,.25,'square',.08);P.sw=.2;if(cineOK())sparks(mx,me.py-me.ey/2,10,['#ffd04a','#888888'],60)}
 function navTick(dt){const V=NAV;V.t+=dt;const[me,en]=navShips();if(!me||!en)return;navExtra(dt,me,en);
   if(V.ph==='cannon'){en.px=en.bx+Math.sin(V.t*.45)*3.2;en.py=en.by+Math.sin(V.t*.3)*2}
   if(V.ph==='sink'){V.sink+=dt;en.az=-V.sink*16;if(cineOK()&&Math.random()<.35)sparks(en.px-1.5,en.py-6,3,['#555555','#888888'],70);if(V.sink>2.6&&!V.go){V.go=1;started=0;document.body.classList.remove('ig');navUI(0);playCine(BOARDC,'boarding',()=>{started=1;document.body.classList.add('ig');last=performance.now();load('arrembaggio','mare')});return}navUIupd(me,en);return}
@@ -725,17 +705,6 @@ function navTick(dt){const V=NAV;V.t+=dt;const[me,en]=navShips();if(!me||!en)ret
     else if(cineOK())sparks(b.x2,b.y2,10,['#cfe8ff','#ffffff'],70)}return false});
   if(V.hp<=0){navLose();return}navUIupd(me,en)}
 function navLose(){NAV=null;navUI(0);banner('La tua nave è affondata','I pescatori ti riportano al porto','teschio');irisGo(()=>load('porto','in_galeone'))}
-function navDraw(){for(const b of NAV.balls){const k=b.k/b.T,x=b.x+(b.x2-b.x)*k,y=b.y+(b.y2-b.y)*k,z=Math.sin(k*Math.PI)*70+14;box(x-.1,y-.1,z,.2,.2,4,'#1a1a1a',1)}}
-function navUI(on){let el=$('navui');if(!on){if(el)el.remove();return}if(!el){el=document.createElement('div');el.id='navui';document.body.appendChild(el)}
-  el.innerHTML='<b>⚓ Battaglia navale</b><div>Il tuo scafo</div><div class="bar"><i id="nvh" style="background:#4ad66a"></i></div><div>La Vedova Nera</div><div class="bar"><i id="nve" style="background:#e04a3a"></i></div><div class="pm"><i id="nvz" class="pz"></i><i id="nvk" class="pk"></i></div><div id="nvs" class="mu">Tieni premuto Fuoco (o Spazio) e rilascia con il segno nella zona verde.</div><button id="nvf">💥 Fuoco</button><button onclick="navEvade()">⛵ Manovra (Shift)</button>';
-  const f=$('nvf');f.onpointerdown=e=>{e.preventDefault();navHold(1)};f.onpointerup=f.onpointerleave=()=>navHold(0)}
-function navUIupd(me,en){const h=$('nvh');if(!h||!NAV)return;h.style.width=Math.max(0,NAV.hp)+'%';$('nve').style.width=Math.max(0,NAV.ehp)+'%';const tp=(en.px-en.ex/2-me.px)/26;
-  $('nvz').style.left=((tp-.065)*100)+'%';$('nvz').style.width='13%';$('nvk').style.left=(NAV.pw*100)+'%';
-  $('nvs').textContent=NAV.ph==='sink'?'La Vedova Nera sta affondando...':NAV.inc?'⚠ Bordata in arrivo: Manovra!':NAV.rl>0?'Ricarica dei cannoni...':NAV.hold?'Rilascia nella zona verde!':'Pronto al fuoco'}
-function navWin(){const lv=Z.arrembaggio.lv,gd=Math.round((300+lv*60)*(NET.cfg.gm||1)),xp=200+lv*40;P.g+=gd;gainXP(xp);P.navw=(P.navw||0)+1;
-  const it=item(lv+3,3,'w');it.n='Sciabola di Scarlatto';ents.push(dropOk({k:'dr',px:P.px+.5,py:P.py,it}));
-  banner('Vittoria sul mare!','+'+gd+' oro, +'+xp+' XP: la Vedova Nera è sconfitta','corona');goldFly(gd);jingle([72,76,79,84,88,91],.1,'triangle');if(cineOK())coinRain(30);
-  ents.push(po(14,4,'porto',{st:'gate',n:'Torna al Porto'}));music('town');save()}
 addEventListener('keyup',e=>{if(NAV&&Zk==='mare'&&e.key===' ')navHold(0)});
 
 /* ---- dopo ogni caricamento di zona ---- */
@@ -746,12 +715,6 @@ let LORET=0;function loadPost(k){npcUnstick();routineInit(k);secretsLoad(k);trut
 
 /* ---- prologo animato ---- */
 let INTRO=null;
-const ISC=[{d:7.5,tx:'C\'era una volta Aldoria, un regno di pietra e di luce, tenuto unito dalla Corona di Voxel.'},
-  {d:7.5,tx:'Ma Malakar, fratello del Re Aldric, bramava quel potere. Studiò le arti proibite, e divenne il Re Lich.'},
-  {d:7,tx:'In una notte di tempesta infranse la Corona. Sei frammenti volarono lontano, nei luoghi più oscuri del regno.'},
-  {d:8.5,tx:'La Tana dei Goblin, la Cripta Dimenticata, la Piramide di Khem, le Caverne di Cristallo, la Fucina Infernale, l\'Abisso Sommerso: ogni frammento è custodito da un signore terribile.'},
-  {d:7.5,tx:'Dalla sua Cittadella del Vuoto, Malakar attende che il regno cada nell\'ombra. E i dungeon rinascono, più forti, a ogni ciclo.'},
-  {d:8,tx:'Il Re Aldric cerca un eroe capace di riunire la Corona. Quell\'eroe sei tu.'}];
 function playIntro(cb){auInit();INTRO={t:0,cb,shown:''};$('menu').style.display='none';let el=$('intro');
   if(!el){el=document.createElement('div');el.id='intro';el.innerHTML='<div class="itx" id="itx"></div><button class="iskip" onclick="introEnd()">Salta il prologo ▸</button>';document.body.appendChild(el)}el.style.display='flex';music('intro')}
 function introEnd(){if(!INTRO)return;const cb=INTRO.cb;INTRO=null;const el=$('intro');if(el)el.style.display='none';if(cb)cb();else{$('menu').style.display='';MINT=0;music('menu')}}
@@ -760,30 +723,6 @@ function introGround(sc,cx,cy){const Rw=W/2/sc+80,oy=H*.6,camx=PX(cx,cy),camy=PY
   for(let d=d0;d<=d1;d++){const a=Math.floor((camx-Rw)/64+d/2),b=Math.ceil((camx+Rw)/64+d/2);for(let x=a;x<=b;x++)mtile(x,d-x)}}
 function introCastle(x,y,dk){box(x-2,y-2,0,4,4,46,dk?'#5a5a66':'#9a9aa6');for(const[a,b]of[[-2,-2],[2,-2],[-2,2],[2,2]]){box(x+a-.6,y+b-.6,0,1.2,1.2,64,dk?'#6a6a74':'#a8a8b4');box(x+a-.75,y+b-.75,64,1.5,1.5,8,dk?'#2a1a3a':'#3a4a7a')}box(x-.5,y+1.98,0,1,.04,22,'#4a2a12')}
 function introCrown(x,y,z,sp,cols){for(let i=0;i<8;i++){const a=sp+i*Math.PI/4;box(x+Math.cos(a)*.75-.1,y+Math.sin(a)*.75-.1,z,.2,.2,i%2?6:9,i%2?'#d4af37':cols[(i>>1)%cols.length],1.25)}}
-function introDraw(dt){const I=INTRO;I.t+=dt;let s=0,acc0=0;while(s<ISC.length&&I.t>acc0+ISC[s].d){acc0+=ISC[s].d;s++}if(s>=ISC.length){introEnd();return}
-  const lt=I.t-acc0,D=ISC[s].d,cols=['#7aff7a','#9fd0ff','#ffd060','#b0f0ff','#ff6a2a','#6fffe0'];g.setTransform(DPR,0,0,DPR,0,0);
-  const grads=[['#3a7ad0','#f5d08a'],['#1a0a2a','#5a2a6a'],['#0a0612','#3a1a4a'],['#05060c','#1a1430'],['#120620','#2a0a3a'],['#5a8ad0','#f8b878']][s];
-  const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,grads[0]);gr.addColorStop(1,grads[1]);g.fillStyle=gr;g.fillRect(0,0,W,H);
-  const sc=Math.min(W,H)/520,cx=lt*.25,cy=-lt*.25;
-  if(s===0||s===5||s===1){introSc(sc,cx,cy);introGround(sc,cx,cy);if(s===1){g.setTransform(DPR,0,0,DPR,0,0);g.fillStyle='rgba(40,0,60,.5)';g.fillRect(0,0,W,H);introSc(sc,cx,cy)}}
-  else introSc(sc,cx,cy);
-  if(s===0){introCastle(cx,cy,0);introCrown(cx,cy,92+Math.sin(lt*2)*4,lt*1.2,cols)}
-  if(s===1){introCastle(cx+5,cy-5,1);drawL(hum('#2a1a4a','#cfe8ff',3.2,[12,'#d4af37']),cx-1,cy+1,0);box(cx-1.2,cy+1.38,84,.14,.05,6,'#ff3a3a',1.4);box(cx-.82,cy+1.38,84,.14,.05,6,'#ff3a3a',1.4);
-    introCrown(cx-1,cy+1,126,lt*.6,['#555555']);if((lt*1.7)%3<.12){g.setTransform(DPR,0,0,DPR,0,0);g.fillStyle='rgba(220,200,255,.55)';g.fillRect(0,0,W,H)}}
-  if(s===2){const k=Math.min(1,lt/3.5);for(let i=0;i<6;i++){const a=i*Math.PI/3+.3,r=k*9,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r,z=70+Math.sin(k*Math.PI)*60;
-      box(x-.25,y-.25,z,.5,.5,10,cols[i],1.3);for(let j=1;j<5;j++){const r2=Math.max(0,r-j*.6);box(cx+Math.cos(a)*r2-.08,cy+Math.sin(a)*r2-.08,z-j*3,.16,.16,4,cols[i],1.1)}}
-    if(lt<.5){g.setTransform(DPR,0,0,DPR,0,0);g.fillStyle=`rgba(255,255,255,${1-lt*2})`;g.fillRect(0,0,W,H)}}
-  if(s===3){const n=Math.min(6,Math.floor(lt/1.1)+1),ids=SHARDS;for(let i=0;i<n;i++){const a=i*Math.PI/3-Math.PI/2,x=cx+Math.cos(a)*6,y=cy+Math.sin(a)*6,c=TH[DG[ids[i]].th].tc;
-      box(x-.6,y-.6,0,1.2,1.2,8,'#3a3a44');box(x-.4,y-.4,8,.2,.2,36,'#5a5a64');box(x+.2,y-.4,8,.2,.2,36,'#5a5a64');box(x-.4,y-.4,44,1,.2,6,'#5a5a64');box(x-.25,y-.35,10,.5,.1,32,c,1.2+Math.sin(lt*4+i)*.1)}
-    g.setTransform(DPR,0,0,DPR,0,0);g.textAlign='center';g.font='bold 15px Georgia,serif';for(let i=0;i<n;i++){const a=i*Math.PI/3-Math.PI/2,x=cx+Math.cos(a)*6,y=cy+Math.sin(a)*6;
-      const sx=(PX(x,y)-PX(cx,cy))*sc+W/2,sy=(PY(x,y,0)-PY(cx,cy,0))*sc+H*.6+18;label(DG[ids[i]].n,sx,sy,TH[DG[ids[i]].th].tc)}}
-  if(s===4){for(let i=0;i<9;i++){const u=Math.sin(lt*1.2+i)*6;box(cx-3+(i%3)*2,cy-3+Math.floor(i/3)*2,40+u+(i===4?30:0),1.6,1.6,30+(i%2)*20+(i===4?40:0),'#2a1a3a',.9+(i%3)*.1)}
-    for(let i=0;i<12;i++){const a=lt*.4+i*.52;box(cx+Math.cos(a)*7-.15,cy+Math.sin(a)*7-.15,60+Math.sin(lt*2+i)*14,.3,.3,6,'#c46bff',1.3)}
-    g.setTransform(DPR,0,0,DPR,0,0);const ea=.5+.5*Math.sin(lt*2);g.fillStyle=`rgba(255,40,60,${.35+ea*.4})`;g.beginPath();g.ellipse(W*.44,H*.16,26,9,0,0,6.3);g.ellipse(W*.56,H*.16,26,9,0,0,6.3);g.fill()}
-  if(s===5){introCastle(cx+7,cy-7,0);const hx=cx-6+Math.min(1,lt/6)*6,hy=cy+6-Math.min(1,lt/6)*6;drawHero(heroL(APM,1,APM.hh?2:-1,1,20,0,0),hx,hy,Math.abs(Math.sin(lt*9))*2,0,5);
-    if(lt>D-3){g.setTransform(DPR,0,0,DPR,0,0);const a=Math.min(1,(lt-(D-3))/1.2);g.globalAlpha=a;g.textAlign='center';g.font=`bold ${Math.round(Math.min(W,H)/8)}px Georgia,serif`;g.lineWidth=6;g.strokeStyle='#3a1a08';g.strokeText('VOXELIA',W/2,H*.3);g.fillStyle='#ffd88a';g.fillText('VOXELIA',W/2,H*.3);g.globalAlpha=1}}
-  g.setTransform(DPR,0,0,DPR,0,0);const fa=Math.max(0,1-lt/.7,1-(D-lt)/.7);if(fa>0){g.fillStyle=`rgba(0,0,0,${fa})`;g.fillRect(0,0,W,H)}
-  const n=Math.min(ISC[s].tx.length,Math.floor(Math.max(0,lt-.6)*42)),tx=ISC[s].tx.slice(0,n);if(tx!==I.shown){I.shown=tx;const el=$('itx');if(el)el.textContent=tx}}
 function drawMenuFx(){g.setTransform(DPR,0,0,DPR,0,0);const cols=['#7aff7a','#9fd0ff','#ffd060','#b0f0ff','#ff6a2a','#6fffe0'];
   for(let i=0;i<34;i++){const x=(i*137.5+mt0*14*(1+i%3))%W,y=H-((mt0*(22+i%5*6)+i*91)%(H+40)),a=.25+.25*Math.sin(mt0*3+i);g.fillStyle=`rgba(255,230,160,${a})`;g.fillRect(x,y,2+i%2,2+i%2)}
   for(let k=0;k<4;k++){const x=((mt0*(36+k*9)+k*380)%(W+240))-120,y=H*.16+k*34+Math.sin(mt0*1.4+k)*12,f=Math.sin(mt0*10+k)*6;g.strokeStyle='rgba(40,30,40,.6)';g.lineWidth=2;g.beginPath();g.moveTo(x-9,y-f);g.lineTo(x,y);g.lineTo(x+9,y-f);g.stroke()}
@@ -902,9 +841,6 @@ Z.in_motel=Object.assign({},Z.in_motel,{N:16,np:[['portiere',7,2],['ospite',3,10
   [[4,14],[9,14],[14,14],[4,16],[9,16],[14,16]].forEach(([x,y],i)=>{const n=i+1;po2.push([x,y,'in_stanza'+n,'Stanza '+n,{lock:'room'+n,lockMsg:'La stanza '+n+' non è tua: affitta una stanza alla reception, al piano terra.'}])});
   Z.in_motel2=Object.assign({},Z.in_motel2,{N:18,lay,po:po2,np:[['cameriera',7,14,{n:'Cameriera Rina'}]]})})();
 /* nuove modalità del menu, ancora in lavorazione */
-function wipMode(k){const T={dim:['🌌 Voxelia Dimension','Un\'altra dimensione del regno: mondi generati che cambiano a ogni viaggio, regole nuove e nemici mai visti.'],
-  parco:['🎡 Parco giochi','Una modalità libera e creativa: costruisci, prova armi e nemici, gioca senza missioni né pericoli.']}[k];let el=$('wipm');
-  if(!el){el=document.createElement('div');el.id='wipm';document.body.appendChild(el)}el.innerHTML=`<div class="wbox"><h2>${T[0]}</h2><p class="wtag">🚧 Work in progress</p><p>${T[1]}</p><p class="mu">Questa modalità è in lavorazione: arriverà in un prossimo aggiornamento.</p><button onclick="$('wipm').style.display='none'">Torna al menu</button></div>`;el.style.display='flex';tone(520,.08,'triangle')}
 (function(){const st=document.createElement('style');st.textContent=`#wipm{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,8,16,.72);z-index:70}
 #wipm .wbox{max-width:min(520px,90vw);background:#1b2030;border:2px solid #f5b942;border-radius:12px;padding:20px 24px;color:#e8ecf4;font:15px Georgia,serif;text-align:center;animation:vxin .3s ease-out}
 #wipm .wtag{display:inline-block;background:#f5b942;color:#1b2030;font-weight:bold;border-radius:20px;padding:3px 12px}#wipm button{font:inherit;padding:8px 16px;margin-top:8px;cursor:pointer}
@@ -1133,51 +1069,12 @@ function dimClue(e){const st=dimSt(),d2=dimE();if(!st||st.t!=='clue')return;ents
 
 /* ================= 6.4: zaino visibile, pesca con canna e mulinello, parate, arti marziali, tempesta e stiva ================= */
 /* ordinamento dei pezzi dell'eroe: ciò che sta sotto si disegna prima di ciò che gli sta sopra */
-const ovlB=(a,b)=>a[0]<b[0]+b[3]-.001&&b[0]<a[0]+a[3]-.001&&a[1]<b[1]+b[4]-.001&&b[1]<a[1]+a[4]-.001;
-function hsort(p,q){if(ovlB(p,q)){if(p[2]+p[5]<=q[2]+.01)return -1;if(q[2]+q[5]<=p[2]+.01)return 1}return dsort(p,q)}
 /* lo zaino sulla schiena cambia con il livello dello zaino comprato */
 function bagL(tr){const C=[['#8a6a42','#5a3a22'],['#6a4a2a','#4a8a3a'],['#4a3a2a','#3a6aa8'],['#5a2a6a','#d4af37']][tr]||['#8a6a42','#5a3a22'],w=.3+tr*.04,h=8+tr*2.5;
   const L=[[-w/2,-.36,11,w,.15,h,C[0]],[-w/2+.02,-.38,11+h*.55,w-.04,.04,h*.4,C[1]],[-.16,-.22,12,.05,.08,9,C[1]],[.11,-.22,12,.05,.08,9,C[1]]];
   if(tr>=1)L.push([-w/2-.05,-.35,11+h,w+.1,.13,3,'#c8b890']);if(tr>=2)L.push([w/2,-.32,12,.07,.1,5,'#ffe08a']);if(tr>=3)L.push([-w/2,-.385,11,w,.02,1.5,'#d4af37'],[-w/2,-.385,11+h-1.5,w,.02,1.5,'#d4af37']);return L}
-const rodL=()=>{const L=[];for(let k=0;k<7;k++)L.push([.24,.05+k*.13,14+k*3.2,.04,.13,3,k<2?'#3a2a1a':'#8a6a42']);return L};
 /* ---- pesca: lancio con la canna, abboccata, mulinello ---- */
 let FSPOT=null;
-function fishStart(){const sp=FSPOT;FSH={ph:'aim',pw:0,pd:1,hold:0,msg:'Tieni premuto Lancia per caricare il lancio, poi rilascia.',dx:sp?sp.ox:0,dy:sp?sp.oy:1,sx:sp?sp.px:P.px,sy:sp?sp.py:P.py,bx:0,by:0,k:0,rph:''};
-  if(sp)P.dr=[sp.ox,sp.oy];clearInterval(FST);FST=setInterval(fishTick,30);pn('fish')}
-function fishKey(on){const F=FSH;if(!F)return;
-  if(F.ph==='aim'){if(on)F.hold=1;else if(F.hold){F.hold=0;const pw=F.pw,d=.9+pw*2.4;F.good=pw>=.62&&pw<=.9;F.bx=F.sx+F.dx*d;F.by=F.sy+F.dy*d;F.ph='fly';F.k=0;F.msg=F.good?'Lancio perfetto! L\'amo vola lontano.':'Lancio!';whoosh()}}
-  else if(F.ph==='bite'&&on){F.ph='reel';F.dist=1;F.ten=0;F.esc=12+F.f.d*6;F.pull=false;F.pt=1;F.hold=0;F.msg='Preso all\'amo! Gira il mulinello.';tone(500,.08,'square',.05)}
-  else if(F.ph==='reel')F.hold=on?1:0;
-  else if(F.ph==='end'&&on)fishStart();fishUI()}
-function fishTick(){if(PM!=='fish'||!FSH){clearInterval(FST);if(PM!=='fish')FSH=null;return}const F=FSH,dt=.03,now=performance.now();
-  if(F.ph==='aim'&&F.hold){F.pw+=F.pd*dt*1.1;if(F.pw>1){F.pw=1;F.pd=-1}if(F.pw<0){F.pw=0;F.pd=1}}
-  if(F.ph==='fly'){F.k+=dt/.6;if(F.k>=1){F.k=1;F.ph='wait';F.tw=now+(1500+Math.random()*2600)*(F.good?.7:1);F.msg='Il galleggiante dondola... aspetta che abbocchi.';tone(300,.06,'sine')}}
-  if(F.ph==='wait'&&now>=F.tw){F.ph='bite';F.te=now+950;F.f=fishPick(F.good);F.msg='Abbocca!';tone(880,.1,'triangle')}
-  if(F.ph==='bite'&&now>F.te){F.ph='end';F.msg='Troppo lento a ferrare: il pesce ha mangiato l\'esca ed è scappato.';tone(150,.2)}
-  if(F.ph==='reel'){const f=F.f,rod=P.rod>=2;F.pt-=dt;if(F.pt<=0){F.pull=!F.pull;F.pt=F.pull?.5+Math.random()*(.6+f.d):.8+Math.random()*1.2}
-    if(F.hold){F.dist-=dt*(F.pull?.05:.2+(1-f.d)*.1);F.ten+=dt*(F.pull?.9+f.d*.6:.16)*(rod?.75:1)}else{F.ten=Math.max(0,F.ten-dt*.45);F.dist=Math.min(1.2,F.dist+dt*(F.pull?.1+f.d*.08:.02))}
-    F.esc-=dt;if(F.ten>=1){F.ph='end';F.msg='Il filo si è spezzato! '+f.n+' è scappato.';tone(120,.3,'sawtooth')}else if(F.dist<=0)fishCatch();else if(F.esc<=0||F.dist>=1.2){F.ph='end';F.msg=f.n+' si è liberato ed è scappato al largo.';tone(150,.2)}}
-  fishUI()}
-function fishCatch(){const F=FSH,f=F.f;F.ph='end';P.fish[f.id]=(P.fish[f.id]||0)+1;F.msg=f.id==='stivale'?'Hai tirato su... uno stivale vecchio.':'Preso! '+f.n+(f.p>=90?': una rarità!':'');
-  jingle(f.p>=90?[72,76,79,84,88]:[67,72,76],.09,'triangle');if(cineOK())sparks(F.sx,F.sy,12,['#9adcff','#ffffff'],60);
-  for(const q of P.q){const T=QT[q.id];if(T.t==='fish'&&(T.f==='any'?f.id!=='stivale':T.f===f.id)&&!qReady(q)){q.c++;msg(T.ti+': '+q.c+'/'+T.n);if(qReady(q))jingle([67,72])}}npcMarks();hud();save()}
-function fishUI(){const F=FSH;if(!F)return;if(F.ph!==F.rph){F.rph=F.ph;pn('fish');return}const q=id=>$(id);
-  if(F.ph==='aim'&&q('fpw'))q('fpw').style.left=(F.pw*100)+'%';
-  if(F.ph==='reel'&&q('fdi')){q('fdi').style.width=Math.max(0,Math.min(100,F.dist/1.2*100))+'%';q('fte').style.width=Math.min(100,F.ten*100)+'%';q('fte').style.background=F.ten>.75?'#ff4a3a':F.pull?'#ffb04a':'#4ad66a';
-    q('fst').textContent=F.pull?'Il pesce tira! Lascia andare il mulinello.':'È stanco: gira, gira, gira!';q('fes').textContent=Math.max(0,Math.ceil(F.esc))+'s'}}
-function fishHTML(){const F=FSH;let h=`<h3>🎣 Pesca · ${P.rod>=2?'Canna di quercia':'Canna da pesca'}</h3><p>${esc(F.msg)}</p>`;
-  if(F.ph==='aim')h+='<p class="mu">La zona dorata è il lancio perfetto: l\'amo va più lontano e abboccano pesci più rari.</p><div class="fbar"><i class="fz" style="left:62%;width:28%;background:#d4af37"></i><i id="fpw" class="fm" style="left:0%"></i></div><button id="fbt">🎣 Lancia (tieni premuto)</button>';
-  else if(F.ph==='fly'||F.ph==='wait')h+='<p class="mu">Quando il galleggiante va giù, premi Ferra.</p><button onclick="fishStart()">↩ Ritira la lenza</button>';
-  else if(F.ph==='bite')h+='<p style="font-size:34px;text-align:center;color:#ffd84a;margin:6px 0"><b>ABBOCCA!</b></p><button id="fbt">⚡ Ferra!</button>';
-  else if(F.ph==='reel')h+=`<p id="fst">Gira il mulinello!</p><div class="mu">Distanza del pesce · scappa tra <b id="fes"></b></div><div class="fbar"><i id="fdi" class="fz" style="left:0;width:100%;background:#3a8ad8"></i></div><div class="mu">Tensione del filo</div><div class="fbar"><i id="fte" class="fz" style="left:0;width:0%"></i></div><button id="fbt">🔄 Gira (tieni premuto)</button><p class="mu">Tieni premuto Gira quando il pesce è stanco e lascia quando tira: se la tensione arriva in fondo, il filo si spezza.</p>`;
-  else h+='<button id="fbt">🎣 Lancia di nuovo</button>';
-  return h+`<p class="mu">${isNight()?'È notte: calamari e trote dorate salgono in superficie.':'Di notte abboccano anche calamari e trote dorate.'} Puoi usare anche la barra spaziatrice.<br>Pescato: ${fishList()||'niente'}</p><button onclick="cl()">Smetti di pescare</button>`}
-function fishBind(){const b=$('fbt');if(!b)return;b.onpointerdown=e=>{e.preventDefault();fishKey(1)};b.onpointerup=b.onpointerleave=()=>fishKey(0)}
-function fishDraw(){const F=FSH;if(!F||PM!=='fish'||F.ph==='aim')return;const dr=P.dr||[0,1],tx=P.px+dr[0]*.85,ty=P.py+dr[1]*.85,tz=34;let bx=F.bx,by=F.by,bz=-3+Math.sin(t*3)*1;
-  if(F.ph==='fly'){const k=F.k;bx=tx+(F.bx-tx)*k;by=ty+(F.by-ty)*k;bz=tz+(-3-tz)*k+Math.sin(k*Math.PI)*40}
-  if(F.ph==='bite')bz=-6+Math.sin(t*25)*2;if(F.ph==='reel'){const k=Math.max(.05,Math.min(1,F.dist));bx=tx+(F.bx-tx)*k;by=ty+(F.by-ty)*k;bz=-5+Math.sin(t*14)*1.5}
-  g.strokeStyle='rgba(240,240,240,.85)';g.lineWidth=1;g.beginPath();g.moveTo(PX(tx,ty),PY(tx,ty,tz));g.lineTo(PX(bx,by),PY(bx,by,bz+4));g.stroke();
-  box(bx-.06,by-.06,bz,.12,.12,5,'#e8483a');box(bx-.05,by-.05,bz+5,.1,.1,3,'#ffffff');if(F.ph==='reel'&&F.pull&&cineOK()&&Math.random()<.3)sparks(bx,by,2,['#cfe8ff'],30)}
 /* ---- i nemici parano ---- */
 function tryParry(e,d,rem){if(rem||e.k!=='en'||(e.b&&e.b.np)||!(t>=(e.prt||-1))||Math.random()>(e.boss?.12:.18))return d;e.prt=t+1.6;e.pry=t;flt(e,'Parata!','#d8e0ff');if(cineOK())sparks(e.px,e.py,8,['#ffffff','#c8d8ff'],50);tone(1300,.05,'square',.04);return Math.round(d*.2)}
 /* ---- arti marziali del Maestro Dino ---- */

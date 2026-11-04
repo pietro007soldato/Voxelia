@@ -6,7 +6,6 @@
    Le regioni generate restano in memoria e quelle intorno si preparano mentre giochi, così lo spostamento non si sente.
    Il pavimento si disegna a blocchi (solo quelli che si vedono), per non riempire la memoria con un mondo così grande. */
 const TWW={m:0,cache:new Map(),kill:new Map(),carry:null,seam:0,pre:[],preT:0};
-const TWRD=[[24,'Corta'],[36,'Media'],[48,'Lunga']];
 SETD.twrd=TOUCH?0:1;if(SET.twrd==null)SET.twrd=SETD.twrd;
 // 7.19.1: si torna al passaggio di prima fra le regioni (una regione alla volta, con la transizione): la fascia è zero
 const twMarg=()=>0;
@@ -115,10 +114,6 @@ const _buildFC718=buildFC;buildFC=function(){if(ZZ&&ZZ.tw&&N>TWR){buildFCw();ret
 // il disegno del pavimento sceglie da solo fra il foglio unico e i blocchi
 function fcPaint(){if(!FC)buildFC();if(FC.chunk)fcDraw();else if(FC.cv)g.drawImage(FC.cv,-FC.ox,-FC.oy,FC.w,FC.h)}
 /* ---- le Impostazioni: la distanza di visuale di Tomorrow ---- */
-function twSetRD(i){const was=twMarg();SET.twrd=clamp(i|0,0,2);if(typeof saveSet==='function')saveSet();else try{LS.set('voxelia_set',SET)}catch(_){}
-  if(twOn()&&twWin()&&twMarg()!==was&&started){const d=twMarg()-was,ox=P.px,oy=P.py;TWW.carry={ents:ents.slice(),dx:0,dy:0,seen:new Set()};for(const e of TWW.carry.ents){e.px+=d;e.py+=d}TWW.seam=1;
-    try{load(Zk)}finally{TWW.seam=0;TWW.carry=null}P.px=ox+d;P.py=oy+d;camX=PX(P.px,P.py);camY=PY(P.px,P.py,10)}
-  if(typeof openSet==='function'&&$('set')&&$('set').style.display!=='none')openSet()}
 /* ---- i borghi: dove si incrociano i sentieri, al posto della radura, qualche casa con i suoi abitanti ---- */
 function twHamlet(C,ends){const{F,disc,rnd,rr,n,hub,rx,ry,bio,tg,ok,z}=C,[cx,cy]=hub;z.ham=1;
   disc(cx+.5,cy+.5,6.5,(x,y,d)=>{if(M[y][x]===2){M[y][x]=4;DEC[y][x]='~';return}if(M[y][x]!==4)F(x,y,d<2.2?'4':d<3.4?'1':bio==='deserto'?'2':bio==='neve'?'':bio==='cenere'?'9':'2')});

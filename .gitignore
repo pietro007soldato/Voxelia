@@ -1,0 +1,11 @@
+# 7.53: i dati che il server crea quando lo si prova in locale non vanno nel repository
+voxelia-data.json
+voxelia-data.json.*
+mondi/
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+# le configurazioni che i plugin scrivono la prima volta che il server parte (esempio.config.json resta nel repository)
+plugins/*.config.json
+!plugins/esempio.config.json

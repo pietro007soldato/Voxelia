@@ -48,52 +48,6 @@ const _zd717=zd;zd=function(k){if(typeof k==='string'&&k.startsWith('twi:'))twIn
 const _zname717=zname;zname=function(k){if(typeof k==='string'&&k.startsWith('twi:'))twInt(k);return _zname717(k)};
 
 /* ---- la città ---- */
-function twCityGen(C){const{F,W,Pp,disc,rnd,rr,n,hub,rx,ry,bio,tg,ok}=C;let[cx,cy]=hub;const RR=25;cx=clamp(cx,RR+4,n-RR-5);cy=clamp(cy,RR+4,n-RR-5);C.hub[0]=cx;C.hub[1]=cy;
-  const x0=cx-RR,x1=cx+RR,y0=cy-RR,y1=cy+RR,isTrail=(x,y)=>ok(x,y)&&(DEC[y][x]===DN+'1'||M[y][x]===4);
-  // le strade che arrivano da fuori segnano le porte
-  const gates=[];for(let x=x0;x<=x1;x++)for(const y of[y0,y1])if(isTrail(x,y))gates.push([x,y]);for(let y=y0;y<=y1;y++)for(const x of[x0,x1])if(isTrail(x,y))gates.push([x,y]);
-  const nearGate=(x,y)=>gates.some(g=>Math.abs(g[0]-x)+Math.abs(g[1]-y)<=1);
-  // dentro le mura: terreno pulito, niente acqua né alberi
-  const base=bio==='deserto'?'2':bio==='neve'?'':bio==='cenere'?'9':'';
-  for(let y=y0-2;y<=y1+2;y++)for(let x=x0-2;x<=x1+2;x++){if(!ok(x,y))continue;if(isTrail(x,y)&&(x<x0||x>x1||y<y0||y>y1))continue;F(x,y,base)}
-  // viali: la croce principale e due strade per lato, lastricati
-  const street=(x,y)=>{if(ok(x,y)&&M[y][x]!==3)F(x,y,'4')};
-  for(let t=x0+1;t<x1;t++)for(const d of[-1,0,1]){street(t,cy+d);street(cx+d,t)}
-  for(const o of[-13,13]){for(let t=x0+1;t<x1;t++){street(t,cy+o);street(cx+o,t)}}
-  for(let t=x0+1;t<x1;t++){street(t,y0+1);street(t,y1-1);street(x0+1,t);street(x1-1,t)}
-  // la piazza con la fontana, le statue e il mercato
-  for(let y=cy-5;y<=cy+5;y++)for(let x=cx-5;x<=cx+5;x++)F(x,y,'4');
-  for(let y=cy-1;y<=cy;y++)for(let x=cx-1;x<=cx;x++){M[y][x]=2;DEC[y][x]=''}
-  for(let y=cy-2;y<=cy+1;y++)for(let x=cx-2;x<=cx+1;x++)if(M[y][x]!==2){M[y][x]=6;DEC[y][x]='ɸ'}
-  for(const[x,y]of[[cx-5,cy-5],[cx+5,cy-5],[cx-5,cy+5],[cx+5,cy+5]]){M[y][x]=6;DEC[y][x]='l'}
-  for(const[x,y]of[[cx-4,cy-4],[cx+4,cy+4]]){M[y][x]=6;DEC[y][x]=rnd()<.5?'Y':'Б'}
-  for(let i=0;i<5;i++){const x=cx+3,y=cy-3+i+(i>1?1:0);if(y!==cy){M[y][x+1]=6;DEC[y][x+1]=['ʍ','s','H','ʍ','s'][i]}}
-  for(const[x,y]of[[cx-4,cy+2],[cx-4,cy-2]]){M[y][x]=6;DEC[y][x]='n'}
-  // le mura, con le torri agli angoli e le porte dove passano le strade
-  const wallC=bio==='deserto'?['#d8c49a','#c8b48a']:bio==='neve'?['#9aa2ac','#7a828c']:bio==='cenere'?['#5a5252','#4a4242']:['#9a968c','#7a766c'];
-  const wall=(x,y,ht)=>{if(!ok(x,y)||nearGate(x,y))return;const k=TB.push({x,y,w:1,h:1,wall:wallC[0],roof:wallC[1],ht:ht||30})-1;M[y][x]=3;DEC[y][x]='';BM[y][x]=k};
-  for(let x=x0;x<=x1;x++){wall(x,y0);wall(x,y1)}for(let y=y0+1;y<y1;y++){wall(x0,y);wall(x1,y)}
-  for(const[tx,ty]of[[x0-1,y0-1],[x1-1,y0-1],[x0-1,y1-1],[x1-1,y1-1]]){const k=TB.push({x:tx,y:ty,w:3,h:3,wall:wallC[0],roof:wallC[1],ht:46})-1;for(let y=ty;y<ty+3;y++)for(let x=tx;x<tx+3;x++)if(ok(x,y)){M[y][x]=3;DEC[y][x]='';BM[y][x]=k}}
-  for(const[gx,gy]of gates){for(const[a,b]of[[-2,0],[2,0],[0,-2],[0,2]]){const x=gx+a,y=gy+b;if(ok(x,y)&&M[y][x]===0&&!isTrail(x,y)&&!(x>x0&&x<x1&&y>y0&&y<y1)){M[y][x]=6;DEC[y][x]=rnd()<.5?'Ŧ':'§';break}}}
-  C.z.gates=gates.map(g=>g.slice());C.z.walls=[x0,y0,x1,y1];
-  // le case, a isolati, con le botteghe e i luoghi della città fra le prime
-  const roofs=['#a8402f','#3a5a8a','#4a6a3a','#7a3a2a','#5a4a3a','#8a6a2a','#6a3a8a','#2a4a6a'],walls=bio==='deserto'?['#e8d4aa','#d8c49a','#f0e0c0']:bio==='cenere'?['#6a5a50','#5a5050','#7a6a60']:['#e0d0b0','#c8b89a','#d8c8a8','#e8d8c0'];
-  const special=['locanda','bottega','fucina','tempio','gemme'],hasGem=twCityGem(rx,ry);if(!hasGem)special.pop();
-  const H=[];let si=0;const free=(x,y,w,h)=>{for(let v=y-1;v<=y+h;v++)for(let u=x-1;u<=x+w;u++){if(!ok(u,v)||u<=x0+1||u>=x1-1||v<=y0+1||v>=y1-2)return false;const m=M[v][u];if(m!==0||DEC[v][u]===DN+'4')return false}return true};
-  for(let k2=0;k2<500&&H.length<22;k2++){const big=si<special.length,w=big?rr(5,6):rr(3,5),h=big?rr(4,5):rr(3,4),x=rr(x0+2,x1-2-w),y=rr(y0+2,y1-3-h);if(!free(x,y,w,h))continue;if(!ok(x+(w>>1),y+h+1)||M[y+h+1]&&M[y+h+1][x+(w>>1)]===3)continue;
-    const kind=big?special[si++]:'casa',b={x,y,w,h,wall:kind==='tempio'?'#f0ece0':kind==='gemme'?'#b8b0d8':walls[H.length%walls.length],roof:kind==='tempio'?'#d4af37':kind==='gemme'?'#5a3a8a':roofs[Math.floor(rnd()*roofs.length)],ht:kind==='tempio'?36:big?32:24+rr(0,8),smoke:kind==='fucina'||kind==='locanda'||rnd()<.3?1:0,st:kind==='tempio'?'tem':undefined};
-    H.push(b);twHouse(b,100+H.length,rx,ry,kind);const fx=x+(w>>1),fy=y+h+1;if(ok(fx,fy)&&M[fy][fx]===0)F(fx,fy,'4')}
-  // lampioni lungo i viali, giardini, pozzi, botti e casse
-  for(let t=x0+4;t<x1-2;t+=10)for(const[x,y]of[[t,cy-2],[cx+2,t]])if(ok(x,y)&&M[y][x]===0&&DEC[y][x]!==DN+'4'&&Math.abs(x-cx)+Math.abs(y-cy)>7){M[y][x]=6;DEC[y][x]='l'}
-  for(let i=0;i<30;i++){const x=rr(x0+2,x1-2),y=rr(y0+2,y1-2);if(M[y][x]!==0||DEC[y][x]===DN+'4')continue;const near4=[[1,0],[-1,0],[0,1],[0,-1]].some(([a,b])=>DEC[y+b]&&DEC[y+b][x+a]===DN+'4');if(near4&&i%3)continue;M[y][x]=6;DEC[y][x]=['h','o','e','b','k','W','p','n'][i%8]}
-  // la gente: i mestieri in piazza, le guardie di ronda, i cittadini a passeggio
-  const pos=[[cx+2,cy-6],[cx-3,cy+6],[cx+6,cy+3],[cx-6,cy-3],[cx+1,cy+6],[cx-6,cy+2],[cx+6,cy-2],[cx-2,cy-6]];
-  for(let i=0;i<9;i++){if(i===1||i===2||i===3||i===4)continue;const id=twNpcId(rx,ry,i);twNpc(id);const p=pos[i%pos.length],[x,y]=nearFree(p[0],p[1]);const e=mkNpc(id,x,y,{wd:i>=6?1:0});if(i>=6)e.wg=1;ents.push(e)}
-  for(let i=10;i<14;i++){const id=twNpcId(rx,ry,i);twNpc(id);const g=gates[(i-10)%Math.max(1,gates.length)]||[cx,cy+8];const[x,y]=nearFree(clamp(g[0]+Math.sign(cx-g[0])*3,1,n-2),clamp(g[1]+Math.sign(cy-g[1])*3,1,n-2));const e=mkNpc(id,x,y,{wd:1});e.wg=1;ents.push(e)}
-  for(let i=14;i<22;i++){const id=twNpcId(rx,ry,i);twNpc(id);const[x,y]=nearFree(cx+rr(-14,14),cy+rr(-14,14));const e=mkNpc(id,x,y,{wd:1});e.wg=1;ents.push(e)}
-  {const[x,y]=nearFree(cx-6,cy-6);ents.push({k:'owb',n:'Bacheca dei Contratti',px:x+.5,py:y+.5});tg.push([x,y])}
-  for(const g of gates)tg.push(g);
-  return[cx,cy+7]}
 const twCityGem=(rx,ry)=>{const c=twCity1();return!!(c&&c[0]===rx&&c[1]===ry)||twI(rx,ry,113)<.7};
 
 /* ---- vita nelle regioni: recinti, campi, viandanti, santuari, falò ---- */

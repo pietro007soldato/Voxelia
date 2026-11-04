@@ -83,7 +83,6 @@ const rotL=(L,n)=>{let R=L;for(let i=0;i<(n&3);i++)R=R.map(b=>[-(b[1]+b[4]),b[0]
 /* ---- direzione dell'eroe: 8 versi, cambio istantaneo (nessuna animazione) ---- */
 // 0 = guarda verso +y (in basso a sinistra sullo schermo); ogni passo ruota di 45°
 const faceOf=(dx,dy)=>((Math.round((Math.atan2(dy,dx)-Math.PI/2)/(Math.PI/4))%8)+8)%8;
-const dsort=(p,q)=>(p[0]+p[3]/2+p[1]+p[4]/2)-(q[0]+q[3]/2+q[1]+q[4]/2)||p[2]-q[2];
 // scatola ruotata di un angolo qualsiasi attorno a (ox,oy): disegna solo le facce rivolte verso chi guarda, poi il tetto
 function rbox(x,y,z,w,d,h,c,ca,sa,ox,oy){const T=z+h,Q=[[x,y],[x+w,y],[x+w,y+d],[x,y+d]].map(([u,v])=>[ox+u*ca-v*sa,oy+u*sa+v*ca]);
   if(h>0)for(let i=0;i<4;i++){const p=Q[i],q=Q[(i+1)&3],nx=q[1]-p[1],ny=p[0]-q[0];if(nx+ny<=1e-6)continue;const l=nx*nx+ny*ny||1,f=(.58*nx*Math.max(0,nx)+.78*ny*Math.max(0,ny))/l+.68*(Math.min(0,nx)**2+Math.min(0,ny)**2)/l;

@@ -21,7 +21,6 @@ let ELM=null;function elaraShade(){if(!ELM){try{ELM=ghostL(npcModel('elara_o',{}
 const AB_D={slam:230,sweep:190,acid:190,pool:40,vomit:175,beam:210,gaze:140,nova:105,slamE:200,fog:55};
 const abAt=()=>(((ZZ&&ZZ.lv)||16)*.1+1)*DF.dm;
 const AB_C=[14,18.4];// il centro del pavimento davanti al mostro (dove si stringe la nebbia)
-const ABPH=['','Le braccia','Il ventre','L\'eco della Regina','L\'Occhio','Il cuore'];
 // fase visiva per il disegno originale del mostro (1 braccia, 2 ventre aperto, 3 testa abbassata)
 OCCph=function(){if(!OCC)return P&&P.te>=2?4:1;return[1,1,2,2,3,3][OCC.ph]||1};
 const _occEnter711=occEnter;occEnter=function(){_occEnter711();if(!OCC)return;Object.assign(OCC,{nx:3,sw:7,sm:5,bm:4,cl:9,vm:7,gz:9,tp:5,ms:3,fz:0,R:14,ph:1,elb:0,ps:0});OCCK={arms:4,ph:1};P.elb=0;P.mks=0};

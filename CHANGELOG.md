@@ -5,6 +5,20 @@ I numeri delle versioni precedenti alla 4.0 sono stati assegnati a posteriori, s
 
 ---
 
+## 7.53 — Ottimizzazione generale: il gioco arriva compresso, meno codice morto, sorgenti più ordinati, una verifica prima di pubblicare (4 novembre 2026)
+
+Nel gioco non cambia niente da vedere: cambia come arriva e come è fatto dentro.
+
+- **Il gioco arriva tre volte più leggero.** Il server mandava i 3 MB del gioco senza compressione, rileggendo il file dal disco a ogni visita. Ora il gioco, le versioni precedenti e il pannello admin si preparano una volta e restano in memoria già compressi: con brotli il gioco pesa circa **0,8 MB** (con gzip 1,1 MB). Chi torna non lo riscarica: il browser chiede se è cambiato e il server risponde «no» in pochi byte (ETag). Una versione nuova arriva comunque subito.
+- **Controllo di salute leggero.** Docker controllava il server chiedendo l'intera pagina del gioco ogni 30 secondi; ora chiede `/salute`, che risponde subito con la versione.
+- **Meno codice morto (31 KB).** Tolte 48 parti che il gioco non eseguiva mai: i vecchi doppioni sostituiti da versioni più nuove (la pesca di prima, le funzioni della battaglia navale scritte due volte, la vecchia mappa di Tomorrow, i vecchi villaggi e città di Tomorrow, il vecchio prologo, il vecchio sfondo del menu) e funzioni mai usate. Ho controllato che tutte le altre funzioni del gioco restino identiche.
+- **Sorgenti più ordinati.** `8_main.js` pesava 669 KB: ora Voxelia Studio è in `8_main1_studio.js`, la pesca e le battaglie di Ryan in `8_main0_attivita.js`, l'avvio e il ciclo principale in `8_main2_avvio.js`. Il gioco costruito è lo stesso di prima, riga per riga.
+- **Una verifica prima di pubblicare.**
+  - `build.sh` ora controlla la sintassi del gioco e, se c'è un errore, si ferma dicendo la riga.
+  - `tools/verifica.sh` controlla build, sintassi del server e dei plugin, numeri di versione (gioco, menu, server, CHANGELOG, build in `releases/`) e prova un server vero su una porta libera.
+  - Lo stesso controllo gira su GitHub a ogni push e a ogni pull request: una PR che rompe il gioco si vede prima del merge.
+- **`.gitignore`**: i dati che il server crea quando lo si prova in locale (classifica, mondi pubblicati, configurazioni dei plugin) non finiscono più per sbaglio nel repository.
+
 ## 7.52.2 — La freccia di sinistra come quella di destra (4 novembre 2026)
 
 - **Le frecce della Corona uguali.** Nella scheda della gemma la freccia ▶ era l'icona gialla del gioco, mentre la ◀ restava un triangolo bianco del carattere di sistema. Ora anche la ◀ è un'icona, la stessa girata. Vale ovunque compaia ◀ nell'interfaccia: il suggerimento sotto la Corona e i pulsanti «sposta a sinistra» delle immagini dei mondi della community.

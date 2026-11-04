@@ -15,8 +15,6 @@ function fzTk(){let A={};try{A=JSON.parse(localStorage.getItem('voxelia_fzk')||'
 const fzOn=()=>!!(NET.ok&&twOn()&&twWorld());
 function fzSend(e,d){if(!fzOn())return;VXP.send('fazioni',e,Object.assign({w:twWorld(),tk:fzTk()},d||{}))}
 const fzMine=()=>FZ.st&&FZ.st.fz;
-// i permessi: per una città comune decide il ruolo; le altre città sono tue e basta
-function fzCity(S){return S&&S.fz?S:null}
 function fzCan(perm,S){S=S===undefined?P.tw&&P.tw.set:S;if(!S||!S.fz)return true;const F=fzMine();if(!F||F.id!==S.fz)return S.fzo===NET.name;const me=FZ.st.me;return!!me&&(me.r==='capo'||me.p.includes(perm))}
 function fzNo(perm){msg('Il tuo ruolo nella fazione non lo permette: serve «'+(FZPN[perm]||perm).replace(/^\S+ /,'')+'». Chiedilo al capo.');tone(150,.1);return false}
 const fzGate=(nm,perm,getS)=>{if(typeof window[nm]!=='function')return;const f0=window[nm];window[nm]=function(){const S=getS?getS.apply(null,arguments):P.tw&&P.tw.set;if(S&&S.fz&&!fzCan(perm,S))return fzNo(perm);return f0.apply(this,arguments)}};

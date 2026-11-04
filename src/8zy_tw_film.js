@@ -22,7 +22,6 @@ Object.assign(TRK,{
     D:{ch:[0,4,0,0],ld:'fiddle',cp:'pad ens',dr:'timp',m:'12:8 11:4 9:4  11:8 13:8  14:12 12:4  14:16',hm:1}}}});
 // ---- le scene disegnate ----
 const TWFC0=['#5aa84a','#e8d4aa','#e8eef6','#5a5050','#3a8a4a','#c8a060'];
-function twCube(x,y,z,s,c,b){box(x-s/2,y-s/2,z,s,s,s*8,c,b)}
 // 1. la Corona che teneva insieme il mondo: una cupola di luce sopra Aldoria
 function twCrownFx(lt,x,y,z){const sp=lt*.4;fGlow(x,y,z+4,'255,225,150',70+10*Math.sin(lt*2),.28);for(const b of fCrownL(sp,FCOL,1.5,z))box(x+b[0],y+b[1],b[2],b[3],b[4],b[5],b[6],b[7]);
   for(let i=0;i<6;i++){const a=i/6*6.283+lt*.3;for(let j=0;j<6;j++){const r=1.5+j*2.6;box(x+Math.cos(a)*r-.05,y+Math.sin(a)*r-.05,z-j*14,.1,.1,2,FCOL[i],1.4)}}}

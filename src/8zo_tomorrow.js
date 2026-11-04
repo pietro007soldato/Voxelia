@@ -171,19 +171,6 @@ function twGen(z){const n=N,rx=z.rx,ry=z.ry,bio=z.bio,rnd=twRnd('reg',rx,ry),rr=
   for(let i=0;i<z.c&&far.length;i++){const[x,y]=far.pop();ents.push(mk(z.en[Math.floor(R()*z.en.length)],x,y))}
   for(const cp of z.camps||[]){const[x,y]=cp;for(let i=0;i<3;i++){const[u,v]=nearFree(x+(i-1)*2,y+1);const e=mk(z.en[i%z.en.length],u,v);if(i===0)eliteMk(e);ents.push(e)}}
   return sp}
-function twVillage(C){const{F,W,Pp,disc,rnd,rr,n,hub,rx,ry,bio,tg}=C,[cx,cy]=hub;
-  disc(cx+.5,cy+.5,12,(x,y,d)=>{if(M[y][x]===2&&d>9)return;if(M[y][x]===2){M[y][x]=4;DEC[y][x]='~';return}F(x,y,d<4.5?'4':d<6?'1':bio==='deserto'?'2':bio==='neve'?'':bio==='cenere'?'9':'2')});
-  Pp(cx,cy,'f');const walls={prato:['#e0d0b0','#c8b89a','#d8c8a8'],bosco:['#8a6a4a','#7a5a3a','#9a7a5a'],deserto:['#e8d4aa','#d8c49a','#f0e0c0'],neve:['#7a5a3a','#8a6a4a','#6a4a2a'],cenere:['#5a5050','#6a5a50','#4a4040']}[bio];
-  const roofs=['#a8402f','#3a5a8a','#4a6a3a','#7a3a2a','#5a4a3a','#8a6a2a','#6a3a8a'];
-  const nh=rr(4,6),houses=[];for(let i=0;i<nh;i++){const a=i/nh*6.283+rnd()*.4,dd=8.2,w=rr(3,4),h=3,x=Math.round(cx+Math.cos(a)*dd-w/2),y=Math.round(cy+Math.sin(a)*dd-h/2);
-    if(x<2||y<2||x+w>n-2||y+h>n-2)continue;if(houses.some(b=>x<b.x+b.w+1&&x+w+1>b.x&&y<b.y+b.h+1&&y+h+1>b.y))continue;
-    const b={x,y,w,h,wall:walls[i%3],roof:roofs[Math.floor(rnd()*roofs.length)],ht:22+rr(0,6),smoke:rnd()<.5?1:0};houses.push(b);twHouse(b,i,rx,ry)}
-  // gli abitanti: anziano accanto alla bacheca, mercante, fabbro, guaritrice, oste e qualche paesano a passeggio
-  const roles=[['anz',''],['mer','shop'],['fab','smith'],['gua','heal'],['ost','inn'],['alc','alch'],['pae',''],['pae',''],['pae','']];
-  const pos=[[cx+2,cy-2],[cx-3,cy+1],[cx+3,cy+2],[cx-2,cy-3],[cx+1,cy+3],[cx-4,cy-1],[cx+4,cy-1],[cx-1,cy+4],[cx+2,cy+4]];
-  for(let i=0;i<roles.length;i++){const id=twNpcId(rx,ry,i);twNpc(id);const[x,y]=nearFree(pos[i][0],pos[i][1]);ents.push(mkNpc(id,x,y,{wd:roles[i][0]==='pae'?1:0}))}
-  {const[x,y]=nearFree(cx+1,cy-2);ents.push({k:'owb',n:'Bacheca dei Contratti',px:x+.5,py:y+.5});tg.push([x,y])}
-  return[cx,cy+2]}
 // gli abitanti dei villaggi: nome, mestiere e colori sempre uguali per lo stesso villaggio
 const TWNM=['Arnaldo','Bice','Corrado','Delia','Ettore','Fosca','Guido','Ilaria','Lapo','Mirella','Nando','Ofelia','Piero','Rosa','Sandro','Tecla','Ugo','Vanna','Zeno','Adelmo','Gemma','Ilario','Noemi','Ruggero','Agata','Bruno','Celsa','Dino','Elsa','Fulvio','Gilda','Lino','Marta','Nilo','Orsola','Primo'];
 const TWROLE={gem:['Custode delle Gemme','Custode delle Gemme','gem'],gua2:['Guardia','Guardia',''],anz:['Anziano','Anziana',''],mer:['Mercante','Mercante','shop'],fab:['Fabbro','Fabbra','smith'],gua:['Guaritore','Guaritrice','heal'],ost:['Oste','Ostessa','inn'],alc:['Erborista','Erborista','alch'],pae:['','','']};
@@ -288,16 +275,6 @@ OWFK.length=0;OWFK.push(...TWFK);
 const TWMC={prato:'#7ab04e',bosco:'#3f7834',deserto:'#d9b56b',neve:'#dbe6ef',cenere:'#5c5652'};
 function twMapHTML(){return`<h3>🗺 Mappa del mondo</h3><canvas id="twmc" width="520" height="520" style="width:min(520px,82vw);height:auto;border-radius:8px;border:1px solid #ffffff33"></canvas>
   <p class="mu">${esc(ZZ&&ZZ.n||'')} · livello della zona ${ZZ&&ZZ.lv||1} · regioni esplorate ${Object.keys(P.tw.vis).length}<br>🏠 villaggio · ⛫ dungeon · ✦ contratto · il riquadro dorato sei tu. Le regioni mai visitate sono velate.</p><button onclick="cl()">Chiudi</button>`}
-function twMapDraw(){const c=$('twmc');if(!c)return;const q=c.getContext('2d'),R2=6,S2=c.width/(2*R2+1),cur=twP(String(Zk).startsWith('tw:')?Zk:(ZZ&&ZZ.dg&&DG[ZZ.dg]?DG[ZZ.dg].ent:P.tw.at))||[0,0];
-  q.fillStyle='#10141c';q.fillRect(0,0,c.width,c.height);const tgts=new Set();for(const C of P.ow.act){const s=owCur(C);if(s&&s.z){const tz=String(s.z).startsWith('twd_')?(twDG(s.z.split('@')[0])||{}).ent:s.z;if(tz)tgts.add(tz)}}
-  q.textAlign='center';q.textBaseline='middle';
-  for(let j=-R2;j<=R2;j++)for(let i=-R2;i<=R2;i++){const rx=cur[0]+i,ry=cur[1]+j,k=twK(rx,ry),x=(i+R2)*S2,y=(j+R2)*S2,b=twBio(rx,ry),seen=!!P.tw.vis[k];
-    q.fillStyle=TWMC[b];q.globalAlpha=seen?1:.35;q.fillRect(x+1,y+1,S2-2,S2-2);q.globalAlpha=1;
-    q.font=`${Math.round(S2*.42)}px serif`;if(twVil(rx,ry)&&(seen||Math.max(Math.abs(i),Math.abs(j))<=2))q.fillText('🏠',x+S2/2,y+S2/2);else if(twDun(rx,ry)&&seen)q.fillText('⛫',x+S2/2,y+S2/2);
-    if(tgts.has(k)){q.fillStyle='#ffd84a';q.font=`bold ${Math.round(S2*.5)}px serif`;q.fillText('✦',x+S2*.78,y+S2*.24)}
-    if(seen){q.fillStyle='#000a';q.font=`bold ${Math.round(S2*.2)}px Georgia`;q.fillText(twLv(rx,ry),x+S2*.2,y+S2*.82)}}
-  q.strokeStyle='#ffd84a';q.lineWidth=3;q.strokeRect(R2*S2+2,R2*S2+2,S2-4,S2-4);
-  q.fillStyle='#ffffffcc';q.font='bold 13px Georgia';q.fillText('N',c.width/2,10)}
 const _openMap716=openMap;openMap=function(){if(twOn()){edPanel('twmap',twMapHTML());twMapDraw();return}_openMap716()};
 
 /* ---- l'orizzonte in 3D: il mondo vero intorno alla regione ---- */

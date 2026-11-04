@@ -85,7 +85,6 @@ function fTimed(fn,i){const a=performance.now(),r=fn(i);FAST.used+=performance.n
 /* ---- acqua: tutte le caselle visibili insieme, raggruppate per tonalità (al massimo una ventina di riempimenti) ----
    Le caselle d'acqua che hanno subito dietro qualcosa (moli, scafi, rocce, muri, alberi...) si disegnano invece al loro turno,
    come prima: così continuano a coprire la parte di quegli oggetti che sta sott'acqua. */
-const WQ={};
 function fastWater(){const z=ZZ;if(!z)return;const lava=z.pool==='#ff6a1a',col=z.pool||(Zk==='peaks'?'#bfe3f5':'#3b86d6'),B=lava?1.05:.9,amp=Zk==='peaks'?.02:.08;
   const vx=W/2/S+100,vy0=H/2/S+100,vy1=H/2/S+160,G={};let any=0;const ultra=SET.ultra,list=ultra?[]:null,st=FAST.st,wo=FAST.wo,fr=FAST.frame;
   for(let d=0;d<2*N-1;d++){const y0=Math.max(0,d-N+1),y1=Math.min(d,N-1);for(let x=y0;x<=y1;x++){const y=d-x;if(M[y][x]!==2)continue;const ex=PX(x,y)-camX,ey=PY(x,y,0)-camY;if(Math.abs(ex)>=vx||ey<=-vy1||ey>=vy0)continue;

@@ -32,7 +32,6 @@ function sedCapture(){const S=P.tw.set,z=ZZ,c=z.shub||[N>>1,N>>1],R=sedR(),Ly={v
   if(setB('mercato'))Ly.mk=[c[0]-3,c[1]+4];Ly.hq=Math.max(0,sedMaxCase()-Ly.b.filter(b=>b.k==='casa').length);S.lay=Ly;return Ly}
 // i controlli: dentro il borgo, fuori dagli altri edifici, porte libere
 function sedIn(x,y){const Ly=P.tw.set.lay,c=Ly.c;return x>2&&y>2&&x<N-3&&y<N-3&&Math.hypot(x-c[0],y-c[1])<=sedR()-1}
-function sedFoot(b){return[b.x,b.y,b.w,b.h]}
 function sedBldAt(x,y,skip){const Ly=P.tw.set.lay;return Ly.b.find(b=>b!==skip&&x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h)||null}
 function sedFoAt(x,y){const Ly=P.tw.set.lay;return Ly.p.find(p=>x>=p.x-1&&x<=p.x+2&&y>=p.y-1&&y<=p.y+2)||null}
 function sedDoor(b){return[b.x+(b.w>>1),b.y+b.h]}

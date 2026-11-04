@@ -1,0 +1,26 @@
+name: Verifica
+
+# 7.53: a ogni push e a ogni pull request controlla build, sintassi, numeri di versione e un server di prova
+# (tools/verifica.sh). Una PR con il gioco rotto si vede subito, prima del merge.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verifica:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verifica di Voxelia
+        run: sh tools/verifica.sh
+        env:
+          VERIFICA_CI: '1'

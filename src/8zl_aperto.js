@@ -63,7 +63,6 @@ const owTier=v=>{let i=0;for(let k=0;k<OWRT.length;k++)if((v|0)>=OWRT[k][0])i=k;
 const owCap=s=>s?s[0].toUpperCase()+s.slice(1):s;
 const owOn=()=>!!(OW.on&&MODE==='story'&&P&&P.ow&&started);
 function owZn(k){if(Z[k]&&Z[k].n)return String(Z[k].n);const[id,f]=String(k).split('@');return DG[id]?DG[id].n+' · piano '+f:k}
-const owZlv=k=>{const[id,f]=String(k).split('@');return DG[id]?DG[id].lv+((f|0)-1):(Z[k]&&Z[k].lv)||1};
 const owEnOf=k=>{if(OW.enOf){const r=OW.enOf(k);if(r&&r.length)return r}const[id]=String(k).split('@');return(DG[id]?DG[id].en:OWEN[k]||['bandito']).filter(t=>E[t]&&!E[t].boss&&!E[t].np)};
 const owNpcN=id=>NPCS[id]&&NPCS[id].n?NPCS[id].n:id;
 const owStars=n=>'★'.repeat(n)+'☆'.repeat(5-n);

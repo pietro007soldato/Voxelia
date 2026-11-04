@@ -1,4 +1,4 @@
-// Server di Voxelia 7.52.2: serve il gioco e fa da ponte WebSocket tra i giocatori.
+// Server di Voxelia 7.53: serve il gioco e fa da ponte WebSocket tra i giocatori.
 // Gestisce anche: arena PvP (vittorie verificate), punti arena e negozio, classifica, scambi,
 // rigenerazione condivisa dei dungeon, il PANNELLO ADMIN (http://localhost:3000/admin)
 // i PLUGIN: all'avvio carica i moduli della cartella plugins/ (la crea se manca; istruzioni in plugins/LEGGIMI.md)
@@ -8,8 +8,8 @@
 // TLS_CERT=cert.pem TLS_KEY=key.pem node server.js  -> https:// e WebSocket wss:// sulla stessa porta.
 // All'avvio chiede la password del pannello admin (oppure la legge da ADMIN_PASSWORD).
 // I dati (classifica, punti arena, cicli dei dungeon, impostazioni, ban) vengono salvati in voxelia-data.json.
-const http = require('http'), https = require('https'), fs = require('fs'), path = require('path'), crypto = require('crypto'), os = require('os');
-const VER = '7.52.2';
+const http = require('http'), https = require('https'), fs = require('fs'), path = require('path'), crypto = require('crypto'), os = require('os'), zlib = require('zlib');
+const VER = '7.53';
 const PORT = process.env.PORT || 3000;
 // certificato e chiave in formato PEM: se ci sono entrambi il server parla solo https/wss
 const TLS = (() => {
@@ -25,6 +25,37 @@ const DATA = process.env.DATA_FILE || path.join(__dirname, 'voxelia-data.json');
 const gameFile = () => { try { const f = fs.readdirSync(__dirname).filter(n => /^voxelia.*\.html$/i.test(n)).map(n => [n, fs.statSync(path.join(__dirname, n)).mtimeMs]).sort((a, b) => b[1] - a[1]); return f.length ? f[0][0] : 'voxelia.html'; } catch (e) { return 'voxelia.html'; } };
 const page = () => { const h = fs.readFileSync(path.join(__dirname, gameFile()), 'utf8').replace('<!--WS-->', '<script>window.GAME_WS=1</script>'), i = h.lastIndexOf('</body>'), sc = plugScripts(); return i < 0 || !sc ? h : h.slice(0, i) + sc + h.slice(i); };
 const adminPage = () => fs.readFileSync(path.join(__dirname, 'admin.html'), 'utf8');
+/* ---------- 7.53: le pagine grandi si preparano una volta, compresse ----------
+   Il gioco (circa 3 MB), le versioni precedenti e il pannello admin si costruiscono una volta sola e restano in memoria già
+   compressi: gzip subito, brotli appena pronto (si prepara in background, senza fermare il server). Si rifanno solo quando
+   cambia la loro «firma» (il file, la sua data, gli script dei plugin). Ogni pagina ha l'ETag: chi l'ha già la riconferma
+   con un 304 senza riscaricarla. Il gioco arriva così in circa 0,8 MB invece di 3, e le visite successive in pochi byte. */
+const PCACHE = new Map(), PC_MAX_REL = 3;
+const fsig = f => { try { const s = fs.statSync(f); return s.size + ':' + s.mtimeMs; } catch (e) { return 'x'; } };
+function packPage(key, sig, build, q) {
+  const old = PCACHE.get(key);
+  if (old && old.sig === sig) { PCACHE.delete(key); PCACHE.set(key, old); return old; }   // in fondo: è la più recente
+  const raw = Buffer.from(build(), 'utf8');
+  const c = { sig, raw, gz: zlib.gzipSync(raw, { level: 9 }), br: null, etag: '"' + crypto.createHash('sha1').update(raw).digest('base64').replace(/[^\w]/g, '').slice(0, 24) + '"' };
+  zlib.brotliCompress(raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: q || 11, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: raw.length } }, (e, b) => { if (!e) c.br = b; });
+  PCACHE.delete(key); PCACHE.set(key, c);
+  // delle versioni precedenti se ne tengono in memoria solo le ultime aperte
+  const rel = [...PCACHE.keys()].filter(k => k.startsWith('rel:'));
+  while (rel.length > PC_MAX_REL) PCACHE.delete(rel.shift());
+  return c;
+}
+function sendPage(req, res, c, headers) {
+  const h = Object.assign({ 'Content-Type': 'text/html; charset=utf-8', ETag: c.etag, Vary: 'Accept-Encoding' }, headers || {});
+  const inm = String(req.headers['if-none-match'] || '');
+  if (inm && inm.split(/\s*,\s*/).some(x => x.replace(/^W\//, '') === c.etag)) { res.writeHead(304, h); res.end(); return; }
+  const ae = String(req.headers['accept-encoding'] || ''), ok = n => new RegExp('(^|,)\\s*' + n + '\\s*(;\\s*q=(?!0(\\.0*)?\\s*(,|$))[\\d.]+)?\\s*(,|$)').test(ae);
+  let body = c.raw;
+  if (c.br && ok('br')) { h['Content-Encoding'] = 'br'; body = c.br; } else if (ok('gzip')) { h['Content-Encoding'] = 'gzip'; body = c.gz; }
+  h['Content-Length'] = body.length;
+  res.writeHead(200, h); res.end(req.method === 'HEAD' ? undefined : body);
+}
+const gamePage = () => { const f = path.join(__dirname, gameFile()), sc = plugScripts(); return packPage('gioco', fsig(f) + '|' + crypto.createHash('sha1').update(sc).digest('hex'), page); };
+const adminCached = () => packPage('admin', fsig(path.join(__dirname, 'admin.html')), adminPage);
 
 // Costi del negozio dell'arena (devono coincidere con la tabella AR nel gioco)
 const AR_COST = [40, 25, 35, 25, 120, 150, 90, 90];
@@ -173,21 +204,23 @@ function relPage(v) {
 const srv = (TLS ? https.createServer.bind(null, TLS) : http.createServer)((req, res) => {
   const u = req.url.split('?')[0];
   if (u === '/' || u === '/index.html') {
-    try { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(page()); }
-    catch (e) { res.writeHead(500); res.end('file del gioco (voxelia*.html) non trovato: mettilo nella stessa cartella di server.js'); }
-    return;
+    // no-cache: il browser chiede sempre se è cambiato (e se non è cambiato riceve un 304), così una versione nuova arriva subito
+    let c; try { c = gamePage(); } catch (e) { res.writeHead(500); res.end('file del gioco (voxelia*.html) non trovato: mettilo nella stessa cartella di server.js'); return; }
+    return sendPage(req, res, c, { 'Cache-Control': 'no-cache' });
   }
+  // 7.53: per il controllo di salute (Docker) basta una risposta piccola, senza preparare la pagina del gioco
+  if (u === '/salute') return json(res, 200, { ok: true, versione: VER });
   if (u === '/versioni' || u === '/versioni/') return json(res, 200, { attuale: VER, versioni: relList() });
   { const m = u.match(/^\/versioni\/(\d+(?:\.\d+){1,2})\/?$/); if (m) {
     if (!u.endsWith('/')) { res.writeHead(301, { Location: '/versioni/' + m[1] + '/' }); res.end(); return; }
-    const h = relPage(m[1]); if (!h) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }); res.end('Versione non trovata'); return; }
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=3600', 'Content-Security-Policy': "connect-src 'none'; form-action 'none'; base-uri 'none'", 'X-Robots-Tag': 'noindex', 'Referrer-Policy': 'no-referrer' });
-    res.end(h); return;
+    if (!relList().some(o => o.v === m[1])) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }); res.end('Versione non trovata'); return; }
+    let c; try { c = packPage('rel:' + m[1], fsig(path.join(REL_DIR, 'voxelia_v' + m[1] + '.html')), () => { const h = relPage(m[1]); if (!h) throw new Error('versione'); return h; }, 9); }
+    catch (e) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }); res.end('Versione non trovata'); return; }
+    return sendPage(req, res, c, { 'Cache-Control': 'public, max-age=3600', 'Content-Security-Policy': "connect-src 'none'; form-action 'none'; base-uri 'none'", 'X-Robots-Tag': 'noindex', 'Referrer-Policy': 'no-referrer' });
   } }
   if (u === '/admin' || u === '/admin/') {
-    try { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY' }); res.end(adminPage()); }
-    catch (e) { res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' }); res.end('admin.html non trovato: mettilo nella stessa cartella di server.js'); }
-    return;
+    let c; try { c = adminCached(); } catch (e) { res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' }); res.end('admin.html non trovato: mettilo nella stessa cartella di server.js'); return; }
+    return sendPage(req, res, c, { 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY' });
   }
   if (u.startsWith('/admin/')) return adminApi(req, res, u);
   if (u.startsWith('/plugins/')) return plugRoute(req, res, u);
@@ -1249,6 +1282,7 @@ setInterval(() => {
 (async () => {
   setPw(await choosePassword());
   loadPlugins();
+  try { gamePage(); } catch (e) {}   // 7.53: la pagina del gioco è già pronta (e compressa) per il primo giocatore
   srv.listen(PORT, '0.0.0.0', () => {
     log('sys', 'Server avviato sulla porta ' + PORT);
     console.log('Voxelia ' + VER + ' in ascolto sulla porta ' + PORT);
