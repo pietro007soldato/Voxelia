@@ -1,7 +1,11 @@
 # Changelog dei plugin di Voxelia
 
-Stato al 14 ottobre 2026. Versioni prese dal campo `version` di ogni file, date e modifiche dai thread del progetto.
+Stato al 3 novembre 2026. Versioni prese dal campo `version` di ogni file, date e modifiche dai thread del progetto.
 Dove una modifica non ha cambiato il numero di versione, è segnata come «senza cambio di versione».
+
+## Teletrasporto 1.3 (gioco 7.50.1)
+
+- Se `/tpa` non parte perché chi chiede è impegnato (sta già cambiando zona, sta facendo uno scambio, è in cella), il messaggio dice solo il motivo, senza più «… è in una zona che non puoi raggiungere» davanti.
 
 ## Bacheca 1.0 e Classifiche 1.0 (gioco 7.48)
 
@@ -252,7 +256,10 @@ Dove una modifica non ha cambiato il numero di versione, è segnata come «senza
 - Prima versione per la 7.0: `/discoteca`, sala con pista, fari e laser a tempo, DJ con coda per stanza da YouTube e SoundCloud, voti per skip e pausa, volume, base house quando il DJ è libero. Comandi `/dj`, `/coda`, `/skip`, `/pausa`.
 
 
-## Teletrasporto (`tpa.js`) — 1.2
+## Teletrasporto (`tpa.js`) — 1.3
+
+**1.3** — 3 novembre 2026 (gioco 7.50.1)
+- Quando `/tpa` non parte perché chi chiede è impegnato (sta già cambiando zona, sta facendo uno scambio, è in cella), il messaggio dice solo il motivo: prima cominciava con «… è in una zona che non puoi raggiungere», anche se la zona andava benissimo.
 
 **1.2** — 9 ottobre 2026
 - Stanza dell'Occhio: ci si arriva solo con la chiave di Malakar e dopo l'arresto, come per la porta di pietra del gioco.

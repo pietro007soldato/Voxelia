@@ -16,10 +16,11 @@ gioco di allora. Cosa cambia in ogni versione è in [CHANGELOG.md](../CHANGELOG.
 
 ## Elenco
 
-80 versioni, dalla più recente.
+81 versioni, dalla più recente.
 
 | Versione | Data | Novità | Peso |
 |---|---|---|---|
+| [7.50.1](voxelia_v7.50.1.html) | 3 novembre 2026 | Manutenzione: la tavoletta del faro, il banco del cantiere, le terre smosse a portata di mano | 2.866 KB |
 | [7.50](voxelia_v7.50.html) | 30 ottobre 2026 | Due conferme prima di cancellare una partita | 2.864 KB |
 | [7.49.2](voxelia_v7.49.2.html) | 30 ottobre 2026 | Manutenzione: un pasto alla volta davvero, il giullare spiegato bene | 2.853 KB |
 | [7.49.1](voxelia_v7.49.1.html) | 29 ottobre 2026 | Manutenzione: la Torre senza vicoli ciechi, l'elenco delle versioni completo | 2.850 KB |

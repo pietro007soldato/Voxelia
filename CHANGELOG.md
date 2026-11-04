@@ -5,6 +5,15 @@ I numeri delle versioni precedenti alla 4.0 sono stati assegnati a posteriori, s
 
 ---
 
+## 7.50.1 — Manutenzione: la tavoletta del faro, il banco del cantiere, le terre smosse a portata di mano (3 novembre 2026)
+
+- **La terza Tavoletta di Giada si può leggere.** Quella del faro di Thalassa stava sul lato dello scoglio verso il mare, chiuso fra i pali e il faro: non ci si arrivava, e il titolo «Storico di Thalassa» (tutte e sei le tavolette) non si poteva prendere. Ora è ai piedi del faro, dal lato del ponticello. Le tavolette già lette restano lette.
+- **Il Banco del progetto del Cantiere Navale si raggiunge.** Nel cantiere del Porto il banco per progettare la tua nave compariva dentro la sagoma della nave in costruzione, dove l'eroe non entra: ora compare sulla casella libera più vicina che si raggiunge a piedi (vale anche per le città di Tomorrow sul mare).
+- **Le terre smosse da scavare** compaiono solo dove l'eroe arriva a piedi: ogni tanto una finiva in una radura chiusa dagli alberi.
+- **Teletrasporto (plugin del server, 1.3).** Se `/tpa` non parte perché stai già cambiando zona, stai facendo uno scambio o sei in cella, il messaggio dice solo questo: prima cominciava con «… è in una zona che non puoi raggiungere», anche quando la zona andava benissimo.
+
+---
+
 ## 7.50 — Due conferme prima di cancellare una partita (30 ottobre 2026)
 
 - **Niente più finestre del browser per sovrascrivere una partita.** Iniziare una nuova partita della Storia, un nuovo mondo di Tomorrow, un nuovo viaggio della Dimension o ricominciare «Da capo» un mondo di Voxelia Studio o della community ora chiede due volte, con schermate del gioco:
