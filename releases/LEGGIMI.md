@@ -16,7 +16,7 @@ gioco di allora. Cosa cambia in ogni versione è in [CHANGELOG.md](../CHANGELOG.
 
 ## Elenco
 
-87 versioni, dalla più recente.
+102 versioni, dalla più recente.
 
 | Versione | Data | Novità | Peso |
 |---|---|---|---|
@@ -97,15 +97,32 @@ gioco di allora. Cosa cambia in ogni versione è in [CHANGELOG.md](../CHANGELOG.
 | [7.5](voxelia_v7.5.html) | 9 ottobre 2026 | Voxelia Studio | 1.167 KB |
 | [7.4.1](voxelia_v7.4.1.html) | 9 ottobre 2026 | Linee guida nell'HUD | 899 KB |
 | [7.3.2](voxelia_v7.3.2.html) | 9 ottobre 2026 | Personaggi interi e cripta sbloccata | 872 KB |
+| [7.3](voxelia_v7.3.html) | 9 ottobre 2026 | Personaggi unici, la Puledra e i campi di battaglia | 861 KB |
+| [7.2](voxelia_v7.2.html) | 8 ottobre 2026 | Animazioni, nemici nuovi e un regno più duro | 740 KB |
+| [7.1](voxelia_v7.1.html) | 8 ottobre 2026 | Il vero finale | 665 KB |
 | [7.0](voxelia_v7.0.html) | 8 ottobre 2026 | La città viva, i segreti del castello e le musiche nuove | 621 KB |
 | [6.10](voxelia_v6.10.html) | 8 ottobre 2026 | Mappa nuova, zoom e tema scuro | 555 KB |
 | [6.9](voxelia_v6.9.html) | 8 ottobre 2026 | Impostazioni divise per categoria | 541 KB |
+| [6.8](voxelia_v6.8.html) | 8 ottobre 2026 | Ritocchi alla ruota delle azioni | 593 KB |
 | [6.7](voxelia_v6.7.html) | 8 ottobre 2026 | Plugin per il server | 527 KB |
+| [6.6](voxelia_v6.6.html) | 8 ottobre 2026 | Aldoria Vecchia | 525 KB |
+| [6.5](voxelia_v6.5.html) | 8 ottobre 2026 | La mappa di Aldoria, i sogni e le lingue | 502 KB |
+| [6.4](voxelia_v6.4.html) | 8 ottobre 2026 | Tempesta, stiva e arti marziali | 470 KB |
+| [6.3](voxelia_v6.3.html) | 7 ottobre 2026 | Voxelia Dimension | 442 KB |
+| [6.2](voxelia_v6.2.html) | 7 ottobre 2026 | Armi che crescono, boss con poteri, dungeon con i falò | 405 KB |
+| [6.0](voxelia_v6.0.html) | 7 ottobre 2026 | Dungeon unici, battaglie navali e il prologo | 388 KB |
 | [5.3](voxelia_v5.3.html) | 8 ottobre 2026 | Plugin per il server | 351 KB |
 | [5.2](voxelia_v5.2.html) | 7 ottobre 2026 | Aldoria più grande, eroe che si gira, arredi unici | 348 KB |
+| [5.1](voxelia_v5.1.html) | 7 ottobre 2026 | Ogni edificio si può esplorare, il Porto rifatto | 325 KB |
 | [4.7.2](voxelia_v4.7.2.html) | 7 ottobre 2026 | Menu iniziale nuovo | 258 KB |
 | [4.7](voxelia_v4.7.html) | 7 ottobre 2026 | Giorno e notte, orologio, bussola, icone nuove, scene, aspetto dell'eroe e HUD su misura | 249 KB |
 | [4.6](voxelia_v4.6.html) | 7 ottobre 2026 | Zaino nuovo, WASD, cursore, cielo e grafica Ultra | 199 KB |
 | [4.5](voxelia_v4.5.html) | 7 ottobre 2026 | Schivata, affondo, casinò e prezzi del giorno | 138 KB |
+| [4.0](voxelia_v4.0.html) | 7 ottobre 2026 | Arena, dungeon, città e storia | 116 KB |
+| [3.0](voxelia_v3.0.html) | 6 ottobre 2026 | Server per giocare da wifi diverse | 30 KB |
+| [2.1](voxelia_v2.1.html) | 6 ottobre 2026 | Correzione del multigiocatore | 29 KB |
+| [2.0](voxelia_v2.0.html) | 6 ottobre 2026 | Multigiocatore e menu animato | 29 KB |
 
-Mancano le build di queste versioni del changelog, che non sono state conservate: 4.0, 4.1, 4.2, 4.3, 4.4, 4.7.1, 5.0, 5.1, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.8, 6.8.1, 7.1, 7.2, 7.3, 7.3.1, 7.4.
+Mancano le build di queste versioni del changelog, che non sono state conservate: 1.0, 4.1, 4.2, 4.3, 4.4, 4.7.1, 5.0, 6.1, 6.8.1, 7.3.1, 7.4.
+
+Il multigiocatore della 2.0 e della 2.1 funzionava solo dentro claude.ai: qui si giocano da soli. La 2.0, la 2.1 e la 3.0 non hanno una data nel changelog: quella dell'elenco è il giorno in cui sono state scaricate.
