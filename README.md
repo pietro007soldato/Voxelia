@@ -8,7 +8,7 @@ Tomorrow si fonda un regno proprio, e con l'editor **Voxelia Studio** si costrui
 [⌨️ Comandi](#comandi) · [🖥 Server](#il-server-multigiocatore) · [🛠 Sviluppo](#sviluppo) ·
 [📝 Novità (CHANGELOG)](CHANGELOG.md)
 
-![Aldoria, la città](docs/aldoria.jpg)
+![Aldoria, la città, nella vista classica](docs/aldoria.jpg)
 
 > *Il Re Lich Malakar ha spezzato la Corona di Voxel in sei frammenti. Esplora Aldoria, accetta missioni, conquista i
 > dungeon che rinascono a ogni vittoria e sfida gli altri eroi nel Colosseo.*
@@ -31,7 +31,7 @@ Le novità di ogni versione, dalla più recente, sono in [CHANGELOG.md](CHANGELO
 
 | Per giocare | Il gioco | Il server | Il progetto |
 |---|---|---|---|
-| [In breve](#in-breve) | [La Modalità Storia](#la-modalità-storia) | [Il server multigiocatore](#il-server-multigiocatore) | [Struttura del progetto](#struttura-del-progetto) |
+| [In breve](#in-breve) · [Galleria](#galleria) | [La Modalità Storia](#la-modalità-storia) | [Il server multigiocatore](#il-server-multigiocatore) | [Struttura del progetto](#struttura-del-progetto) |
 | [Come iniziare](#come-iniziare) | [Il combattimento](#il-combattimento) | [Il pannello admin](#il-pannello-admin) | [Sviluppo](#sviluppo) |
 | [Comandi](#comandi) | [Il mondo di Aldoria](#il-mondo-di-aldoria) | [Plugin del server](#plugin-del-server) | [Versioni precedenti](#versioni-precedenti) |
 | [Le modalità](#le-modalità) | [L'eroe e l'equipaggiamento](#leroe-e-lequipaggiamento) | [Pubblicare il server online](#pubblicare-il-server-online) | |
@@ -58,6 +58,27 @@ Le novità di ogni versione, dalla più recente, sono in [CHANGELOG.md](CHANGELO
 - **Voxelia Studio**: un editor completo per creare mondi e **pubblicarli** sul server.
 - **Su ogni schermo**: computer, telefoni e tablet (comandi touch) e Meta Quest (realtà virtuale).
 - In **italiano**, con l'interfaccia anche in inglese e in eldoriano, la lingua antica del regno.
+
+---
+
+## Galleria
+
+Immagini della versione 7.50.1.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/vista3d.jpg" alt="Aldoria nella vista 3D, con l'orizzonte"><br><sub><b>La vista 3D</b> · Aldoria con le colline e i campi fino all'orizzonte</sub></td>
+<td width="50%"><img src="docs/prologo.jpg" alt="Una scena disegnata del prologo"><br><sub><b>Il prologo</b> · la fondazione di Aldoria, in una scena disegnata in pixel art</sub></td>
+</tr>
+<tr>
+<td><img src="docs/combattimento.jpg" alt="L'eroe combatte i goblin nella Foresta di Elmwood"><br><sub><b>Il combattimento</b> · contro i goblin nella Foresta di Elmwood</sub></td>
+<td><img src="docs/thalassa.jpg" alt="Il porto di Thalassa"><br><sub><b>Thalassa</b> · il regno oltre il mare, con il porto e la città bianca</sub></td>
+</tr>
+<tr>
+<td><img src="docs/regno.jpg" alt="Una città costruita in Tomorrow, in 3D"><br><sub><b>Tomorrow</b> · la tua città al livello 15, nella vista 3D</sub></td>
+<td><img src="docs/telefono.jpg" alt="Il gioco su un telefono in orizzontale, con il joystick e i pulsanti"><br><sub><b>Sul telefono</b> · joystick, Colpo, Affondo, Schiva, Pozione e Menu</sub></td>
+</tr>
+</table>
 
 ---
 
@@ -285,7 +306,7 @@ scegliere **maledizioni** che rendono il dungeon più duro e il bottino più ric
 | Tempio di Giada | Giungla di Smeraldo (Thalassa) | 14 | 3 | Quetzal, il Serpente di Giada |
 | Cittadella del Vuoto | Castello di Aldoria | 15 | 4 | Re Lich Malakar |
 
-![Nella Cripta Dimenticata](docs/dungeon.jpg)
+![Nella Piramide di Khem, al primo piano](docs/dungeon.jpg)
 
 La **Torre della Corona** è la sfida del giorno: piani costruiti a caso, uguali per tutti e sempre più difficili, con le
 benedizioni e la classifica del plugin Torre.
@@ -308,7 +329,9 @@ benedizioni e la classifica del plugin Torre.
 - **Zaini** da 24 fino a 48 posti. Gli oggetti si bloccano, si gettano, si vendono o si distruggono.
 - **Pozioni** (tasto Q): ognuna ridà il 35% della vita, con 2,5 secondi tra un sorso e l'altro.
 
-![Icone dello zaino e oggetti indossati](docs/equipaggiamento.png)
+![Lo zaino, con l'equipaggiamento indossato e i filtri](docs/zaino.jpg)
+
+![Le icone dello zaino accanto all'eroe che le indossa](docs/equipaggiamento.png)
 
 ---
 
@@ -335,6 +358,8 @@ benedizioni e la classifica del plugin Torre.
 Mille anni dopo Aldoria la Corona è distrutta e il mondo si è ricomposto in terre nuove. Tomorrow ha un eroe e un
 salvataggio suoi: la partita della Storia non viene toccata.
 
+![Sassofosca, un villaggio di Tomorrow, con la piazza, la Bacheca dei Contratti e le case](docs/tomorrow.jpg)
+
 ### Un mondo che non finisce
 - Il mondo è fatto di **regioni** generate mentre cammini, con cinque biomi (prati, boschi, deserti, vette innevate, lande
   di cenere), fiumi e sentieri che continuano da una regione all'altra.
@@ -343,6 +368,8 @@ salvataggio suoi: la partita della Storia non viene toccata.
   allontani. Il livello non ha limite.
 - **Mappa del mondo** (M), **campo** (T) per riposare e cucinare, **gemme del teletrasporto** (G) e la Pietra del viaggio.
 - **Meteo e stagioni** che cambiano i raccolti e i viaggi.
+
+![La mappa del mondo di Tomorrow, con città, villaggi, dungeon e la scheda della regione](docs/mappa.jpg)
 
 ### Contratti, oggetti unici e scambi
 - **La Bacheca dei Contratti** in ogni villaggio propone ogni giorno contratti nuovi e unici (taglie, infestazioni,
