@@ -19,7 +19,7 @@ function navDock(pref){const K=SHK[navKind()],w=Math.ceil(K.w)+1,l=Math.ceil(K.l
 function navPlace(){if(!ZZ||!started)return;const home=navHome(),here=Zk===home,isl=!!ZZ.isola;
   // il banco del progetto nel cantiere (e nelle città di Tomorrow sul mare)
   const twSea=typeof twOn==='function'&&twOn()&&ZZ.set&&ZZ.shub&&navWater()>=30;
-  if((Zk==='in_cantiere'||twSea)&&!ents.some(e=>e.k==='cant46')){const c=Zk==='in_cantiere'?[6,6]:[ZZ.shub[0]+5,ZZ.shub[1]-3];const q=nearFree(c[0],c[1]);ents.push({k:'cant46',px:q[0]+.5,py:q[1]+.5,n:'Banco del progetto'})}
+  if((Zk==='in_cantiere'||twSea)&&!ents.some(e=>e.k==='cant46')){const c=Zk==='in_cantiere'?[6,6]:[ZZ.shub[0]+5,ZZ.shub[1]-3];const q=nearReach(c[0],c[1]);ents.push({k:'cant46',px:q[0]+.5,py:q[1]+.5,n:'Banco del progetto'})}
   if(!navOwn()||!(here||isl))return;const pref=isl?[N/2,N-6]:Zk==='porto'?[46,16]:[ZZ.shub?ZZ.shub[0]:N/2,ZZ.shub?ZZ.shub[1]:N/2];const D=navDock(pref);if(!D)return;
   const kind=navKind(),s=mkShip(kind,D.x0,D.y0,'y');s.mia=1;ents.push(s);ents.push({k:'molo46',px:D.sh[0]+.5,py:D.sh[1]+.5,n:'Molo · '+P.nave.n});
   if(/^isola46_/.test(String(LFROM))&&!isl||isl){heroPut(D.sh[0],D.sh[1]);LFP=1}}

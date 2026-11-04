@@ -7,8 +7,9 @@ const DIG43={hint:0};let CAVA=null;
 function digZoneOk(){const z=ZZ;if(!z||!started||z.dg||z.int||z.lay||z.ed||z.war||z.dist&&!String(Zk).startsWith('tw:')||Zk==='arena'||Zk==='mare'||String(Zk).startsWith('dim_')||N<24)return false;
   return!!(SKY[Zk]||String(Zk).startsWith('tw:'))}
 function digSetup(){if(!digZoneOk())return;const d=dayKey();P.dug=P.dug||{};for(const k in P.dug)if(!k.startsWith(d))delete P.dug[k];
-  const r=sd(hs('scavo|'+d+'|'+(NET.code||'')+'|'+Zk));
-  for(let i=0;i<3;i++){const id=d+'|'+Zk+'|'+i,q=freeTile(r,(x,y)=>!ents.some(e=>e.k==='po'&&Math.abs(e.px-x)<4&&Math.abs(e.py-y)<4));if(!q)continue;const rl=r();if(P.dug[id])continue;ents.push({k:"dig",px:q[0]+.5,py:q[1]+.5,id,rl,n:'Terra smossa'})}}
+  const r=sd(hs('scavo|'+d+'|'+(NET.code||'')+'|'+Zk)),dR=bfs(P.px|0,P.py|0);
+  // 7.50.1: solo dove l'eroe arriva a piedi (prima una terra smossa poteva finire in una radura chiusa dagli alberi)
+  for(let i=0;i<3;i++){const id=d+'|'+Zk+'|'+i,q=freeTile(r,(x,y)=>dR[y*N+x]>=0&&!ents.some(e=>e.k==='po'&&Math.abs(e.px-x)<4&&Math.abs(e.py-y)<4));if(!q)continue;const rl=r();if(P.dug[id])continue;ents.push({k:"dig",px:q[0]+.5,py:q[1]+.5,id,rl,n:'Terra smossa'})}}
 const _loadPost743d=loadPost;loadPost=function(k){_loadPost743d(k);try{digSetup()}catch(e){console.warn('scavo',e)}
   if(LFROM==='cava43'&&CAVA&&CAVA.from===k){const[x,y]=nearFree(CAVA.x|0,CAVA.y|0);P.px=x+.5;P.py=y+.5;camX=PX(P.px,P.py);camY=PY(P.px,P.py,10)}};
 ITK.add('dig');

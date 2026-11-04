@@ -17,6 +17,9 @@ function path(sx,sy,gx,gy){if(gx<0||gy<0||gx>=N||gy>=N||!WK(M[gy][gx]))return[];
   for(let i=0;i<q.length;i++){const c=q[i],x=c%N,y=c/N|0;if(x==gx&&y==gy)break;for(let a=-1;a<2;a++)for(let b=-1;b<2;b++){const u=x+a,v=y+b;if((!a&&!b)||u<0||v<0||u>=N||v>=N||!WK(M[v][u])||pr[v*N+u]!=-2)continue;if(a&&b&&(!WK(M[y][u])||!WK(M[v][x])))continue;pr[v*N+u]=c;q.push(v*N+u)}}
   let c=gy*N+gx;if(pr[c]==-2)return[];const r=[];while(pr[c]!=-1){r.push({x:c%N,y:c/N|0});c=pr[c]}return r.reverse()}
 function nearFree(x,y){for(let r=1;r<6;r++)for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){if(Math.max(Math.abs(dx),Math.abs(dy))!==r)continue;const u=x+dx,v=y+dy;if(u>0&&v>0&&u<N-1&&v<N-1&&WK(M[v][u])&&!ents.some(e=>(e.k==='po'||e.k==='npc')&&(e.px|0)===u&&(e.py|0)===v))return[u,v]}return[x,y]}
+// 7.50.1: come nearFree, ma solo su caselle che l'eroe può raggiungere a piedi da dove si trova (non dentro un recinto o una sagoma chiusa)
+function nearReach(x,y){const d=bfs(P.px|0,P.py|0);for(let r=0;r<N;r++)for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){if(Math.max(Math.abs(dx),Math.abs(dy))!==r)continue;const u=x+dx,v=y+dy;
+  if(u>0&&v>0&&u<N-1&&v<N-1&&d[v*N+u]>=0&&!ents.some(e=>(e.k==='po'||e.k==='npc')&&(e.px|0)===u&&(e.py|0)===v))return[u,v]}return nearFree(x,y)}
 const grid=v=>Array.from({length:N},()=>new Array(N).fill(v));
 
 function load(k,from){LFROM=from;if(from==='arrembaggio'||from==='mare'||from==='stiva')from='in_galeone';if(k!=='mare'&&NAV){NAV=null;navUI(0)}if(k==='arrembaggio'||k==='stiva')ARRW=0;if(k==='stiva'&&!SKY.stiva)SKY.stiva=['#0a0604','#140a06','#1e120a'];load0(k,from);if(ZZ&&Zk===k){loadPost(k);heroFix(from)}}

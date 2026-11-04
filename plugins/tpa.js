@@ -97,7 +97,11 @@ function nelGioco(ID) {
   function chiudi() { if (box) box.remove(); box = null; aperta = null; }
   function rispondi(si) { if (aperta) VXP.send(ID, 'risposta', { id: aperta, si: !!si }); chiudi(); }
 
-  VXP.on(ID, 'verifica', d => { const perche = controlla(d); VXP.send(ID, 'verifica', { id: d.id, perche, rotto: perche === ROTTO ? mancanti() : undefined }); });
+  VXP.on(ID, 'verifica', d => {
+    // "occupato": il motivo è quello che sta facendo chi chiede (uno scambio, un cambio di zona…), non la zona di arrivo
+    let occupato = false; try { occupato = !!impegnato(); } catch (e) {}
+    const perche = controlla(d); VXP.send(ID, 'verifica', { id: d.id, perche, rotto: perche === ROTTO ? mancanti() : undefined, occupato: occupato || undefined });
+  });
   VXP.on(ID, 'vai', d => {
     const perche = controlla(d);
     VXP.send(ID, 'esito', { id: d.id, perche });
@@ -136,7 +140,7 @@ function nelGioco(ID) {
 
 module.exports = {
   name: 'Teletrasporto',
-  version: '1.2',
+  version: '1.3',
   author: 'Voxelia',
   description: '/tpa <nome> per raggiungere un altro eroe, se accetta',
   defaults: {
@@ -227,7 +231,7 @@ module.exports = {
       if (d.rotto && !rottoDetto) { rottoDetto = true; api.log('il gioco non ha più ' + [].concat(d.rotto).join(', ') + ': il teletrasporto va aggiornato per questa versione'); }
       const o = api.player(v.a);
       if (!o || o.room !== p.room) { p.tell('L\'eroe che cercavi non è più nella tua stanza.'); return; }
-      if (d.perche) { p.tell((d.rotto ? '' : o.name + ' è in una zona che non puoi raggiungere. ') + String(d.perche).slice(0, 200)); return; }
+      if (d.perche) { p.tell((d.rotto || d.occupato ? '' : o.name + ' è in una zona che non puoi raggiungere. ') + String(d.perche).slice(0, 200)); return; }
       if (uscenti(p)) return;
       ultima.set(p.id, Date.now());
       const r = { id: d.id, da: p.id, daNome: p.name, a: o.id, aNome: o.name };

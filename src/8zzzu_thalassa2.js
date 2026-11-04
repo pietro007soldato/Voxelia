@@ -77,8 +77,8 @@ const freeAt=(x,y)=>x>0&&y>0&&x<N-1&&y<N-1&&(M[y][x]===0||M[y][x]===4);
   ents.push({k:'san48',px:30.5,py:22.5,n:'Santuario del Mare'});for(let y=21;y<=23;y++)for(let x=30;x<=31;x++){M[y][x]=6;DEC[y][x]=' '}
   // le lanterne sopra il viale
   for(const y of[8,16,24,32])ents.push({k:'lan48',px:24,py:y+.5});
-  // le tavolette in città: davanti al palazzo, nel santuario, al faro
-  ents.push({k:'tav48',i:0,px:19.5,py:12.5,n:'Tavoletta di Giada'},{k:'tav48',i:1,px:32.5,py:24.5,n:'Tavoletta di Giada'},{k:'tav48',i:2,px:45.5,py:39.5,n:'Tavoletta di Giada'});
+  // le tavolette in città: davanti al palazzo, nel santuario, al faro (7.50.1: ai piedi del faro, dal lato del ponticello: dietro, fra i pali dello scoglio, non ci si arrivava)
+  ents.push({k:'tav48',i:0,px:19.5,py:12.5,n:'Tavoletta di Giada'},{k:'tav48',i:1,px:32.5,py:24.5,n:'Tavoletta di Giada'},{k:'tav48',i:2,px:41.5,py:40.5,n:'Tavoletta di Giada'});
   // il relitto sugli scogli a est della spiaggia
   R4(44,33,3,3,0);ents.push({k:'rel48',px:45.5,py:34.5,n:'Relitto',on:perP()>=2});
   // i personaggi nuovi e gli animali
