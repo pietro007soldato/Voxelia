@@ -12,7 +12,7 @@ function ovrWhen(t){if(!t)return'';const d=new Date(t),n=new Date(),hm=d.toLocal
     g=x=>new Date(x.getFullYear(),x.getMonth(),x.getDate()).getTime(),dd=Math.round((g(n)-g(d))/864e5);
   return dd===0?'oggi alle '+hm:dd===1?'ieri alle '+hm:'il '+d.toLocaleDateString('it-IT')+' alle '+hm}
 function ovrOpen(){return!!(($('ovrm')&&!$('ovrm').hidden)||($('ovrt')&&!$('ovrt').hidden))}
-// o: {ti titolo, cosa testo, eroe, lv, df, g oro, t ultimo salvataggio, ic icona, dati «i dati di…» per l'avviso, ok testo del pulsante}
+// o: {ti titolo, cosa testo, eroe, lv, df, g oro, t ultimo salvataggio, ic icona, dati «i dati di…» per l'avviso, ok testo del pulsante, extra HTML in più sopra i pulsanti (7.52)}
 function ovrAsk(o,go){ovrClose(1);OVR.go=go;OVR.o=o;let el=$('ovrm');
   if(!el){el=document.createElement('div');el.id='ovrm';document.body.appendChild(el);el.addEventListener('click',e=>{if(e.target===el)ovrClose()})}
   const r=[];if(o.lv)r.push('Livello '+o.lv);if(o.df)r.push(o.df);if(o.g!=null)r.push('💰 '+Number(o.g).toLocaleString('it-IT')+' oro');
@@ -21,7 +21,7 @@ function ovrAsk(o,go){ovrClose(1);OVR.go=go;OVR.o=o;let el=$('ovrm');
     <div class="ovh"><span class="ovi" aria-hidden="true">⚠</span><h3 id="ovrh">${esc(o.ti)}</h3></div>
     <p id="ovrd">${esc(o.cosa)}</p>
     <div class="ovs"><span class="ovsi" aria-hidden="true">${o.ic||'🛡'}</span><span><b>${esc(o.eroe||'Partita salvata')}</b>${r.length?`<small>${esc(r.join(' · '))}</small>`:''}${o.t?`<small>Ultimo salvataggio ${esc(ovrWhen(o.t))}</small>`:''}</span></div>
-    <p class="ovw">Una partita sovrascritta <b>non si può recuperare</b>.</p>
+    <p class="ovw">Una partita sovrascritta <b>non si può recuperare</b>.</p>${o.extra||''}
     <div class="ovbt"><button class="ovno" onclick="ovrClose()">Annulla, tieni la partita</button><button class="ovyes" onclick="ovrStep2()">${esc(o.ok||'Sovrascrivi')}…</button></div></div>`;
   el.hidden=false;try{tone(330,.08,'triangle',.04)}catch(_){}setTimeout(()=>{const b=el.querySelector('.ovno');if(b)b.focus()},30)}
 // il secondo passo: l'avviso in basso che conferma la perdita dei dati

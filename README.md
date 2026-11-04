@@ -4,7 +4,7 @@
 Si gioca da soli o con gli amici. Si esplora la città di Aldoria e il regno intorno e si combatte nei dungeon. In
 Tomorrow si fonda un regno proprio, e con l'editor **Voxelia Studio** si costruiscono mondi da far giocare agli altri.
 
-**Versione attuale: 7.51** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
+**Versione attuale: 7.52** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
 [⌨️ Comandi](#comandi) · [🖥 Server](#il-server-multigiocatore) · [🛠 Sviluppo](#sviluppo) ·
 [📝 Novità (CHANGELOG)](CHANGELOG.md)
 
@@ -453,6 +453,10 @@ commenti. Gli admin possono nascondere mondi, rispondere alle segnalazioni e blo
 - **Salvataggi**: tutto resta nel browser (`localStorage`): la partita, Tomorrow a parte, le impostazioni, l'aspetto
   dell'eroe, i mondi di Voxelia Studio e i filmati già visti. Il salvataggio si aggiorna da solo, anche chiudendo la
   pagina, e resta compatibile da una versione all'altra.
+- **Esportare e importare l'eroe**: nel menu della Storia e di Tomorrow (e nel menu di pausa, per esportare) l'eroe si
+  scarica in un file `.voxelia-eroe.json` e si ricarica da lì, anche su un altro computer. Il file ha tutto l'eroe tranne
+  il codice della stanza; all'importazione il gioco controlla che sia intero e non ritoccato, e se c'è già un eroe chiede
+  le due conferme, con la possibilità di esportarlo prima.
 - **Sovrascrivere una partita** chiede due conferme: una schermata nel menu con l'eroe che si perde, poi un avviso in
   basso da confermare entro 12 secondi. Senza la seconda conferma non si cancella niente.
 
@@ -640,7 +644,7 @@ docker-compose.yml      avvio con Docker Compose
 `build.sh` mette in fila `src/head.html` e i file `src/[numero]_*.js` in ordine alfabetico (`LC_ALL=C`, per cui
 `75_tempo.js` viene prima di `7_net.js`). Tutto il codice condivide un unico ambito globale: i file successivi possono
 estendere o sostituire le funzioni di quelli precedenti. Per questo i file nuovi si aggiungono in fondo, con un nome
-che viene dopo gli altri (`8zzzv_…`, `8zzzw_…`).
+che viene dopo gli altri (`8zzzz_…`, `8zzzza_…`).
 
 <details>
 <summary><b>Che cosa c'è in ogni file di <code>src/</code></b></summary>
@@ -779,6 +783,7 @@ che viene dopo gli altri (`8zzzv_…`, `8zzzw_…`).
 | `8zzzv_sovrascrivi.js` | Le due conferme prima di sovrascrivere una partita: la schermata nel menu e l'avviso finale |
 | `8zzzw_correzioni.js` | Niente cose una sopra l'altra, testi dei pannelli che vanno a capo, correzioni varie |
 | `8zzzx_thalassa3.js` | Thalassa e la Giungla di Smeraldo costruite da capo, con gli interni e gli arredi nuovi |
+| `8zzzy_eroe.js` | Esportare e importare l'eroe in un file, con il codice di controllo e le conferme |
 
 </details>
 

@@ -5,6 +5,15 @@ I numeri delle versioni precedenti alla 4.0 sono stati assegnati a posteriori, s
 
 ---
 
+## 7.52 — Esportare e importare l'eroe (4 novembre 2026)
+
+- **L'eroe in un file.** Nel menu della Modalità Storia e in quello di Tomorrow, sotto «Continua», ci sono **📤 Esporta l'eroe** e **📥 Importa un eroe**; nel menu di pausa c'è **Esporta l'eroe**. Serve per tenere una copia dell'eroe, spostarlo su un altro computer o in un altro browser, o passarlo a un amico.
+  - **Esportare** salva la partita e scarica un file `.voxelia-eroe.json` con tutto l'eroe: livello, oggetti, missioni, aspetto, compagni e, per Tomorrow, il tuo regno. Il codice della stanza non ci va, perché può essere privato.
+  - **Importare** controlla il file: deve essere un eroe di Voxelia, intero e non ritoccato a mano (c'è un codice di controllo calcolato sui dati), e non venire da una versione più nuova del salvataggio. Il gioco capisce da solo se è un eroe della Storia o di Tomorrow e lo mette nella modalità giusta.
+  - Se in quella modalità c'è già un eroe, chiede le **due conferme** della 7.50 e offre di **esportare prima l'eroe attuale**. Senza un eroe salvato, l'importazione è immediata.
+  - I file sbagliati vengono rifiutati con un avviso che dice perché (un mondo di Voxelia Studio, un file rovinato o modificato, un file di un'altra cosa) e il salvataggio resta com'era.
+- Il codice di controllo riconosce i file rovinati o modificati per sbaglio: non ferma chi vuole barare di proposito, perché il gioco gira tutto nel browser. Sui server il Guardiano continua a controllare oro, livelli e oggetti.
+
 ## 7.51 — Thalassa e la giungla rifatte, le insegne luminose, la polvere della corsa, via immersioni e nave, tanti bug sistemati (4 novembre 2026)
 
 Preparata il 29 ottobre come «7.50» (PR #47) e unita ora, dopo la 7.50.1.
