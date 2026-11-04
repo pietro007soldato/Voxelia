@@ -58,7 +58,7 @@ function aniState(e,dt,ox,oy,hx,hy){const moved=Math.hypot(e.px-ox,e.py-oy)>.004
   if(!moved){if(e.dg&&t-e.dg<1.4)st='dig';else if(e.hrt&&t-e.hrt<1.4)st='happy';else if(ANI.hid>14&&e.it>5)st='sleep';else if(e.it>2.5){const cyc=Math.floor((e.it+(e.ph||0)*3)/4)%4,A=e.t;st=(A==='cane'||A==='gatto'||A==='volpe')?(cyc===1?'look':cyc===3?'sniff':'sit'):(A==='coniglio'||A==='maialino')?(cyc%2?'sniff':'look'):cyc===2?'look':'idle'}else st='idle'}
   if(st!==e.st){e.st=st;e.stT=t}}
 function aniFollow(e,tx,ty,dt){const dx=tx-e.px,dy=ty-e.py,d=Math.hypot(dx,dy);if(d>8){e.px=tx;e.py=ty;e.mv=0;return}if(d>1.1){const s=Math.min(d-1,(d>3?7:3.6)*dt);e.px+=dx/d*s;e.py+=dy/d*s;e.mv=.2}else e.mv=Math.max(0,e.mv-dt)}
-const aniOkZone=()=>!!(ZZ&&!(ZZ.sub46)&&Zk!=='abissi46');
+const aniOkZone=()=>!!ZZ;
 const _upd747a=upd;upd=function(dt){_upd747a(dt);if(!P||!started)return;const c=aniCur(),me=ANI.e.me;
   {const mv=Math.hypot(P.px-(ANI.lx||0),P.py-(ANI.ly||0))>.002;ANI.hid=mv?0:(ANI.hid||0)+dt;ANI.lx=P.px;ANI.ly=P.py}
   if(c&&aniOkZone()){const e=aniEnt('me',c.t,c.n),ox=e.px,oy=e.py;if(!(e.dg&&t-e.dg<1.4))aniFollow(e,P.px-.6,P.py+.5,dt);aniState(e,dt,ox,oy,P.px,P.py);

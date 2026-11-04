@@ -5,6 +5,30 @@ I numeri delle versioni precedenti alla 4.0 sono stati assegnati a posteriori, s
 
 ---
 
+## 7.51 — Thalassa e la giungla rifatte, le insegne luminose, la polvere della corsa, via immersioni e nave, tanti bug sistemati (4 novembre 2026)
+
+Preparata il 29 ottobre come «7.50» (PR #47) e unita ora, dopo la 7.50.1.
+
+- **Thalassa costruita da capo.** Una città bianca sulla baia, molto più grande (56×56) e piena di dettagli:
+  - in alto il **Palazzo della Regina** con il piazzale di marmo, il tappeto rosso, le colonne dorate, le statue e i cipressi; **si entra**: nella sala del trono c'è il Cancelliere Oreste con le guardie (e la Regina Nerea, quando torna);
+  - il **Viale delle palme** con le **luci appese** vere: un filo che pende fra due pali di ferro, con le lanterne di carta che dondolano al vento e di notte si accendono (prima erano lanterne sospese nel vuoto), il **giardino dei limoni** e il **giardino delle statue** con le siepi;
+  - la **Piazza del Serpente** a mosaico, con la fontana nuova (due vasche e il serpente di giada che getta l'acqua), le panchine e le aiuole;
+  - il **Santuario del Mare** (dentro: Fratel Corallo e una tavoletta), la **Taverna della Sirena** con i tavolini fuori (dentro: l'Ostessa Gaia, il Vecchio Glauco e la Velaia Iride), la **casa della Nonna Marea**;
+  - due quartieri di case dai tetti colorati con i vicoli, gli archi di bouganvillea, i vasi, le anfore e i **panni stesi**;
+  - il **Mercato delle spezie** con due file di bancarelle dalle tende a righe (pesce, frutta, spezie, vasi), il lungomare con le bitte, tre moli con le barche, il frangiflutti e il **faro** sullo scoglio;
+  - a ovest la **spiaggia** di sabbia con gli ombrelloni, le palme, una barca in secco e gli scogli del relitto;
+  - personaggi nuovi: la Pescivendola Teti, il Vasaio Nereo, la piccola Ondina, l'Ostessa Gaia, il Vecchio Glauco, la Velaia Iride.
+- **La Giungla di Smeraldo rifatta** (60×60): alberi giganti con le liane, palme, banani, felci, fiori enormi, cespugli fioriti e rocce coperte di muschio; una **cascata** che scende da una parete di roccia, il fiume con i **ponti di corda** e il lago; sentieri di terra battuta; il **Tempio di Giada** a gradoni in cima a un piazzale di rovine con le colonne e i bracieri di fuoco verde; i tre santuari, l'accampamento di Ilva, la capanna di Scirocco, le teste di pietra, farfalle e pappagalli. Gli alberi alti diventano trasparenti quando ci passi dietro.
+- **Via le immersioni e la nave da costruire.** Niente più Boa dei tuffatori, cantiere della nave e isole: l'Elisir del respiro diventa l'**Elisir di vigore** (rigenera la vita) e chi ne aveva lo ritrova cambiato.
+- **Le insegne del Motel e del Casinò.** Prima il Motel aveva una sbarra rosa appoggiata sopra la porta e il Casinò niente. Ora sul tetto c'è una vera insegna: MOTEL al neon rosa con le lampadine che si rincorrono e la freccia, CASINÒ rosso e oro con le lampadine tutto intorno, i semi delle carte e la moneta che gira. Di notte illuminano la strada.
+- **La polvere della corsa nasce dai piedi**: piccoli sbuffi a terra, a ogni passo, del colore del terreno (sabbia, neve, strada, prato), invece delle scintille a mezz'aria.
+- **Bug sistemati**
+  - Le **palme e gli scogli** di Thalassa e della giungla erano invisibili ma bloccavano il passaggio: ora si vedono.
+  - L'**acqua di una zona** a volte restava disegnata nella zona dopo (dentro le case, o sopra il mercato).
+  - Personaggi, raccolte e forzieri **sopra le porte** o uno sopra l'altro (soprattutto nei villaggi di Tomorrow) vengono spostati nella casella libera più vicina.
+  - I testi lunghi nei pannelli (il Diario, per esempio) **vanno a capo** invece di uscire di lato.
+  - Il pannello delle benedizioni della Torre, aperto da fuori, dava errore.
+
 ## 7.50.1 — Manutenzione: la tavoletta del faro, il banco del cantiere, le terre smosse a portata di mano (3 novembre 2026)
 
 - **La terza Tavoletta di Giada si può leggere.** Quella del faro di Thalassa stava sul lato dello scoglio verso il mare, chiuso fra i pali e il faro: non ci si arrivava, e il titolo «Storico di Thalassa» (tutte e sei le tavolette) non si poteva prendere. Ora è ai piedi del faro, dal lato del ponticello. Le tavolette già lette restano lette.

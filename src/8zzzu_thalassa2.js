@@ -39,7 +39,7 @@ function tavRead(i){const T=TAV48[i];if(!T)return;const L=tavFix(),nw=!L[i];L[i]
 /* ---- il mistero della Perla ---- */
 // p: 0 da cominciare · 1 la Regina chiede · 2 Ilio ha visto la vela · 3 il relitto (sciarpa e mappa) · 4 hai la Perla · 5 Perla sull'altare · 6 finito
 const perP=()=>olFix().p|0,perSet=v=>{olFix().p=Math.max(perP(),v);save()};
-const PERS=['','Chiedi in città chi ha visto qualcosa la notte del furto (i pescatori al molo).','Cerca la barca dalla vela arancione sugli scogli a est della spiaggia di Thalassa.','Segui la mappa del relitto: una capanna nella giungla, a nord-ovest.','Riporta la Perla di Giada sull\'altare davanti al Tempio.','Torna dalla Regina Nerea.','Il mistero della Perla è risolto.'];
+const PERS=['','Chiedi in città chi ha visto qualcosa la notte del furto (i pescatori al molo).','Cerca la barca dalla vela arancione sugli scogli a ovest della spiaggia di Thalassa.','Segui la mappa del relitto: una capanna nella giungla, a nord-ovest.','Riporta la Perla di Giada sull\'altare davanti al Tempio.','Torna dalla Regina Nerea.','Il mistero della Perla è risolto.'];
 const perStatus=()=>{const p=perP();return p?'🔎 La Perla rubata: '+PERS[Math.min(6,p)]:''};
 {const os0=olStatus;olStatus=function(){const t0=tavFix().filter(Boolean).length,ps=perStatus();return os0()+(ps?' '+ps:'')+' · Tavolette di Giada: '+t0+'/6.'}}
 // la Regina, a missione finita, chiede della Perla
@@ -51,7 +51,7 @@ function perReward(){if(perP()!==5)return;perSet(6);P.g+=2500;goldFly(2500);gain
   banner('Il mistero della Perla è risolto','2500 oro, lo Scudo della Perla e il titolo «Custode della Perla»','corona');jingle([60,64,67,72,76,79],.09,'triangle');cl();save();hud()}
 // Ilio e Zefiro: gli indizi
 {const a0=act;act=function(e){const p=perP();
-  if(e&&e.k==='npc'&&(e.nid==='ilio48'||e.nid==='basilio48')&&p===1){PA={ti:e.n,tx:'«La notte del furto? Ero qui a pescare. Ho visto una barca con la vela arancione che scendeva dal fiume, veloce, senza lanterne. È andata a sbattere sugli scogli a est della spiaggia: si vede ancora quello che resta.»'};pn('txt');perSet(2);ents.forEach(q=>{if(q.k==='rel48')q.on=1});return}
+  if(e&&e.k==='npc'&&(e.nid==='ilio48'||e.nid==='basilio48')&&p===1){PA={ti:e.n,tx:'«La notte del furto? Ero qui a pescare. Ho visto una barca con la vela arancione che scendeva dal fiume, veloce, senza lanterne. È andata a sbattere sugli scogli in fondo alla spiaggia, a ovest: si vede ancora quello che resta.»'};pn('txt');perSet(2);ents.forEach(q=>{if(q.k==='rel48')q.on=1});return}
   if(e&&e.k==='npc'&&e.nid==='zefiro48'&&p===3){PA={ti:e.n,tx:'«Una sciarpa arancione… questa è di mio cugino Scirocco! Fa il contrabbandiere, vende di tutto a chiunque. Deve aver pensato che una perla del genere valesse una fortuna oltre il mare. Vive in una capanna nella giungla, a nord-ovest. Ti prego… non fargli troppo male. È uno stupido, non un mostro.»'};pn('txt');return}
   if(e&&e.k==='rel48'){if(p<2){msg('I resti di una barca sugli scogli. Una vela arancione strappata sventola nel vento.');return}if(p===2){PA={ti:'Il relitto',tx:'Tra le assi spezzate trovi una sciarpa arancione, di quelle che vende il Mercante Zefiro, e una mappa bagnata: c\'è una croce nella giungla, a nord-ovest, accanto a un disegno di capanna.'};pn('txt');perSet(3);banner('Indizio: la mappa del relitto','Una capanna nella giungla, a nord-ovest','libro');return}msg('Il relitto non ha altro da dire.');return}
   if(e&&e.k==='cap48'){if(p<3){msg('Una capanna di canne e foglie. Non c\'è nessuno.');return}if(p===3&&!ents.some(q=>q.t==='scirocco48')){const[x,y]=nearFree((e.px|0)+1,(e.py|0)+2);const m=mk('scirocco48',x,y);m.n='Scirocco il contrabbandiere';m.sci48=1;ents.push(m);
@@ -67,42 +67,7 @@ function perAltar(e){perSet(5);const sp=P.st48&&P.st48.b&&P.st48.b.tempio48>0;ji
   else PA={ti:'L\'altare di giada',tx:'Appena la Perla tocca l\'altare, le pietre del tempio si illuminano di verde, una dopo l\'altra. Il Serpente non c\'è più, ma la giungla sembra respirare di nuovo: gli uccelli tornano a cantare.\n\nTorna dalla Regina Nerea.'};
   setTimeout(()=>pn('txt'),700);save()}
 {const rc0=recalc;recalc=function(){rc0();if(P&&P.ol48&&P.ol48.bl){P.mx=Math.round(P.mx*1.05);P.hp=Math.min(P.hp,P.mx)}}}
-/* ---- i luoghi nuovi di Thalassa ---- */
-const freeAt=(x,y)=>x>0&&y>0&&x<N-1&&y<N-1&&(M[y][x]===0||M[y][x]===4);
-{const g0=Z.thal48.gen;Z.thal48.gen=function(o){const sp=g0(o),{R4,D,H,N2,AN}=o,n=o.n;
-  // il faro sullo scoglio, a est del molo
-  R4(41,37,5,5,0);for(const[x,y]of[[41,37],[45,37],[41,41],[45,41]])D(x,y,'ꞃ');H({x:42,y:38,w:3,h:3,st:'lh',wall:'#f4f0e8',ht:104});R4(38,39,3,1,4);for(let x=38;x<41;x++)DEC[39][x]='~';
-  // la piazza con la fontana del Serpente e il Santuario del Mare
-  for(let y=17;y<=18;y++)for(let x=23;x<=24;x++){M[y][x]=6;DEC[y][x]=' '}ents.push({k:'fon48',px:24,py:18,n:'Fontana del Serpente'});
-  ents.push({k:'san48',px:30.5,py:22.5,n:'Santuario del Mare'});for(let y=21;y<=23;y++)for(let x=30;x<=31;x++){M[y][x]=6;DEC[y][x]=' '}
-  // le lanterne sopra il viale
-  for(const y of[8,16,24,32])ents.push({k:'lan48',px:24,py:y+.5});
-  // le tavolette in città: davanti al palazzo, nel santuario, al faro (7.50.1: ai piedi del faro, dal lato del ponticello: dietro, fra i pali dello scoglio, non ci si arrivava)
-  ents.push({k:'tav48',i:0,px:19.5,py:12.5,n:'Tavoletta di Giada'},{k:'tav48',i:1,px:32.5,py:24.5,n:'Tavoletta di Giada'},{k:'tav48',i:2,px:41.5,py:40.5,n:'Tavoletta di Giada'});
-  // il relitto sugli scogli a est della spiaggia
-  R4(44,33,3,3,0);ents.push({k:'rel48',px:45.5,py:34.5,n:'Relitto',on:perP()>=2});
-  // i personaggi nuovi e gli animali
-  N2('marea48',18,22);N2('corallo48',29,24);N2('tito48',20,33,{wd:1});N2('basilio48',41,39);
-  for(const[x,y]of[[12,35],[30,35],[44,36],[6,34]])AN('gabbiano',x,y,ANM.gabbiano());
-  N2('gatto',9,25,{wd:1});N2('gatto',35,13,{wd:1});
-  if(perP()>=6)N2('scirocco48',40,39,{n:'Scirocco, aiutante del faro'});
-  return sp}}
-{const g0=Z.giungla48.gen;Z.giungla48.gen=function(o){const sp=g0(o),{R4,D,N2}=o,n=o.n,c=n>>1;
-  const carve=(a,b)=>{let[x,y]=a;while(x!==b[0]||y!==b[1]){for(let k=-1;k<=1;k++)for(let j=-1;j<=1;j++){const u=x+k,v=y+j;if(u>0&&v>0&&u<n-1&&v<n-1){if(M[v][u]===2){if(!k&&!j){M[v][u]=4;DEC[v][u]='~'}}else if(M[v][u]!==3){M[v][u]=0;DEC[v][u]=''}}}
-    if(Math.abs(b[0]-x)>Math.abs(b[1]-y))x+=Math.sign(b[0]-x);else y+=Math.sign(b[1]-y)}};
-  // l'accampamento dell'esploratrice (a sud-est) e la capanna di Scirocco (a nord-ovest)
-  const camp=[n-10,n-10],hut=[6,7];carve([c,c],camp);carve([c,c],hut);for(const q of[camp,hut])R4(q[0]-2,q[1]-2,5,5,0);
-  ents.push({k:'ten48',px:camp[0]+.5,py:camp[1]-.5,n:'Tenda dell\'esploratrice'},{k:'fuo48',px:camp[0]+1.5,py:camp[1]+1.5});N2('ilva',camp[0]-1,camp[1]+1);
-  ents.push({k:'cap48',px:hut[0]+.5,py:hut[1]+.5,n:'Capanna nella giungla'});for(let v=hut[1]-1;v<=hut[1];v++)for(let u=hut[0]-1;u<=hut[0]+1;u++){M[v][u]=6;DEC[v][u]=' '}carve([c,c],[c+3,11]);
-  // l'altare della Perla davanti al tempio e le teste di pietra degli antichi re
-  ents.push({k:'alt48',px:c+.5,py:10.5,n:'Altare della Perla'});
-  for(const[x,y]of[[c-9,14],[c+12,26],[12,c+6]]){R4(x-1,y-1,3,3,0);for(let v=y;v<=y+1;v++)for(let u=x;u<=x+1;u++){M[v][u]=6;DEC[v][u]=' '}ents.push({k:'tes48',px:x+1,py:y+1,n:'Testa di pietra'});carve([c,c],[x,y+2])}
-  // le tavolette nella giungla: vicino a una testa, al santuario dell'est, davanti al tempio
-  ents.push({k:'tav48',i:3,px:c-8.5,py:17.5,n:'Tavoletta di Giada'},{k:'tav48',i:4,px:c+3.5,py:10.5,n:'Tavoletta di Giada'},{k:'tav48',i:5,px:hut[0]+2.5,py:hut[1]+2.5,n:'Tavoletta di Giada'});
-  // pappagalli e lucciole
-  for(let i=0;i<6;i++)ents.push({k:'pap48',px:4+Math.random()*(n-8),py:4+Math.random()*(n-8),ph:Math.random()*6.28,c:['#e83a3a','#3a8ae8','#ffd84a','#3ac85a'][i%4]});
-  for(let i=0;i<18;i++)ents.push({k:'luc48',px:3+Math.random()*(n-6),py:3+Math.random()*(n-6),ph:Math.random()*6.28});
-  return sp}}
+/* 7.50: i luoghi di Thalassa e della giungla ora sono costruiti da capo in 8zzzx_thalassa3.js */
 /* ---- i disegni ---- */
 {const e0=ent;ent=function(e){const k=e.k;
   if(k==='fon48'){drawL([[-1,-1,0,2,2,4,'#e8e0d0'],[-.9,-.9,4,1.8,1.8,1,'#3a9ad8'],[-.25,-.25,4,.5,.5,14,'#e8e0d0'],[-.15,-.15,18,.3,.3,8,'#2ab87a'],[-.05,.1,22,.1,.25,4,'#2ab87a'],[.0,.3,24,.06,.06,2,'#ffe84a']],e.px,e.py,0);

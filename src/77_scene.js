@@ -43,7 +43,7 @@ function ringFx(x,y,c,d=.8,r=2.2){sfx({k:'ring',x,y,c,d,r})}
 function sfxUpd(dt){if(!SFX.length)return;for(const p of SFX){p.t+=dt;if(p.k==='pt'){p.x+=p.vx*dt;p.y+=p.vy*dt;p.z+=p.vz*dt;p.vz-=p.gr*dt;if(p.z<0){if(p.b){p.z=0;p.vz=-p.vz*.35;p.vx*=.5;p.vy*=.5}else p.t=p.d}}}SFX=SFX.filter(p=>p.t<p.d)}
 function sfxDraw(){if(!SFX.length)return;g.setTransform(S*DPR,0,0,S*DPR,(W/2-camX*S)*DPR,(H/2-camY*S)*DPR);
   for(const p of SFX){const k=p.t/p.d,X=PX(p.x,p.y),Y=PY(p.x,p.y,p.z);
-    if(p.k==='pt'){g.globalAlpha=Math.min(1,(1-k)*2.2);g.fillStyle=p.c;g.fillRect(X-p.s/2,Y-p.s/2,p.s,p.s)}
+    if(p.k==='pt'){if(p.gl===1){const z2=p.s*(1+k*1.6);g.globalAlpha=Math.max(0,Math.min(.7,(1-k)*1.1));g.fillStyle=p.c;g.fillRect(X-z2/2,Y-z2/2,z2,z2*.8)}else{g.globalAlpha=Math.min(1,(1-k)*2.2);g.fillStyle=p.c;g.fillRect(X-p.s/2,Y-p.s/2,p.s,p.s)}}
     else if(p.k==='beam'){const a=Math.sin(Math.min(1,k)*Math.PI),w=p.w*(.6+.4*a),h=330;g.globalCompositeOperation='lighter';const gr=g.createLinearGradient(0,Y-h,0,Y);gr.addColorStop(0,`rgba(${p.c},0)`);gr.addColorStop(.7,`rgba(${p.c},${.45*a})`);gr.addColorStop(1,`rgba(${p.c},${.7*a})`);g.fillStyle=gr;g.fillRect(X-w/2,Y-h,w,h);
       g.globalAlpha=.7*a;g.drawImage(glowSpr(p.c),X-w*1.6,Y-w*.9,w*3.2,w*1.8);g.globalAlpha=1;g.globalCompositeOperation='source-over'}
     else if(p.k==='ring'){g.globalAlpha=1-k;g.strokeStyle=`rgb(${p.c})`;g.lineWidth=3;g.beginPath();g.ellipse(X,Y,p.r*45*k+4,p.r*22*k+2,0,0,6.3);g.stroke()}}

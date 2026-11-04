@@ -63,8 +63,9 @@ function wMark(){const st=FAST.st,wo=FAST.wo,fr=FAST.frame;if(!st||!wo)return;co
 const _fastWater737=fastWater;fastWater=function(){if(SET.ultra||!SET.wfast||!ZZ||typeof document==='undefined'){_fastWater737();return}
   const k=S*DPR,m=Math.max(8,Math.round(Math.min(96*DPR,90*k))),cw=cv.width+2*m,ch=cv.height+2*m,dx=FAST.tx-WCL.tx,dy=FAST.ty-WCL.ty;
   const stale=!WCL.c||WCL.zk!==Zk||WCL.M!==M||WCL.n!==N||Math.abs(WCL.k-k)>1e-6||WCL.w!==cw||WCL.h!==ch||Math.abs(dx)>m*.85||Math.abs(dy)>m*.85||t-WCL.t>WCL.dt||t<WCL.t;
-  if(stale){if(!WCL.c){WCL.c=document.createElement('canvas');WCL.x=WCL.c.getContext('2d')}if(WCL.c.width!==cw||WCL.c.height!==ch){WCL.c.width=cw;WCL.c.height=ch}
-    const q=WCL.x;q.setTransform(1,0,0,1,0,0);q.clearRect(0,0,cw,ch);q.setTransform(k,0,0,k,FAST.tx+m,FAST.ty+m);const og=g;g=q;try{_fastWater737()}finally{g=og}
+  if(stale){// 7.50: cambiando zona il foglio si rifà nuovo (prima l'acqua della zona di prima a volte restava disegnata dentro le case)
+    if(!WCL.c||WCL.zk!==Zk||WCL.M!==M){WCL.c=document.createElement('canvas');WCL.x=WCL.c.getContext('2d')}if(WCL.c.width!==cw||WCL.c.height!==ch){WCL.c.width=cw;WCL.c.height=ch}
+    const q=WCL.x;if(typeof q.reset==='function')q.reset();q.setTransform(1,0,0,1,0,0);q.clearRect(0,0,cw,ch);q.setTransform(k,0,0,k,FAST.tx+m,FAST.ty+m);const og=g;g=q;try{_fastWater737()}finally{g=og}
     Object.assign(WCL,{t,tx:FAST.tx,ty:FAST.ty,k,zk:Zk,M,w:cw,h:ch,m,n:N})}else wMark();
   g.save();g.setTransform(1,0,0,1,0,0);g.drawImage(WCL.c,FAST.tx-WCL.tx-m,FAST.ty-WCL.ty-m);g.restore()};
 /* ---- più fluido: la risoluzione dinamica ----

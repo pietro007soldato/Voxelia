@@ -4,7 +4,7 @@
 Si gioca da soli o con gli amici. Si esplora la città di Aldoria e il regno intorno e si combatte nei dungeon. In
 Tomorrow si fonda un regno proprio, e con l'editor **Voxelia Studio** si costruiscono mondi da far giocare agli altri.
 
-**Versione attuale: 7.50.1** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
+**Versione attuale: 7.51** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
 [⌨️ Comandi](#comandi) · [🖥 Server](#il-server-multigiocatore) · [🛠 Sviluppo](#sviluppo) ·
 [📝 Novità (CHANGELOG)](CHANGELOG.md)
 
@@ -47,7 +47,7 @@ Le novità di ogni versione, dalla più recente, sono in [CHANGELOG.md](CHANGELO
 
 - **Un solo file.** Il gioco intero è `voxelia.html`: grafica, musica, testi e logica. Per giocare da soli non servono
   installazioni, librerie o connessione a internet.
-- **Un regno grande**: 117 zone (81 interni da esplorare), 8 dungeon a più piani, 190 personaggi, 130 missioni, 78 tipi di
+- **Un regno grande**: 120 zone (84 interni da esplorare), 8 dungeon a più piani, 196 personaggi, 130 missioni, 78 tipi di
   nemici di cui 14 boss. Oltre il mare c'è un secondo regno, **Thalassa**.
 - **Una storia raccontata da filmati** girati nei luoghi veri del gioco, con scelte che cambiano il finale.
 - **Tomorrow**: un mondo senza confini, generato mentre cammini, dove conquisti terre, fondi città e fai la guerra
@@ -63,7 +63,7 @@ Le novità di ogni versione, dalla più recente, sono in [CHANGELOG.md](CHANGELO
 
 ## Galleria
 
-Immagini della versione 7.50.1.
+Immagini della versione 7.51.
 
 <table>
 <tr>
@@ -72,7 +72,7 @@ Immagini della versione 7.50.1.
 </tr>
 <tr>
 <td><img src="docs/combattimento.jpg" alt="L'eroe combatte i goblin nella Foresta di Elmwood"><br><sub><b>Il combattimento</b> · contro i goblin nella Foresta di Elmwood</sub></td>
-<td><img src="docs/thalassa.jpg" alt="Il porto di Thalassa"><br><sub><b>Thalassa</b> · il regno oltre il mare, con il porto e la città bianca</sub></td>
+<td><img src="docs/thalassa.jpg" alt="Il Mercato delle spezie di Thalassa, sul lungomare"><br><sub><b>Thalassa</b> · il regno oltre il mare: il Mercato delle spezie e i moli</sub></td>
 </tr>
 <tr>
 <td><img src="docs/regno.jpg" alt="Una città costruita in Tomorrow, in 3D"><br><sub><b>Tomorrow</b> · la tua città al livello 15, nella vista 3D</sub></td>
@@ -214,8 +214,10 @@ in una battaglia in cinque fasi.
 - **Le scelte**: i boss dei dungeon si arrendono e tu decidi se risparmiarli o finirli. La tua via (misericordia, spada o
   equilibrio) cambia i prezzi, gli alleati e l'epilogo. Ogni giorno il Viandante in piazza porta un dilemma.
 - **Thalassa**, il regno oltre il mare: dal livello 10 la Capitana Marina, al Porto, ci porta l'eroe. È un capitolo
-  nuovo, con la Giungla di Smeraldo, i Sigilli di Giada, il Tempio di Quetzal, le Tavolette di Giada e il mistero della
-  Perla.
+  nuovo, con i Sigilli di Giada, il Tempio di Quetzal, le Tavolette di Giada e il mistero della Perla. Thalassa è una
+  città bianca sulla baia, con il Palazzo della Regina, la Piazza del Serpente, la Taverna della Sirena, il Mercato
+  delle spezie, i moli e il faro; la Giungla di Smeraldo ha la cascata, il fiume con i ponti di corda e il tempio fra le
+  rovine.
 
 ### Difficoltà
 
@@ -311,10 +313,8 @@ scegliere **maledizioni** che rendono il dungeon più duro e il bottino più ric
 La **Torre della Corona** è la sfida del giorno: piani costruiti a caso, uguali per tutti e sempre più difficili, con le
 benedizioni e la classifica del plugin Torre.
 
-### Il mare
+### Il mare e le battaglie
 - **Battaglia navale** contro la *Vedova Nera* del Capitano Scarlatto, con cannonate e arrembaggio.
-- **La tua nave**: si progetta al Cantiere Navale e dal molo si salpa verso isole sempre nuove.
-- **Immersioni** dalla Boa dei tuffatori, sul fondo del mare con l'ossigeno contato.
 - **I campi di battaglia di Ryan il Pelato**: cinque battaglie in cui si comanda un esercito.
 
 ---
@@ -348,7 +348,7 @@ benedizioni e la classifica del plugin Torre.
 | **Scavare** | Con la pala si trovano tesori sepolti e grotte segrete |
 | **Casinò e motel** | Slot, dadi, roulette e blackjack; una stanza con il letto per dormire (e sognare) |
 | **Foto** | Modalità foto (F8) con pose, filtri e cornice |
-| **Scoperte** | Il diario di luoghi, creature, risorse, pesci e isole, con i premi |
+| **Scoperte** | Il diario di luoghi, creature, risorse e pesci, con i premi |
 | **Classifiche** | Ogni settimana pesca, Colosseo, dungeon e città premiano i primi tre con titoli e mantelli |
 
 ---
@@ -763,10 +763,8 @@ che viene dopo gli altri (`8zzzv_…`, `8zzzw_…`).
 | `8zzt_versioni.js` | Il selettore delle versioni precedenti (serve il server) |
 | `8zzta_frasi.js` | Le frasi gialle del titolo |
 | `8zzzf_cavalli.js` | I cavalli (H), lo stallo e la corsa a cavallo |
-| `8zzzg_navi.js` | La nave da progettare, il molo e le isole |
 | `8zzzh_eventi.js` | Gli eventi del mondo ogni mezz'ora |
 | `8zzzi_scoperte.js` | Il diario delle scoperte |
-| `8zzzj_immersioni.js` | Le immersioni sul fondo del mare |
 | `8zzzk_mestieri.js` | I mestieri e la Bottega (Fornello, Alambicco, Incudine), le ricette, il Ricettario |
 | `8zzzl_casa.js` | La lavagna di casa e la mensola dei trofei |
 | `8zzzm_foto.js` | La modalità foto (F8) |
@@ -777,7 +775,10 @@ che viene dopo gli altri (`8zzzv_…`, `8zzzw_…`).
 | `8zzzs_oltremare.js` | Thalassa, la Giungla di Smeraldo e il Tempio di Giada |
 | `8zzzt_classifiche.js` | Le classifiche della settimana |
 | `8zzzu_thalassa2.js` | Thalassa più ricca: luoghi, personaggi, Tavolette di Giada, il mistero della Perla |
+| `8zzzv_insegne.js` | Le insegne luminose del Motel e del Casinò |
 | `8zzzv_sovrascrivi.js` | Le due conferme prima di sovrascrivere una partita: la schermata nel menu e l'avviso finale |
+| `8zzzw_correzioni.js` | Niente cose una sopra l'altra, testi dei pannelli che vanno a capo, correzioni varie |
+| `8zzzx_thalassa3.js` | Thalassa e la Giungla di Smeraldo costruite da capo, con gli interni e gli arredi nuovi |
 
 </details>
 

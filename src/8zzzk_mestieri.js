@@ -2,8 +2,8 @@
    La Bottega dei mestieri (in piazza ad Aldoria, nelle Cucine del castello e nelle città di Tomorrow) ha tre postazioni:
    - 🍲 il Fornello: si cucinano i PASTI. Un pasto alla volta, dura dieci minuti e si vede in alto a sinistra: vita massima,
      attacco, difesa, rigenerazione, più esperienza o più oro. Mangiarne un altro lo sostituisce;
-   - ⚗ l'Alambicco: pozioni, Sigilli di doma, la Pietra del ritorno e gli ELISIR (anche loro uno alla volta: aria doppia
-     sott'acqua, fortuna, esperienza);
+   - ⚗ l'Alambicco: pozioni, Sigilli di doma, la Pietra del ritorno e gli ELISIR (anche loro uno alla volta: vigore,
+     fortuna, esperienza);
    - ⚒ l'Incudine: FORGIA armi, elmi, corazze e scudi con il tuo nome, TEMPRA quello che indossi (fino a tre volte, +7% ogni
      volta) e FONDE gli oggetti che non ti servono, per riavere ferro, carbone, rame e gemme.
    Il Ricettario mostra tutte le ricette, con gli ingredienti, dove si trovano e quanti ne hai: ogni livello del mestiere
@@ -31,7 +31,7 @@ const MSRC47=[
   {id:'sidro',m:'c',lv:1,a:'r:lunare',b:'r:mela',na:1,nb:1,n:'Sidro di luna',fx:'oro',d:'Oro dai nemici +30%',sec:1},
   {id:'pozrosa',m:'a',lv:1,a:'r:rosa',b:'r:mela',na:1,nb:1,n:'Pozioni di rosa',fx:'pozioni',v:3,d:'Tre pozioni curative'},
   {id:'sigillo',m:'a',lv:2,a:'r:lunare',b:'r:rosa',na:1,nb:1,n:'Sigilli di doma',fx:'sigilli',v:2,d:'Due Sigilli per domare i mostri'},
-  {id:'respiro',m:'a',lv:3,a:'r:conchiglia',b:'r:rosa',na:2,nb:1,n:'Respiro del mare',fx:'aria',d:'Elisir: il doppio dell\'aria sott\'acqua'},
+  {id:'vigore',m:'a',lv:3,a:'r:conchiglia',b:'r:rosa',na:2,nb:1,n:'Elisir di vigore',fx:'rigenera',d:'Elisir: rigenera la vita'},
   {id:'ritorno',m:'a',lv:4,a:'r:ghiaccio',b:'r:lunare',na:1,nb:1,n:'Pietra del ritorno',fx:'ritorno',d:'Ti riporta subito ad Aldoria (o alla tua città)'},
   {id:'fortuna',m:'a',lv:5,a:'r:scarab',b:'r:rosa',na:2,nb:1,n:'Elisir della fortuna',fx:'oro',d:'Elisir: oro dai nemici +30%'},
   {id:'saggio',m:'a',lv:7,a:'r:gemma',b:'r:lunare',na:1,nb:2,n:'Essenza del saggio',fx:'xp2',d:'Elisir: esperienza +50%'},
@@ -43,7 +43,9 @@ const MSRC47=[
   {id:'capo',m:'f',lv:8,a:'r:gemma',b:'r:ferro',na:1,nb:4,n:'Capolavoro',s:null,d:'Un oggetto epico, di qualunque tipo'},
   {id:'drago',m:'f',lv:1,a:'r:gemma',b:'r:carbone',na:2,nb:3,n:'Lama del drago',s:'w',d:'Un\'arma epica con il fuoco dentro',sec:1}];
 const MST47={tab:'c',sel:[],ft:'forgia'};
-function mstFix(){P.mest=P.mest||{};const m=P.mest;m.k=m.k||{};m.xp=m.xp||{};m.cib=m.cib||{};m.fx=m.fx||{};return m}
+function mstFix(){P.mest=P.mest||{};const m=P.mest;m.k=m.k||{};m.xp=m.xp||{};m.cib=m.cib||{};m.fx=m.fx||{};
+  // 7.50: il Respiro del mare (le immersioni non ci sono più) diventa l'Elisir di vigore
+  if(m.cib.respiro){m.cib.vigore=(m.cib.vigore|0)+m.cib.respiro;delete m.cib.respiro}if(m.k.respiro){m.k.vigore=1;delete m.k.respiro}if(m.fx.eli&&m.fx.eli.id==='respiro')m.fx.eli.id='vigore';return m}
 const mstLv=c=>Math.min(10,1+Math.floor(Math.sqrt((mstFix().xp[c]|0)/12)));
 const mstKnown=r=>r.sec?!!mstFix().k[r.id]:mstLv(r.m)>=r.lv||!!mstFix().k[r.id];
 const ingN=k=>{const[t,id]=k.split(':');if(t==='r')return RESN[id]||id;const f=(typeof FISHT!=='undefined'?FISHT:[]).find(q=>q.id===id);return f?f.n:id};
@@ -92,7 +94,6 @@ const _kill749m=kill;kill=function(e){const g0=P?P.g:0,on=e&&e.k==='en'&&ents.in
 let MSTV=0;
 const _upd747m=upd;upd=function(dt){_upd747m(dt);if(!P||!started||!P.mest)return;const now=Date.now();
   if(mstHas(['rigenera'])&&P.hp>0&&P.hp<P.mx)P.hp=Math.min(P.mx,P.hp+P.mx*.015*dt);
-  if(typeof SUB46!=='undefined'){const mx=mstHas(['aria'])?60:30;if(SUB46.mx!==mx){SUB46.mx=mx;SUB46.o=Math.min(SUB46.o,mx)}}
   // il cartellino in alto a sinistra con il pasto e l'elisir
   MSTV-=dt;if(MSTV>0)return;MSTV=.5;{const f=P.mest.fx&&P.mest.fx.meal;if(f&&!f.e&&f.u<now)mstBuffEnd(f)}let el=$('mst49');const A=[['meal',mstAct('meal')],['eli',mstAct('eli')]].filter(q=>q[1]);
   if(!A.length){if(el)el.hidden=true;if(P.mest.vv){P.mest.vv=0;recalc()}return}if(!el){el=document.createElement('div');el.id='mst49';el.onclick=()=>{MST47.tab='d';pn('mest47')};document.body.appendChild(el)}el.hidden=false;

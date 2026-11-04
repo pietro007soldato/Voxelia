@@ -9,7 +9,7 @@ const CAV46=[{k:'puledro',n:'Puledro',v:1.45,p:300,d:'Un cavallino giovane e viv
 const CAVC={baio:['Baio','#8a5a32','#2a1a10'],morello:['Morello','#2a2426','#120e0e'],grigio:['Grigio','#c8c4c0','#8a8682'],pezzato:['Pezzato','#e8e0d0','#4a3a2a']};
 const CAVR={on:null};
 function cavFix(){P.cav=P.cav||{own:[],sel:0,col:'baio',on:0,best:{}};P.cav.own=P.cav.own||[];P.cav.best=P.cav.best||{};return P.cav}
-const cavOk=()=>!!(ZZ&&!ZZ.int&&!ZZ.lay&&!ZZ.dg&&!ZZ.torre&&!ZZ.sub46&&!ZZ.boat&&!ZZ.war&&!ZZ.ass&&Zk!=='mare'&&Zk!=='arena'&&!String(Zk).startsWith('mare_')&&(SKY[Zk]||String(Zk).startsWith('tw:')));
+const cavOk=()=>!!(ZZ&&!ZZ.int&&!ZZ.lay&&!ZZ.dg&&!ZZ.torre&&!ZZ.boat&&!ZZ.war&&!ZZ.ass&&Zk!=='mare'&&Zk!=='arena'&&!String(Zk).startsWith('mare_')&&(SKY[Zk]||String(Zk).startsWith('tw:')));
 const cavOn=()=>!!(P&&P.cav&&P.cav.on&&cavOk());
 const cavB=()=>{const c=cavFix();return CAV46.find(b=>b.k===c.own[c.sel])||CAV46[0]};
 function cavToggle(){if(!started||PM)return;const c=cavFix();if(!c.own.length){msg('Non hai un cavallo: lo compri allo Stallo dei Campi (Aldoria Est) o nella tua città di Tomorrow');return}

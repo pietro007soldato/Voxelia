@@ -40,7 +40,6 @@ function troList(){const L=[];for(const id in DG){const d=DG[id];if(d&&!d.tw&&P.
   if(P.sh&&P.sh.length)L.push({i:'👑',n:'Frammenti della Corona',s:P.sh.length+' frammenti',c:'#ff6ad5'});
   try{const T=LS.get('voxelia_torre',{})||{};let b=0;for(const d in T)b=Math.max(b,(T[d]&&T[d].c)|0);if(b)L.push({i:'🗼',n:'Torre della Corona',s:'Il tuo record: '+b+'/10 piani',c:'#9adcff'})}catch(_){}
   if(P.cav&&P.cav.best&&Object.keys(P.cav.best).length)L.push({i:'🐎',n:'Corse a cavallo',s:Object.keys(P.cav.best).length+' percorsi corsi',c:'#c8a870'});
-  if(P.nave&&P.nave.isl&&P.nave.isl.length)L.push({i:'🏝',n:'Isole scoperte',s:P.nave.isl.length+' isole',c:'#5adcc8'});
   if(P.disc&&P.disc.pg)for(const k in P.disc.pg)L.push({i:'📖',n:'Pagina completa del Diario',s:{z:'Luoghi',e:'Creature',r:'Risorse',f:'Pesci'}[k]||k,c:'#ffe08a'});return L}
 X43P.tro47=()=>{const L=troList();return`<h3>🏆 Mensola dei trofei · ${L.length}</h3>${L.length?L.map(q=>`<div class="x43r"><span>${q.i} <b>${esc(q.n)}</b></span><span class="mu">${esc(q.s)}</span></div>`).join(''):'<p class="mu">La mensola è vuota: libera un dungeon per la prima coppa.</p>'}<button onclick="cl()">Chiudi</button>`};
 // lavagna e mensola nelle case

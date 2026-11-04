@@ -271,7 +271,7 @@ function d3Frame(){const gl=D3.gl,cvs=D3.cv;const now=performance.now(),fdt=D3.l
       if(e.torch||e.k==='tc'){for(let i=n0;i<D3B.length;i+=10)if(D3B[i+9]%10>1.16){dl.push([D3B[i],D3B[i+1],D3B[i+2]+D3B[i+5]/2,D3B[i+6],D3B[i+7],D3B[i+8]]);break}}}
     D3E=null;D3CTX=0;for(const p of PJ)box(p.x-.08,p.y-.08,18,.16,.16,8,p.c,1.2);if(typeof PPJ!=='undefined'&&PPJ.length)ppjDraw()},0);
   // effetti: scintille e anelli del gioco diventano piccole luci nel mondo
-  if(typeof SFX!=='undefined')for(const p of SFX){if(p.k==='pt'&&p.x!=null){const k=x3Col(p.c||'#ffd84a');B.push(p.x-.03,p.y-.03,(p.z||10),.06,.06,4,k[0],k[1],k[2],2)}}
+  if(typeof SFX!=='undefined')for(const p of SFX){if(p.k==='pt'&&p.x!=null){const k=x3Col(p.c||'#ffd84a'),w=p.gl===1?(p.s||4)*.016*(1+.8*p.t/(p.d||1)):.06,hh=p.gl===1?w*10:4;B.push(p.x-w/2,p.y-w/2,(p.z==null?10:p.z),w,w,hh,k[0],k[1],k[2],p.gl===1?1:2)}}
   for(const f of fx){if(f.k==='ring'||f.k==='boom'){const p=Math.max(0,1-f.t/(f.k==='boom'?.4:.5)),r=f.r*p*1.1,c=f.k==='boom'?[255,120,60]:[255,200,80];for(let i=0;i<24;i++){const a=i/24*6.283;B.push(f.x+Math.cos(a)*r-.06,f.y+Math.sin(a)*r-.06,1,.12,.12,3,c[0],c[1],c[2],2)}}
     else if(f.k==='warn'){const p=1-f.t/f.mx;for(let i=0;i<32;i++){const a=i/32*6.283;B.push(f.x+Math.cos(a)*f.r-.05,f.y+Math.sin(a)*f.r-.05,.5,.1,.1,1,255,60,40,2);if(i%2===0)B.push(f.x+Math.cos(a)*f.r*p-.04,f.y+Math.sin(a)*f.r*p-.04,.6,.08,.08,1,255,120,60,2)}}}
   D3.dyn=d3Upload(gl,D3.dyn,B,0,1);

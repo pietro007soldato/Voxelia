@@ -70,6 +70,12 @@ function lockToggle(){if(ACT.lock)ACT.lock=null;else lockNext()}
   cbPress('m');CMB.th=1}}
 // fin dove arriva la prossima mossa dell'arma contro questo nemico
 function actReach(e){const W=cbW(),mv=W.c3[Math.max(0,CMB.step+1)%3]||W.c3[0];return mv.r+cbRad(e)-.05}
+// 7.50: la polvere della corsa esce dai piedi: dietro l'eroe, a terra, un piede alla volta, del colore del terreno
+const RUND={k:0,ft:0};
+function runDust(dx,dy,dt){RUND.k+=dt*13;if(RUND.k<1)return;RUND.k=0;RUND.ft^=1;const d=Math.hypot(dx,dy)||1,ux=dx/d,uy=dy/d,side=RUND.ft?1:-1,
+    x=P.px-ux*.16-uy*.09*side,y=P.py-uy*.16+ux*.09*side,tx=P.px|0,ty=P.py|0,m=M[ty]&&M[ty][tx],z=ZZ||{},pt=z.pt;
+  const c=pt==='snow'?['#ffffff','#e8f0f8']:z.th==='desert'||Zk==='desert'||pt==='dust'?['#e0c890','#c8a868']:m===4?['#b8b4a8','#9a968c']:z.int?['#a89880','#8a7a64']:['#b8a882','#9a8a66'];
+  for(let i=0;i<2;i++)sfx({k:'pt',x:x+(Math.random()-.5)*.06,y:y+(Math.random()-.5)*.06,z:.6,vx:-ux*.25+(Math.random()-.5)*.35,vy:-uy*.25+(Math.random()-.5)*.35,vz:10+Math.random()*10,gr:55,b:0,d:.35+Math.random()*.25,c:c[i%c.length],s:2.5+Math.random()*1.5,gl:1})}
 /* ---- ogni fotogramma: stamina, corsa, blocco ---- */
 const _upd732=upd;upd=function(dt){const on=actOn()&&started&&P&&P.hp>0;const ox=P&&P.px,oy=P&&P.py;
   // l'avvicinamento al nemico cliccato: finisce se si fa altro (tasti, altro clic, capriola) o se il nemico non c'è più
@@ -78,7 +84,7 @@ const _upd732=upd;upd=function(dt){const on=actOn()&&started&&P&&P.hp>0;const ox
   _upd732(dt);if(!on)return;stCur();
   // la corsa
   const kd=keyDir();ACT.run=0;if(ACT.sh&&t-ACT.shT>=.24&&kd&&!P.dm&&!CMB.cur&&P.sta>0&&!ACT.ex&&!PM){ACT.run=1;ACT.ran=1;const[dx,dy]=kd,s=1.95*dt,r=.24;
-    if(!blk(P.px+dx*s+Math.sign(dx)*r,P.py))P.px+=dx*s;if(!blk(P.px,P.py+dy*s+Math.sign(dy)*r))P.py+=dy*s;P.sta=Math.max(0,P.sta-16*dt);ACT.stT=t;if(P.sta<=0){ACT.ex=1;stTired()}if(cineOK()&&Math.random()<dt*8)sparks(P.px,P.py,1,['#c8b890','#a89870'],20)}
+    if(!blk(P.px+dx*s+Math.sign(dx)*r,P.py))P.px+=dx*s;if(!blk(P.px,P.py+dy*s+Math.sign(dy)*r))P.py+=dy*s;P.sta=Math.max(0,P.sta-16*dt);ACT.stT=t;if(P.sta<=0){ACT.ex=1;stTired()}if(cineOK())runDust(dx,dy,dt)}
   // si ricarica quando non fai niente di faticoso
   if(!ACT.run&&!CMB.cur&&!CMB.ch&&!P.dm&&t-ACT.stT>.65){P.sta=Math.min(stMax(),P.sta+dt*(kd?30:42));if(ACT.ex&&P.sta>=stMax()*ST_OK)ACT.ex=0}
   // il bersaglio bloccato: si guarda sempre lui
