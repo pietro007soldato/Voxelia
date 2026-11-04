@@ -4,7 +4,7 @@
 Si gioca da soli o con gli amici. Si esplora la città di Aldoria e il regno intorno e si combatte nei dungeon. In
 Tomorrow si fonda un regno proprio, e con l'editor **Voxelia Studio** si costruiscono mondi da far giocare agli altri.
 
-**Versione attuale: 7.53** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
+**Versione attuale: 7.54** · [📖 Guida](#la-guida-completa) · [🎮 Come iniziare](#come-iniziare) ·
 [⌨️ Comandi](#comandi) · [🖥 Server](#il-server-multigiocatore) · [🛠 Sviluppo](#sviluppo) ·
 [📝 Novità (CHANGELOG)](CHANGELOG.md)
 
@@ -249,7 +249,10 @@ Impostazioni → Comandi.
   a ★10 (+4% di danno per livello).
 - **Domare i mostri**: un mostro sotto un terzo della vita si doma con un **Sigillo di doma** (tasto Z; i boss no). I
   compagni (tasto N, fino a 12 nella stalla) combattono al tuo fianco, crescono, si evolvono ai livelli 10 e 20 e si
-  possono incrociare per far nascere specie nuove.
+  possono incrociare per far nascere specie nuove. Dagli incroci il piccolo può nascere con una **variante**: Cromatica,
+  Perla, Corallo, Smeraldo, Ghiaccio, Ombra, Neon, Tempesta, Magma, Spettro, Oro, Stellare, Diamante e RGB, dalle comuni
+  alle leggendarie (più è rara, più è forte; i genitori la possono passare). I compagni si rinominano nella stalla e si
+  **scambiano** con gli altri giocatori; in rete si vede il compagno di ognuno e i suoi colpi arrivano a tutti.
 
 <details>
 <summary><b>Le mosse di ogni arma</b></summary>
@@ -311,7 +314,8 @@ scegliere **maledizioni** che rendono il dungeon più duro e il bottino più ric
 ![Nella Piramide di Khem, al primo piano](docs/dungeon.jpg)
 
 La **Torre della Corona** è la sfida del giorno: piani costruiti a caso, uguali per tutti e sempre più difficili, con le
-benedizioni e la classifica del plugin Torre.
+benedizioni e la classifica del plugin Torre. Ad Aldoria sta a nord-est, sull'erba vicino all'Osservatorio. Dopo ogni
+piano si sceglie una benedizione (anche dall'altare al centro della sala), poi si apre la scala.
 
 ### Il mare e le battaglie
 - **Battaglia navale** contro la *Vedova Nera* del Capitano Scarlatto, con cannonate e arrembaggio.
@@ -650,7 +654,7 @@ docker-compose.yml      avvio con Docker Compose
 `build.sh` mette in fila `src/head.html` e i file `src/[numero]_*.js` in ordine alfabetico (`LC_ALL=C`, per cui
 `75_tempo.js` viene prima di `7_net.js`). Tutto il codice condivide un unico ambito globale: i file successivi possono
 estendere o sostituire le funzioni di quelli precedenti. Per questo i file nuovi si aggiungono in fondo, con un nome
-che viene dopo gli altri (`8zzzz_…`, `8zzzza_…`).
+che viene dopo gli altri (`8zzzzb_…`, `8zzzzc_…`).
 
 <details>
 <summary><b>Che cosa c'è in ogni file di <code>src/</code></b></summary>
@@ -793,6 +797,8 @@ che viene dopo gli altri (`8zzzz_…`, `8zzzza_…`).
 | `8zzzw_correzioni.js` | Niente cose una sopra l'altra, testi dei pannelli che vanno a capo, correzioni varie |
 | `8zzzx_thalassa3.js` | Thalassa e la Giungla di Smeraldo costruite da capo, con gli interni e gli arredi nuovi |
 | `8zzzy_eroe.js` | Esportare e importare l'eroe in un file, con il codice di controllo e le conferme |
+| `8zzzz_compagni.js` | I compagni in rete (visti dagli altri, colpi condivisi), negli scambi, le varianti degli incroci, il nome cambiato nella stalla |
+| `8zzzza_fermo.js` | Quando si apre una finestra l'eroe si ferma; un clic fuori da una finestra la chiude e basta |
 
 </details>
 

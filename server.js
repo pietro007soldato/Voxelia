@@ -1,4 +1,4 @@
-// Server di Voxelia 7.53: serve il gioco e fa da ponte WebSocket tra i giocatori.
+// Server di Voxelia 7.54: serve il gioco e fa da ponte WebSocket tra i giocatori.
 // Gestisce anche: arena PvP (vittorie verificate), punti arena e negozio, classifica, scambi,
 // rigenerazione condivisa dei dungeon, il PANNELLO ADMIN (http://localhost:3000/admin)
 // i PLUGIN: all'avvio carica i moduli della cartella plugins/ (la crea se manca; istruzioni in plugins/LEGGIMI.md)
@@ -9,7 +9,7 @@
 // All'avvio chiede la password del pannello admin (oppure la legge da ADMIN_PASSWORD).
 // I dati (classifica, punti arena, cicli dei dungeon, impostazioni, ban) vengono salvati in voxelia-data.json.
 const http = require('http'), https = require('https'), fs = require('fs'), path = require('path'), crypto = require('crypto'), os = require('os'), zlib = require('zlib');
-const VER = '7.53';
+const VER = '7.54';
 const PORT = process.env.PORT || 3000;
 // certificato e chiave in formato PEM: se ci sono entrambi il server parla solo https/wss
 const TLS = (() => {
@@ -738,6 +738,29 @@ function cleanItem(o) {
   if (q && typeof q === 'object' && /^[a-z0-9]{6,16}$/.test(String(q.sd || ''))) it.uq = { sd: String(q.sd), lv: n(q.lv, 1, 99), rm: n(q.rm, 0, 3), gv: n(q.gv, 1, 9), own: (Array.isArray(q.own) ? q.own : []).slice(-6).map(x => str(x, 14)).filter(Boolean) };
   return it;
 }
+// 7.54: i compagni domati negli scambi (specie, nome, livello, esperienza, variante; per quelli nati dagli incroci anche le
+// specie dei genitori, che chi li riceve ricostruisce). Il server controlla solo la forma: i numeri restano nei limiti del gioco.
+const PET_T = /^[A-Za-z0-9_.:-]{1,60}$/, PET_V = ['cromatica', 'perla', 'corallo', 'smeraldo', 'ghiaccio', 'ombra', 'neon', 'tempesta', 'magma', 'spettro', 'oro', 'stellare', 'diamante', 'rgb'];
+function cleanPetDef(d) {
+  if (!d || typeof d !== 'object') return null;
+  const a = String(d.a || ''), b = String(d.b || ''); if (!PET_T.test(a) || !PET_T.test(b)) return null;
+  const f = (v, lo, hi, z) => { v = +v; return isFinite(v) ? Math.max(lo, Math.min(hi, v)) : z; };
+  return { a, b, dh: f(d.dh, -360, 360, 0), sc: f(d.sc, 0.5, 2, 1), mu: d.mu ? 1 : 0, rg: d.rg ? 1 : 0, n: str(d.n, 22) || 'Compagno' };
+}
+function cleanPet(o) {
+  if (!o || typeof o !== 'object') return null;
+  const tk = String(o.t || ''); if (!PET_T.test(tk)) return null;
+  const n = (v, a, b) => Math.max(a, Math.min(b, Math.round(+v || 0)));
+  const p = { id: str(o.id, 16) || crypto.randomBytes(4).toString('hex'), t: tk, n: str(o.n, 22) || 'Compagno', lv: n(o.lv, 1, 40), xp: n(o.xp, 0, 1e6) };
+  if (PET_V.includes(o.vr)) { p.vr = o.vr; p.vh = n(o.vh, 0, 359); }
+  if (tk.startsWith('x47.')) {
+    const xd = {}; let k = 0;
+    if (o.xd && typeof o.xd === 'object' && !Array.isArray(o.xd)) for (const id of Object.keys(o.xd)) { if (k >= 8 || !/^[A-Za-z0-9_-]{1,24}$/.test(id)) continue; const d = cleanPetDef(o.xd[id]); if (d) { xd[id] = d; k++; } }
+    if (!xd[tk.slice(4)]) return null;
+    p.xd = xd;
+  }
+  return p;
+}
 function trSync(S) { for (const p of [S.a, S.b]) { const o = p === S.a ? S.b : S.a; send(p, { t: 'tr', a: 'st', n: o.name, you: S.o[p.id], them: S.o[o.id] }); } }
 function trEnd(S, m) { trades.delete(S.a.id); trades.delete(S.b.id); if (m) for (const p of [S.a, S.b]) send(p, { t: 'tr', a: 'end', s: m }); }
 function trade(c, j) {
@@ -762,13 +785,14 @@ function trade(c, j) {
       me.it = (Array.isArray(j.it) ? j.it : []).slice(0, 12).map(cleanItem).filter(Boolean);
       me.g = Math.max(0, Math.min(1e7, j.g | 0));
       me.pt = Math.max(0, Math.min(999, j.pt | 0));   // 7.14: anche le pozioni si scambiano
+      me.pe = (Array.isArray(j.pe) ? j.pe : []).slice(0, 3).map(cleanPet).filter(Boolean);   // 7.54: e i compagni
       for (const k in S.o) S.o[k].ok = false; trSync(S);
     } else if (j.a === 'ok') {
       me.ok = true;
       if (S.o[oth.id].ok) {
         send(c, { t: 'tr', a: 'done', give: me, get: S.o[oth.id], n: oth.name }); send(oth, { t: 'tr', a: 'done', give: S.o[oth.id], get: me, n: c.name });
-        log('trade', c.name + ' e ' + oth.name + ' hanno scambiato ' + me.it.length + '+' + S.o[oth.id].it.length + ' oggetti e ' + me.g + '/' + S.o[oth.id].g + ' oro');
-        emit('trade', c, oth, { give: me.it.map(i => Object.assign({}, i)), gold: me.g }, { give: S.o[oth.id].it.map(i => Object.assign({}, i)), gold: S.o[oth.id].g });
+        log('trade', c.name + ' e ' + oth.name + ' hanno scambiato ' + me.it.length + '+' + S.o[oth.id].it.length + ' oggetti, ' + (me.pe || []).length + '+' + (S.o[oth.id].pe || []).length + ' compagni e ' + me.g + '/' + S.o[oth.id].g + ' oro');
+        emit('trade', c, oth, { give: me.it.map(i => Object.assign({}, i)), gold: me.g, pets: (me.pe || []).map(p => Object.assign({}, p)) }, { give: S.o[oth.id].it.map(i => Object.assign({}, i)), gold: S.o[oth.id].g, pets: (S.o[oth.id].pe || []).map(p => Object.assign({}, p)) });
         trEnd(S);
       } else trSync(S);
     } else if (j.a === 'x') trEnd(S, c.name + ' ha annullato lo scambio');

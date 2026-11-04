@@ -5,6 +5,24 @@ I numeri delle versioni precedenti alla 4.0 sono stati assegnati a posteriori, s
 
 ---
 
+## 7.54 — I compagni in rete, negli scambi e con le varianti; la Torre fuori dai piedi; l'eroe non cammina più da solo (4 novembre 2026)
+
+- **I compagni degli altri si vedono.** In rete ogni giocatore vede il compagno in campo degli altri, con il nome, il livello, la forma evoluta e la variante: cammina con il suo padrone, attacca con lui e ha la sua barra della vita. Nel profilo di un eroe (doppio clic) c'è anche la sua stalla.
+- **I colpi dei compagni arrivano a tutti.** Quando il compagno di qualcuno colpisce un mostro guidato da un altro giocatore, il danno arriva anche a lui (prima restava solo sullo schermo del padrone del compagno), come i colpi degli eroi.
+- **I compagni si scambiano.** Nella finestra degli scambi c'è la sezione «🐾 Compagni»: se ne offrono fino a tre per volta. Passano con la specie, il nome, il livello, l'esperienza e la variante; quelli nati dagli incroci portano con sé le specie dei genitori, così chi li riceve li ritrova identici.
+- **Le varianti.** Negli incroci il piccolo può nascere con una variante, una volta su due circa, con i suoi colori e i suoi effetti e più forza in attacco:
+  - comuni (+5%): **Cromatica** (colori stravolti, ognuna a modo suo), **Perla**, **Corallo**;
+  - non comuni (+8%): **Smeraldo**, **Ghiaccio** (con i fiocchi di neve), **Ombra** (con il fumo viola), **Neon** (con l'alone);
+  - rare (+12%): **Tempesta** (con i lampi), **Magma** (roccia e lava), **Spettro** (trasparente come un fantasma);
+  - epiche (+18%): **Oro** (con le scintille), **Stellare** (blu notte con le stelle);
+  - leggendarie (+25%): **Diamante** (lucente, con i lampi di luce) e **RGB** (cambia colore di continuo).
+
+  Un genitore con una variante la passa al piccolo una volta su quattro; se ce l'hanno tutti e due uguale, una volta su due. Nel pannello degli incroci c'è l'elenco, e alla nascita un annuncio dice quale variante è uscita.
+- **Il nome dei compagni si cambia nella stalla.** «Rinomina» apre il campo del nome direttamente sulla scheda (Invio per salvare, Esc per lasciar stare), invece della finestra del browser.
+- **La Torre della Corona non dà più fastidio.** Ad Aldoria stava sul bordo del viale grande e lo restringeva; ora sta a nord-est, sull'erba vicino all'Osservatorio, lontana da strade, porte e personaggi. Anche nelle città di Tomorrow si cerca prima un posto così.
+- **La benedizione della Torre non si perde più.** La scelta dopo un piano non si chiude più cliccando fuori dal riquadro (prima si chiudeva e, senza benedizione, la scala per il piano dopo non compariva). Se si chiude con Esc o un'altra finestra, al centro della sala c'è l'**altare delle benedizioni** che la riapre.
+- **L'eroe non cammina più da solo.** Se una finestra si apriva mentre l'eroe camminava, lui continuava ad andare sotto la finestra: finiva il percorso del clic, seguiva i tasti ancora premuti o il joystick rimasto agganciato quando la finestra copriva il dito. Ora quando si apre una finestra si ferma, e finché è aperta i comandi di movimento non lo muovono; un clic fuori da una finestra la chiude e basta (prima intanto faceva anche camminare o attaccare); dopo le conferme del browser e quando la pagina si nasconde, i tasti non restano «premuti».
+
 ## 7.53 — Ottimizzazione generale: il gioco arriva compresso, meno codice morto, sorgenti più ordinati, una verifica prima di pubblicare (4 novembre 2026)
 
 Nel gioco non cambia niente da vedere: cambia come arriva e come è fatto dentro.

@@ -76,11 +76,13 @@ function torWave(){const R=TOR.run;if(!torOn()||R.law!=='rinforzi'||R.w2||!R.sp)
 // il piano è ripulito: si sceglie la benedizione e si sale
 function torTick(){const R=TOR.run;if(!torOn()||R.clr||!R.sp)return;if(ents.some(e=>e.k==='en'&&e.hp>0))return;R.clr=1;R.done=Math.max(R.done|0,R.f);
   jingle([67,72,76,79],.1,'triangle');if(R.f>=TOR_N){setTimeout(()=>torEnd(1),1200);return}
+  // 7.54: al centro compare l'altare delle benedizioni: se la scelta si chiude senza aver scelto, si riapre da lì
+  {const c=N>>1,[sx,sy]=R.st||[c,c];if(!ents.some(e=>e.k==='torb54'))ents.push({k:'torb54',px:sx+.5,py:sy+.5,n:'Altare delle benedizioni'})}
   setTimeout(()=>{if(torOn()&&!PM)pn('torb')},900)}
 X43P.torb=()=>{const R=TOR.run,r=torRng('benedizioni'+R.f),L=TORB.slice();for(let i=L.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[L[i],L[j]]=[L[j],L[i]]}const C=L.slice(0,3);
   return`<h3>✨ Piano ${R.f} ripulito · scegli una benedizione</h3><p class="x43t">Vale fino a quando resti nella Torre e si somma a quelle che hai già.${R.b.length?' Hai: '+R.b.map(k=>TORB.find(b=>b.k===k).i).join(' '):''}</p>
   <div class="x43c">${C.map(b=>`<button onclick="torBless('${b.k}')"><i>${b.i}</i><b>${b.n}${torN(b.k)?' ×'+(torN(b.k)+1):''}</b><small>${b.d}</small></button>`).join('')}</div>`};
-function torBless(k){const R=TOR.run;if(!R)return;R.b.push(k);cl();if(k==='pozioni'){P.pot+=2;flt(P,'+2 🧪','#88ff88')}if(k==='vita'){recalc();P.hp=Math.min(P.mx,P.hp+Math.round(P.mx*.25))}hud();
+function torBless(k){const R=TOR.run;if(!R||R.bf===R.f)return;R.bf=R.f;R.b.push(k);ents=ents.filter(e=>e.k!=='torb54');cl();if(k==='pozioni'){P.pot+=2;flt(P,'+2 🧪','#88ff88')}if(k==='vita'){recalc();P.hp=Math.min(P.mx,P.hp+Math.round(P.mx*.25))}hud();
   const c=N>>1,[sx,sy]=R.st||[c,c];ents.push(po(sx,sy,'torre'+(R.f+1),{st:'up',n:'Sali al piano '+(R.f+1)}));if(cineOK())ringFx(sx+.5,sy+.5,'255,216,74',.9,2.4);msg('Benedizione: '+TORB.find(b=>b.k===k).n+'. La scala per il piano '+(R.f+1)+' è al centro della sala.')}
 // la prova finisce (vittoria, caduta o uscita): premio dei piani fatti e classifica del giorno
 function torEnd(win){const R=TOR.run;if(!R)return;const done=win?TOR_N:(R.done|0),sec=Math.round((Date.now()-R.t0)/1000),lv=R.lv;TOR.run=null;recalc();
@@ -103,16 +105,30 @@ const _lunge743t=lunge;lunge=function(){const c0=P?P.lgc:0;_lunge743t();if(torOn
 // cadere nella Torre non costa niente
 const _die743t=die;die=function(){if(torOn()){if(typeof sceneDeath==='function')sceneDeath();P.hp=P.mx;torEnd(0);return}_die743t()};
 // uscire: dalla porta della Torre (la prova finisce) o in altri modi (la prova si perde)
-const _act743t=act;act=function(e){if(e&&e.k==='po'&&e.torEx&&TOR.run){torEnd(0);return}if(e&&e.k==='torre43'){pn('torre');tone(330,.1,'triangle');return}_act743t(e)};
+const _act743t=act;act=function(e){if(e&&e.k==='po'&&e.torEx&&TOR.run){torEnd(0);return}if(e&&e.k==='torb54'){if(TOR.run&&TOR.run.bf!==TOR.run.f){pn('torb');tone(520,.08,'triangle')}return}if(e&&e.k==='torre43'){pn('torre');tone(330,.1,'triangle');return}_act743t(e)};
 const _loadPost743t=loadPost;loadPost=function(k){_loadPost743t(k);if(TOR.run&&!(ZZ&&ZZ.torre)){const v=torN('vita');TOR.run=null;if(v)recalc()}torDoor();
   // 7.44.1: uscendo dalla Torre si torna davanti alla sua porta, non al punto di partenza della zona
   if(/^torre\d+$/.test(String(LFROM))&&!(ZZ&&ZZ.torre)){const d=ents.find(e=>e.k==='torre43');if(d){let x=d.px|0,y=(d.py|0)+1;if(!(M[y]&&WK(M[y][x])))[x,y]=nearFree(x,y);if(M[y]&&WK(M[y][x])){heroPut(x,y);LFP=1}}}};
 // la porta della Torre: in piazza ad Aldoria e nella tua città di Tomorrow
-ITK.add('torre43');
+ITK.add('torre43');ITK.add('torb54');
+// 7.54: la scelta della benedizione non si chiude più cliccando fuori dal riquadro (si sceglie e basta); se si chiude in altro
+// modo (Esc, un'altra finestra), l'altare al centro della sala la riapre
+addEventListener('pointerdown',ev=>{if(!started||PM!=='torb'||!ev.target||!ev.target.closest||ev.target.closest('#pn'))return;ev.stopImmediatePropagation();ev.preventDefault();const p=$('pn');if(p){p.classList.remove('torbw');void p.offsetWidth;p.classList.add('torbw')}},true);
+{const c0=cl;cl=function(){const w=PM==='torb'&&TOR.run&&TOR.run.bf!==TOR.run.f;c0();if(w)msg('Scegli la benedizione all\'altare al centro della sala: poi si apre la scala')}}
+(function(){const st=document.createElement('style');st.textContent='#pn.torbw{animation:torbw .35s}@keyframes torbw{25%{transform:translate(calc(-50% - 6px),-50%)}75%{transform:translate(calc(-50% + 6px),-50%)}}';document.head.appendChild(st)})();
 // 7.49: l'ingresso è una torre vera (3×3 caselle) con la porta davanti; la porta è la casella dove si preme R
-function torDoor(){if(!ZZ||ents.some(e=>e.k==='torre43'))return;let c=null;
-  if(Zk==='town'&&MODE==='story'&&!(typeof OW!=='undefined'&&OW.on))c=[47,47];else if(typeof twOn==='function'&&twOn()&&ZZ.set&&ZZ.shub)c=[ZZ.shub[0]+3,ZZ.shub[1]+4];if(!c)return;
+function torDoor(){if(!ZZ||ents.some(e=>e.k==='torre43'))return;let c=null;const town=Zk==='town'&&MODE==='story'&&!(typeof OW!=='undefined'&&OW.on);
+  if(town)c=[47,47];else if(typeof twOn==='function'&&twOn()&&ZZ.set&&ZZ.shub)c=[ZZ.shub[0]+3,ZZ.shub[1]+4];if(!c)return;
   const free=(u,v)=>u>1&&v>1&&u<N-2&&v<N-2&&(M[v][u]===0||M[v][u]===4)&&!(DEC[v][u]&&DEC[v][u][0]!=='₪');
+  // 7.54: prima si cerca un posto che non dia fastidio: sull'erba, con almeno una casella libera da strade tutto intorno
+  // (prima la torre poteva finire sul bordo di una strada e restringerla), lontano da porte e personaggi, con la porta
+  // che dà su un passaggio. Ad Aldoria il posto è vicino al castello, a nord-est, sul viale grande.
+  const grass=(u,v)=>u>2&&v>2&&u<N-3&&v<N-3&&M[v][u]===0&&!DEC[v][u],road=(u,v)=>!!(M[v]&&M[v][u]===4);
+  const calm=(x,y)=>{for(let v=y-3;v<=y;v++)for(let u=x-1;u<=x+1;u++)if(!grass(u,v))return false;for(let v=y-4;v<=y;v++)for(let u=x-2;u<=x+2;u++)if(road(u,v))return false;
+    if(!(M[y+1]&&(M[y+1][x]===0||M[y+1][x]===4)))return false;return!ents.some(e=>(e.k==='po'||e.k==='npc'||e.k==='board'||e.k==='owb'||e.k==='tr'||e.k==='ani47s')&&e.px>x-3&&e.px<x+3.5&&e.py>y-5&&e.py<y+3.5)};
+  const place=(x,y)=>{for(let v=y-3;v<=y-1;v++)for(let u=x-1;u<=x+1;u++){M[v][u]=6;DEC[v][u]='¨'}ents.push({k:'torre43',px:x+.5,py:y+.5,n:'Torre della Corona'})};
+  for(const q of town?[[60,14],[60,15]]:[])if(calm(q[0],q[1])){place(q[0],q[1]);return}
+  for(let r=0;r<12;r++)for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){if(Math.max(Math.abs(dx),Math.abs(dy))!==r)continue;const x=c[0]+dx,y=c[1]+dy;if(calm(x,y)){place(x,y);return}}
   for(let r=0;r<10;r++)for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){if(Math.max(Math.abs(dx),Math.abs(dy))!==r)continue;const x=c[0]+dx,y=c[1]+dy;
     let ok=true;for(let v=y-3;v<=y+1&&ok;v++)for(let u=x-1;u<=x+1;u++)if(!free(u,v))ok=false;if(!ok)continue;
     if(ents.some(e=>(e.k==='po'||e.k==='npc'||e.k==='board'||e.k==='owb'||e.k==='tr')&&e.px>x-2.5&&e.px<x+2.5&&e.py>y-4.5&&e.py<y+2.5))continue;if(Zk==='town'&&Math.hypot(x-35,y-43)<7)continue;
@@ -125,7 +141,10 @@ X43P.torre=()=>{const d=dayKey(),L=LS.get('voxelia_torre',{})||{},me=L[d],srv=TO
   <button onclick="cl();torStart()">🗼 Entra nella Torre (piano 1)</button><button onclick="cl()">Più tardi</button>`};
 if(typeof VXP!=='undefined')VXP.on('torre','top',d=>{if(!d)return;TOR.top=Array.isArray(d.L)?d.L:[];TOR.topd=String(d.d||'');if(PM==='torre')pn('torre')});
 // 7.49: il disegno della Torre: base, fusto con le paraste, finestre accese, stendardi, merli, tetto a punta e la corona che gira
-const _ent743t=ent;ent=function(e){if(e.k!=='torre43'){_ent743t(e);return}const u=.55+Math.sin(t*2)*.12,S='#8a8478',S2='#6e685e',S3='#a29c90',RO='#3a2a6a',RO2='#4a3a8a',GL=u>.6?'#ffe9a0':'#ffd84a';
+const _ent743t=ent;ent=function(e){if(e.k==='torb54'){const u=.5+Math.sin(t*3)*.5;drawL([[-.35,-.35,0,.7,.7,4,'#6e6480'],[-.25,-.25,4,.5,.5,8,'#8a8098'],[-.32,-.32,12,.64,.64,2,'#a29cb0']],e.px,e.py,0);
+    box(e.px-.12,e.py-.12,16+u*3,.24,.24,5,u>.5?'#ffe9a0':'#ffd84a',1.4);if(cineOK()&&Math.random()<.2)sparks(e.px,e.py,1,['#ffd84a','#ffffff'],30);
+    if(!D3B){g.textAlign='center';g.font='bold 10px Georgia,serif';label('✨ Benedizione',PX(e.px,e.py),PY(e.px,e.py,0)-34,'#ffe9a0')}return}
+  if(e.k!=='torre43'){_ent743t(e);return}const u=.55+Math.sin(t*2)*.12,S='#8a8478',S2='#6e685e',S3='#a29c90',RO='#3a2a6a',RO2='#4a3a8a',GL=u>.6?'#ffe9a0':'#ffd84a';
   if(SET.shad){g.fillStyle='rgba(0,0,0,.3)';g.beginPath();g.ellipse(PX(e.px,e.py-1.5),PY(e.px,e.py-1.5,0),62,30,0,0,6.3);g.fill()}
   const L=[[-1.5,-3.5,0,3,3,6,S2],[-1.3,-3.3,6,2.6,2.6,104,S]];
   for(const[x,y]of[[-1.42,-3.42],[1.06,-3.42],[-1.42,-.94],[1.06,-.94]])L.push([x,y,6,.36,.36,104,S3]);

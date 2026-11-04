@@ -16,10 +16,11 @@ gioco di allora. Cosa cambia in ogni versione è in [CHANGELOG.md](../CHANGELOG.
 
 ## Elenco
 
-86 versioni, dalla più recente.
+87 versioni, dalla più recente.
 
 | Versione | Data | Novità | Peso |
 |---|---|---|---|
+| [7.54](voxelia_v7.54.html) | 4 novembre 2026 | I compagni in rete, negli scambi e con le varianti; la Torre fuori dai piedi; l'eroe non cammina più da solo | 2.898 KB |
 | [7.53](voxelia_v7.53.html) | 4 novembre 2026 | Ottimizzazione generale: il gioco arriva compresso, meno codice morto, sorgenti più ordinati | 2.869 KB |
 | [7.52.2](voxelia_v7.52.2.html) | 4 novembre 2026 | La freccia di sinistra come quella di destra | 2.897 KB |
 | [7.52.1](voxelia_v7.52.1.html) | 4 novembre 2026 | Gli eroi Incubo restano con la morte permanente | 2.897 KB |
