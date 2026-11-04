@@ -3977,7 +3977,7 @@ const EDIC={};
 // un'icona sola per ogni cosa: dove il gioco ha già la sua icona (quelle dell'HUD) si usa quella, anche nell'editor e nelle emoji convertite
 const icoRecol=(n,m)=>ICOS[n].map(sh=>sh.map(v=>typeof v==='string'&&m[v]?m[v]:v));
 Object.assign(ICOS,{ampolla:icoRecol('pozione',{'#e8484f':'#4cd07a','#ffb0b4':'#b4f2c4'}),veleno:icoRecol('pozione',{'#e8484f':'#a070e8','#ffb0b4':'#d8c0ff'}),cuorev:icoRecol('cuore',{'#e8484f':'#d8dde6','#ff9aa0':'#ffffff'})});
-const VXA={coin:'oro',potion:'pozione',flask:'ampolla',poison:'veleno',sword:'spada',swords:'spade',shield:'scudo',gear:'ingranaggio',scroll:'pergamena',book:'libro',star:'stella',rock:'pietra',crown:'corona',moon:'luna',moonn:'luna',ok:'spunta',chest:'forziere',gem:'xp',play:'gioca',skull:'teschio',note:'nota',bolt:'fulmine',film:'ciak',map:'mappa',sel:'cursore',
+const VXA={coin:'oro',potion:'pozione',flask:'ampolla',poison:'veleno',sword:'spada',swords:'spade',shield:'scudo',gear:'ingranaggio',scroll:'pergamena',book:'libro',star:'stella',rock:'pietra',crown:'corona',moon:'luna',moonn:'luna',ok:'spunta',chest:'forziere',gem:'xp',play:'gioca',playl:'indietro',skull:'teschio',note:'nota',bolt:'fulmine',film:'ciak',map:'mappa',sel:'cursore',
   heart:'cuore',heartw:'cuorev',trophy:'trofeo',pack:'zaino',users:'gente',boom:'esplosione',portal:'vortice',dagger:'pugnale',sun:'sole',muscle:'forza',target:'mira',monitor:'schermo',pad:'gamepad',shard:'frammento',page:'pagina'};
 function edIcoC(n){if(EDIC[n])return EDIC[n];const a=VXA[n];if(a&&ICOS[a])return EDIC[n]=ICON(a,3).c;const R=EDICO[n];if(!R)return null;const sc=4,D=3,c=document.createElement('canvas');c.width=12*sc+D;c.height=12*sc+D;const q=c.getContext('2d'),at=(x,y)=>y>=0&&y<12&&x>=0&&x<12?R[y][x]:'.';
   for(let k=D;k>=1;k--)for(let y=0;y<12;y++)for(let x=0;x<12;x++){const ch=R[y][x];if(ch==='.')continue;q.fillStyle=shx(EDIP[ch]||'#ff00ff',k===D?.38:.55);q.fillRect(x*sc+k,y*sc+D-k,sc,sc)}
@@ -3992,7 +3992,7 @@ let EDICS=null;function edIcoRule(n){if(EDIC['r'+n]||!EDICO[n]&&!VXA[n])return;E
 const edI=(n,cls)=>{edIcoRule(n);return`<i class="vi${cls?' '+cls:''}" data-v="${n}"></i>`};
 // emoji dell'interfaccia → icona (quelle dei fumetti e le note musicali restano com'erano: sono contenuto, non interfaccia)
 const EDEM={'👆':'sel','✋':'hand','🟩':'grass','🧱':'brick','🌊':'water','⬛':'void','🌳':'tree','🏠':'house','🧑':'person','👹':'monster','🎁':'chest','🧰':'chest','🚪':'door','⚡':'bolt','🚩':'flag','🧽':'eraser','💧':'drop',
-  '🌙':'moon','🎵':'note','♪':'note','🌍':'globe','🗺':'map','⚙':'gear','↶':'undo','↷':'redo','💾':'save','▶':'play','📜':'scroll','⚔':'swords','🎬':'film','🔣':'vars','🩺':'check','❓':'help','✖':'close','✕':'close',
+  '🌙':'moon','🎵':'note','♪':'note','🌍':'globe','🗺':'map','⚙':'gear','↶':'undo','↷':'redo','💾':'save','▶':'play','◀':'playl','📜':'scroll','⚔':'swords','🎬':'film','🔣':'vars','🩺':'check','❓':'help','✖':'close','✕':'close',
   '🗑':'trash','⧉':'dup','＋':'plus','✏':'pencil','✎':'pencil','📍':'pin','💰':'coin','🔥':'fire','🔷':'gem','💎':'gem','🪧':'sign','💡':'bulb','🛏':'bed','🕹':'lever','🌾':'wheat','🎣':'fish','🛡':'shield','⛑':'helmet',
   '🧪':'potion','🔑':'key','📦':'box','🛒':'stall','🎨':'palette','💬':'speech','👑':'crown','🔒':'lock','⚠':'warn','⛔':'stop','ℹ':'info','✔':'ok','⭐':'star','✨':'star','🎲':'dice','📤':'export','📥':'import','🎓':'cap',
   '🔍':'search','🪣':'bucket','☠':'skull','💀':'skull','❄':'snow','🩸':'blood','💨':'wind','💪':'up','🪨':'rock','⏹':'stopb','⏱':'timer','⟲':'rotl','⟳':'rotr','↺':'rotl','↪':'arrowr','▲':'up','▼':'down','⚒':'anvil','⚗':'flask',

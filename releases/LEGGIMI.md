@@ -16,10 +16,11 @@ gioco di allora. Cosa cambia in ogni versione è in [CHANGELOG.md](../CHANGELOG.
 
 ## Elenco
 
-84 versioni, dalla più recente.
+85 versioni, dalla più recente.
 
 | Versione | Data | Novità | Peso |
 |---|---|---|---|
+| [7.52.2](voxelia_v7.52.2.html) | 4 novembre 2026 | La freccia di sinistra come quella di destra | 2.897 KB |
 | [7.52.1](voxelia_v7.52.1.html) | 4 novembre 2026 | Gli eroi Incubo restano con la morte permanente | 2.897 KB |
 | [7.52](voxelia_v7.52.html) | 4 novembre 2026 | Esportare e importare l'eroe | 2.896 KB |
 | [7.51](voxelia_v7.51.html) | 4 novembre 2026 | Thalassa e la giungla rifatte, le insegne luminose, la polvere della corsa, via immersioni e nave | 2.885 KB |

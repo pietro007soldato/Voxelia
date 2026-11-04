@@ -5,6 +5,10 @@ I numeri delle versioni precedenti alla 4.0 sono stati assegnati a posteriori, s
 
 ---
 
+## 7.52.2 — La freccia di sinistra come quella di destra (4 novembre 2026)
+
+- **Le frecce della Corona uguali.** Nella scheda della gemma la freccia ▶ era l'icona gialla del gioco, mentre la ◀ restava un triangolo bianco del carattere di sistema. Ora anche la ◀ è un'icona, la stessa girata. Vale ovunque compaia ◀ nell'interfaccia: il suggerimento sotto la Corona e i pulsanti «sposta a sinistra» delle immagini dei mondi della community.
+
 ## 7.52.1 — Gli eroi Incubo restano con la morte permanente (4 novembre 2026)
 
 - **Niente copie degli eroi Incubo.** In difficoltà Incubo la morte è permanente: con un file esportato si poteva tenere una copia dell'eroe e ricaricarla dopo la morte. Ora gli eroi Incubo (della Storia e di Tomorrow) non si esportano, né dal menu né dal menu di pausa (il pulsante dice perché), e un file con un eroe Incubo non si importa.
