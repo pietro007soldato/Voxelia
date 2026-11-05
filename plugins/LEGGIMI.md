@@ -78,6 +78,10 @@ VXP.on('mioplugin', 'evento', dati => { … });   // dal server (p.send o api.br
 VXP.send('mioplugin', 'evento', dati);          // al server (api.onClient)
 ```
 
+Per un annuncio a schermo che salti chi è in un dungeon, nella Torre, nella fossa o vicino a un boss, copia da `boss.js` la funzione
+`annuncioNelGioco` e `ANNUNCIO`: poi `api.client(ANNUNCIO(api.id))` e `api.broadcast('annuncio', { titolo, testo, icona }, stanza)`
+(o `p.send('annuncio', …)` per un solo giocatore). Nel gioco si chiama `VXAnnuncio(titolo, testo, icona)`.
+
 Il codice nel gioco arriva ai giocatori quando ricaricano la pagina.
 
 ## Bot dello stress test

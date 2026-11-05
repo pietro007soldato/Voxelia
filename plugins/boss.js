@@ -8,7 +8,8 @@
 // poi cambia nome, misura e forza e lo segna con wb=1. Ogni colpo dell'eroe passa da hurtE(): per il boss del mondo il plugin
 // lo intercetta, mostra il colpo e lo manda al server invece di togliere vita da solo; il boss non passa mai da kill(),
 // quindi niente missioni completate per sbaglio, niente bottino doppio e niente dungeonClear. Gli altri nemici non cambiano.
-// Ogni gioco muove la sua copia del boss (come gli altri nemici condivisi): conta solo la vita, che è quella del server.
+// Ogni gioco muove la sua copia del boss: conta solo la vita, che è quella del server. Per questo dalla 7.41 il boss e i suoi
+// evocati restano fuori dai nemici che il gioco condivide in rete (syncPack, syncEH).
 //
 // Limiti: i danni arrivano dal gioco del giocatore; il server ne accetta al massimo dannoMaxSec al secondo per eroe,
 // così chi usa i trucchi non lo abbatte in un colpo, ma può comunque arrivare a quel tetto. Il server non può togliere
@@ -77,10 +78,46 @@ function nelGioco(ID) {
     if (e.shd && e.shd > t) { flt(e, 'Immune', '#9adcff'); return; }
     if (!rem) { opz(() => wmHit()); const d2 = opz(() => tryParry(e, d, rem)); if (typeof d2 === 'number') d = d2; }
     if (!(d > 0)) return;
+    // 7.44: i boss hanno il punto debole (colpi doppi, quattro colpi lo stordiscono) e, storditi, prendono una volta e mezzo i danni.
+    // Il colpo al boss del mondo non passa dal gioco, quindi qui si fa lo stesso conto (con i nomi del gioco, se ci sono)
+    opz(() => {
+      if (b43Open(e)) { d = Math.round(d * 2); e.stg = (e.stg || 0) + 1; if (e.stg >= 4) { e.wkO = 0; e.stn = t + 3; e.stg = 0; flt(e, 'STORDITO!', '#ffd84a'); tone(200, .4, 'square', .06); shake(.6); } }
+      else if (b43Stun(e)) d = Math.round(d * 1.5);
+    });
     e.hp = Math.max(1, e.hp - d); e.fl = .12; e.al = 1;
     flt(e, (cr ? '💥' : '') + d, cr ? '#ffd84a' : '#ffffff'); opz(() => tone(cr ? 330 : 220, .05));
     pend += d / (e.vb || 1);
   };
+
+  // 7.41: in rete ogni nemico ha un padrone e gli altri ne vedono la copia (syncPack, syncEH). Il boss del mondo ce l'ha
+  // già ogni eroe, quindi lui e i suoi evocati restano fuori: senza, ognuno vedeva anche il boss degli altri (due o più boss),
+  // i colpi alla copia finivano nel contributo del suo padrone e i colpi del boss arrivavano due volte
+  const mio = e => e && (e.wb || e.wbs || (e.id >= 10000 + EID * 10 && e.id < 10000 + EID * 10 + 10));
+  // 7.44: in terza fase il boss richiama due rinforzi (b43Tick, dentro bossAI): anche quelli sono del boss del mondo
+  if (typeof b43Tick === 'function') {
+    const tick0 = b43Tick;
+    b43Tick = function () {
+      const b = boss(), n0 = opz(() => ents.length) || 0, r = tick0.apply(this, arguments);
+      if (b) opz(() => { for (let i = n0; i < ents.length; i++) if (ents[i] && ents[i].k === 'en' && !ents[i].pup && dist(ents[i], b) < 4) ents[i].wbs = 1; });
+      return r;
+    };
+  }
+  if (typeof syncPack === 'function') {
+    const pack0 = syncPack;
+    syncPack = function () {
+      const r = pack0.apply(this, arguments);
+      if (r && Array.isArray(r.es)) { const via = new Set(opz(() => ents.filter(mio).map(e => e.sg)) || []); if (via.size) r.es = r.es.filter(x => !via.has(x[0])); }
+      return r;
+    };
+  }
+  if (typeof syncEH === 'function') {
+    const eh0 = syncEH;
+    syncEH = function (pid, at) {
+      // il colpo parte da un nemico in questo fotogramma (atkT) o dallo schianto del boss (1,5 volte l'attacco)
+      if (opz(() => ents.some(e => mio(e) && ((e.atkT === t && Math.abs(at - e.at) < .01) || (e.wb && Math.abs(at - e.at * 1.5) < .01))))) return;
+      return eh0.apply(this, arguments);
+    };
+  }
 
   // barra della vita in alto, solo nella zona del boss
   const bar = document.createElement('div');
@@ -124,7 +161,8 @@ function nelGioco(ID) {
   VXP.on(ID, 'fine', d => {
     if (!B || !d || d.k !== B.k) return;
     const c = qui(); via(!!d.vinto); B = null; pend = 0; disegna();
-    if (d.vinto && (c || d.tuo)) opz(() => banner('Boss sconfitto!', d.tuo || (d.nome + ' è caduto'), 'corona'));
+    // chi era nella zona del boss o ha dato colpi vede il suo risultato; gli altri sanno che il boss è caduto
+    if (d.vinto) opz(() => VXAnnuncio(c || d.tuo ? 'Boss sconfitto!' : 'Boss del mondo sconfitto', d.tuo || (d.nome + ' è caduto'), 'corona', !(c || d.tuo)));
   });
   setInterval(() => {
     if (pend > 0 && B) { VXP.send(ID, 'colpo', { k: B.k, v: +pend.toFixed(4) }); pend = 0; }
@@ -134,9 +172,42 @@ function nelGioco(ID) {
   }, 300);
 }
 
+// ---------- annuncio a schermo, come «Giorno N» o il level up ----------
+// Nel gioco: VXAnnuncio(titolo, testo, icona, soloRegno) mostra uno stendardo al centro dello schermo, ma non a chi è in un posto
+// impegnativo (dungeon, Torre, fossa del Colosseo, battaglia in mare, missioni delle dimensioni, sogno, scena) o vicino a un boss
+// sveglio: a lui resta il messaggio in chat. Lo stesso codice è in tutti i plugin a eventi: lo usa la versione più nuova.
+function annuncioNelGioco() {
+  const V = 1;
+  if (globalThis.VXAnnuncio && globalThis.VXAnnuncio.v >= V) return;
+  const opz = f => { try { return f(); } catch (e) { return undefined; } };
+  const impegnato = () => {
+    if (!opz(() => started)) return 'scena';                                    // menu, caricamento, filmati
+    const z = opz(() => ZZ) || {}, k = String(opz(() => Zk) || '');
+    if (z.dg || /^twd_/.test(k)) return 'dungeon';
+    if (z.torre || /^torre\d+$/.test(k)) return 'torre';
+    if (/^dim_/.test(k) && k !== 'dim_hub') return 'dimensione';
+    if (opz(() => NAV)) return 'mare';
+    if (opz(() => DREAM)) return 'sogno';
+    if (opz(() => inPit(P.px, P.py))) return 'fossa';
+    if ((opz(() => CAM.t) || 0) > 0) return 'scena';
+    if (opz(() => ents.some(e => e.boss && e.hp > 0 && (e.al || e.wb) && dist(e, P) < 14))) return 'boss';
+    return '';
+  };
+  const VXAnnuncio = (titolo, testo, icona, soloRegno) => {
+    if (impegnato() || (soloRegno && opz(() => twOn()))) return false;
+    opz(() => banner(String(titolo || ''), String(testo || ''), icona || 'stella'));
+    if (opz(() => cineOK())) opz(() => { $('msg').style.display = 'none'; });  // lo stendardo prende il posto dell'avviso in alto
+    return true;
+  };
+  VXAnnuncio.v = V; VXAnnuncio.impegnato = impegnato;
+  globalThis.VXAnnuncio = VXAnnuncio;
+}
+// da mettere con api.client: definisce VXAnnuncio e mostra gli annunci che il plugin manda con l'evento «annuncio»
+const ANNUNCIO = id => '(' + annuncioNelGioco.toString() + ')();VXP.on(' + JSON.stringify(id) + ',"annuncio",d=>{if(d&&globalThis.VXAnnuncio)VXAnnuncio(d.titolo,d.testo,d.icona,d.regno)});';
+
 module.exports = {
   name: 'Boss del mondo',
-  version: '1.2',
+  version: '1.5',
   author: 'Voxelia',
   description: 'Un boss enorme compare in una zona selvaggia: si affronta tutti insieme e il premio va in base al contributo (/boss)',
   defaults: {
@@ -161,6 +232,9 @@ module.exports = {
   },
 
   setup(api) {
+    // annuncio a schermo (oltre alla chat) a tutti o a una stanza; regno: solo a chi gioca nel regno, non a Tomorrow
+    const schermo = (titolo, testo, icona, room, regno) => api.broadcast('annuncio', { titolo: String(titolo).slice(0, 60), testo: String(testo || '').slice(0, 120), icona, regno: regno ? 1 : 0 }, room);
+    api.client(ANNUNCIO(api.id));
     const C = api.config, ID = api.id, S = api.store;
     if (!S.eroi || typeof S.eroi !== 'object') S.eroi = {};       // nome in minuscolo → { nome, vittorie, primi, danni }
     if (!Array.isArray(S.storico)) S.storico = [];                // ultimi boss: { quando, nome, zona, stanza, vinto, top: [nomi] }
@@ -199,6 +273,7 @@ module.exports = {
       ATT.set(room, A);
       api.broadcast('stato', vista(A), room);
       api.announce('🐉 ' + A.nome + ' è apparso: ' + ZONE[A.zk] + '! Affrontatelo insieme entro ' + minuti(A.fine - ora) + ' min (/boss)', room);
+      schermo('Boss del mondo!', A.nome + ' è apparso: ' + ZONE[A.zk] + ' · /boss', 'teschio', room, 1);
       api.log('boss evocato nella stanza ' + room + ': ' + A.nome + ' (' + A.zk + ', ' + A.max.toFixed(1) + ' vite)' + (chi ? ' da ' + chi : ''));
       return '';
     }
@@ -265,8 +340,8 @@ module.exports = {
         if (ora >= A.fine) { chiudi(A, false); continue; }
         if (A.cambiata) { A.cambiata = false; api.broadcast('vita', { k: A.k, hp: +Math.max(0, A.hp).toFixed(3), max: +A.max.toFixed(3) }, A.room); }
         const resta = A.fine - ora;
-        if (resta < 2 * MIN && A.fine - A.inizio > 5 * MIN && !A.avvisi.fine) { A.avvisi.fine = 1; api.announce('⏳ ' + A.nome + ' se ne va tra 2 minuti! Vita rimasta ' + pct(A) + '%', A.room); }
-        if (A.hp <= A.max / 2 && !A.avvisi.meta) { A.avvisi.meta = 1; api.announce('⚔ ' + A.nome + ' è a metà vita! (' + ZONE[A.zk] + ')', A.room); }
+        if (resta < 2 * MIN && A.fine - A.inizio > 5 * MIN && !A.avvisi.fine) { A.avvisi.fine = 1; api.announce('⏳ ' + A.nome + ' se ne va tra 2 minuti! Vita rimasta ' + pct(A) + '%', A.room); schermo(A.nome + ' se ne va tra 2 minuti', 'Vita rimasta ' + pct(A) + '% · ' + ZONE[A.zk], 'teschio', A.room, 1); }
+        if (A.hp <= A.max / 2 && !A.avvisi.meta) { A.avvisi.meta = 1; api.announce('⚔ ' + A.nome + ' è a metà vita! (' + ZONE[A.zk] + ')', A.room); schermo(A.nome + ' è a metà vita!', ZONE[A.zk] + ': ancora un ultimo sforzo', 'spade', A.room, 1); }
       }
       if (ATT.size || ora < S.prossima || !lista.length) return;
       const min = num(C.minGiocatori, 1, 1, 100), stanze = api.rooms();

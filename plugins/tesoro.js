@@ -10,7 +10,7 @@
 // zone dove il tesoro può stare, con la loro misura (verificate sul gioco 7.3.2: si raggiungono da Aldoria
 // senza cancelli chiusi e la mappa è la stessa in ogni stanza; Nord, Est e Porto cambiano solo qualche cespuglio)
 const APERTE = {
-  town: 72, arena: 30, nord: 56, campi: 56, porto: 56,
+  town: 72, arena: 40, nord: 56, campi: 56, porto: 56,   // il Colosseo dalla 7.12 è 40×40 (prima 30)
   in_castle: 16, in_library: 12, in_tavern: 14, in_house1: 8, in_alch: 10, in_smith: 11, in_temple: 13, in_house2: 8, in_casino: 16,
   in_house3: 8, in_panetteria: 12, in_sartoria: 12, in_caserma: 16, in_scuderia: 14, in_osservatorio: 12, in_municipio: 16, in_motel: 16, in_motel2: 18,
   cas_galleria: 14, cas_consiglio: 14, cas_cucine: 12, cas_appartamenti: 14, cas_armeria: 12, cas_archivio: 12, cas_prigioni: 13,
@@ -31,7 +31,8 @@ function nelGioco(ID) {
   VXP.on(ID, 'trovato', d => {
     if (qui && opz(() => Zk) === qui.zk) opz(() => burst(qui.x + .5, qui.y + .5, 40, ['#ffd700', '#fff6a0', '#ffb030'], { v: 1.4, up: 200, gr: 40 }));
     qui = null; detto = false;
-    if (d && d.tuo) { opz(() => banner('Tesoro trovato!', d.testo || '', 'stella')); opz(() => jingle([72, 76, 79, 84], .14, 'triangle')); }
+    if (d && d.tuo) { opz(() => VXAnnuncio('Tesoro trovato!', d.testo || '', 'forziere')); opz(() => jingle([72, 76, 79, 84], .14, 'triangle')); }
+    else if (d && d.chi) opz(() => VXAnnuncio('Tesoro trovato', d.chi + ' ha trovato il tesoro' + (d.dove ? ' presso ' + d.dove : ''), 'forziere'));
   });
   setInterval(() => {
     if (!qui || opz(() => Zk) !== qui.zk || !opz(() => started)) return;
@@ -66,9 +67,42 @@ const NASCONDIGLI = [
   { zona: 'in_temple', x: 10, y: 1, nome: 'l\'altare del Tempio', indizi: ['Il tesoro è stato benedetto.', 'Cerca dentro il Tempio della Luce.', 'È in fondo al tempio, a destra dell\'altare, vicino alla pianta.'] }
 ];
 
+// ---------- annuncio a schermo, come «Giorno N» o il level up ----------
+// Nel gioco: VXAnnuncio(titolo, testo, icona, soloRegno) mostra uno stendardo al centro dello schermo, ma non a chi è in un posto
+// impegnativo (dungeon, Torre, fossa del Colosseo, battaglia in mare, missioni delle dimensioni, sogno, scena) o vicino a un boss
+// sveglio: a lui resta il messaggio in chat. Lo stesso codice è in tutti i plugin a eventi: lo usa la versione più nuova.
+function annuncioNelGioco() {
+  const V = 1;
+  if (globalThis.VXAnnuncio && globalThis.VXAnnuncio.v >= V) return;
+  const opz = f => { try { return f(); } catch (e) { return undefined; } };
+  const impegnato = () => {
+    if (!opz(() => started)) return 'scena';                                    // menu, caricamento, filmati
+    const z = opz(() => ZZ) || {}, k = String(opz(() => Zk) || '');
+    if (z.dg || /^twd_/.test(k)) return 'dungeon';
+    if (z.torre || /^torre\d+$/.test(k)) return 'torre';
+    if (/^dim_/.test(k) && k !== 'dim_hub') return 'dimensione';
+    if (opz(() => NAV)) return 'mare';
+    if (opz(() => DREAM)) return 'sogno';
+    if (opz(() => inPit(P.px, P.py))) return 'fossa';
+    if ((opz(() => CAM.t) || 0) > 0) return 'scena';
+    if (opz(() => ents.some(e => e.boss && e.hp > 0 && (e.al || e.wb) && dist(e, P) < 14))) return 'boss';
+    return '';
+  };
+  const VXAnnuncio = (titolo, testo, icona, soloRegno) => {
+    if (impegnato() || (soloRegno && opz(() => twOn()))) return false;
+    opz(() => banner(String(titolo || ''), String(testo || ''), icona || 'stella'));
+    if (opz(() => cineOK())) opz(() => { $('msg').style.display = 'none'; });  // lo stendardo prende il posto dell'avviso in alto
+    return true;
+  };
+  VXAnnuncio.v = V; VXAnnuncio.impegnato = impegnato;
+  globalThis.VXAnnuncio = VXAnnuncio;
+}
+// da mettere con api.client: definisce VXAnnuncio e mostra gli annunci che il plugin manda con l'evento «annuncio»
+const ANNUNCIO = id => '(' + annuncioNelGioco.toString() + ')();VXP.on(' + JSON.stringify(id) + ',"annuncio",d=>{if(d&&globalThis.VXAnnuncio)VXAnnuncio(d.titolo,d.testo,d.icona,d.regno)});';
+
 module.exports = {
   name: 'Caccia al tesoro',
-  version: '1.1',
+  version: '1.3',
   author: 'Voxelia',
   description: 'Un tesoro nascosto in città, indizi a tappe e un premio al primo che lo trova (/tesoro)',
   defaults: {
@@ -85,6 +119,9 @@ module.exports = {
   },
 
   setup(api) {
+    // annuncio a schermo (oltre alla chat) a tutti o a una stanza; regno: solo a chi gioca nel regno, non a Tomorrow
+    const schermo = (titolo, testo, icona, room, regno) => api.broadcast('annuncio', { titolo: String(titolo).slice(0, 60), testo: String(testo || '').slice(0, 120), icona, regno: regno ? 1 : 0 }, room);
+    api.client(ANNUNCIO(api.id));
     const C = api.config, ID = api.id;
     const S = api.store;
     if (!S.vinti || typeof S.vinti !== 'object') S.vinti = {};    // nome in minuscolo → { nome, n }
@@ -154,8 +191,8 @@ module.exports = {
       if (nuovo < 0) return;
       salva();
       const t = L[nuovo];
-      if (primo) api.announce('🗝 Caccia al tesoro! Primo indizio: ' + t);
-      else api.announce('🗝 Indizio ' + (nuovo + 1) + (nuovo === L.length - 1 ? ' (l\'ultimo)' : '') + ': ' + t);
+      if (primo) { api.announce('🗝 Caccia al tesoro! Primo indizio: ' + t); schermo('Caccia al tesoro!', t, 'forziere'); }
+      else { api.announce('🗝 Indizio ' + (nuovo + 1) + (nuovo === L.length - 1 ? ' (l\'ultimo)' : '') + ': ' + t); schermo(nuovo === L.length - 1 ? 'Ultimo indizio' : 'Nuovo indizio', t, 'pergamena'); }
     }
     function chiudi() { S.attiva = null; S.prossima = Date.now() + ogni(); salva(); vicini.clear(); api.broadcast('fine', {}); }
     function scaduta() {
@@ -174,7 +211,7 @@ module.exports = {
       const k = p.name.toLowerCase(), v = S.vinti[k] || (S.vinti[k] = { nome: p.name, n: 0 }); v.nome = p.name; v.n++;
       S.storico.unshift({ quando: Date.now(), dove: nomeDi(s), chi: p.name }); S.storico = S.storico.slice(0, 30);
       const premio = [oro > 0 && oro + ' oro', xp > 0 && xp + ' XP', r >= 0 && 'un oggetto ' + ['comune', 'non comune', 'raro', 'epico'][r]].filter(Boolean).join(', ');
-      for (const o of api.players()) o.send('trovato', o.id === p.id ? { tuo: 1, testo: premio ? 'Hai vinto ' + premio : '' } : {});
+      for (const o of api.players()) o.send('trovato', o.id === p.id ? { tuo: 1, testo: premio ? 'Hai vinto ' + premio : '' } : { chi: p.name, dove: nomeDi(s) });
       chiudi();
       api.announce('🏆 ' + p.name + ' ha trovato il tesoro presso ' + nomeDi(s) + '!' + (premio ? ' Premio: ' + premio + '.' : ''));
       api.log(p.name + ' ha trovato il tesoro (' + nomeDi(s) + ')');
