@@ -13,13 +13,14 @@
 // Limite: un gioco modificato riceve comunque dal server la posizione di tutti quelli della stanza, quindi una guardia
 // che bara può vedere i ladri; e chi cammina attraverso i muri a velocità normale non si distingue da chi gira l'angolo.
 
-// portali del gioco 7.3.2 (zona=misura=destinazione:x:y,…), letti dal gioco caricato in Chromium. Restano fuori le zone
+// portali del gioco 7.3.2 (zona=misura=destinazione:x:y,…), letti dal gioco caricato in Chromium; ricontrollati sul 7.27:
+// cambia solo il Colosseo, che dalla 7.12 è 40×40 con la porta d'uscita in 19,1. Restano fuori le zone
 // chiuse (stanze del motel, passaggio segreto del castello). Chi entra in una zona compare entro 3 caselle dalla porta.
 const GRAFO = 'town=72=in_castle:9:13,in_library:24:10,arena:47:13,in_tavern:7:27,in_house1:21:24,in_alch:27:24,in_smith:42:25,in_temple:51:27,in_house2:21:44,in_casino:24:51,in_house3:27:31,in_panetteria:22:31,in_sartoria:28:44,in_caserma:9:34,in_scuderia:63:46,in_osservatorio:64:10,in_municipio:62:27,in_motel:31:62,nord:17:2,campi:71:17,porto:55:71|' +
   'nord=56=in_palazzo:28:13,in_banca:10:25,in_teatro:46:27,in_villa1:9:11,in_villa2:47:11,in_villa3:9:41,in_villa4:48:41,in_villa5:10:53,in_villa6:47:53,town:28:55|' +
   'campi=56=in_mulino:18:11,in_segheria:39:22,in_fattoria:9:38,in_fienile:19:38,town:2:27|' +
   'porto=56=in_faro:49:44,in_locanda:10:24,in_capitaneria:45:23,in_magazzino1:21:24,in_magazzino2:35:24,in_pescheria:22:12,in_cantiere:51:12,in_casa_p1:7:10,in_casa_p2:14:10,in_casa_p3:34:10,in_casa_p4:42:10,in_galeone:27:39,town:28:2|' +
-  'in_castle=16=town:8:16,cas_galleria:2:9,cas_consiglio:15:9,cas_cucine:2:14,cas_appartamenti:15:14|in_library=12=town:6:12,lib_archivio:11:10|arena=30=town:16:2|' +
+  'in_castle=16=town:8:16,cas_galleria:2:9,cas_consiglio:15:9,cas_cucine:2:14,cas_appartamenti:15:14|in_library=12=town:6:12,lib_archivio:11:10|arena=40=town:19:1|' +
   'in_tavern=14=town:7:14,tav_camere:13:12,tav_cantina:2:12|in_house1=8=town:4:8|in_alch=10=town:5:10|in_smith=11=town:5:11|in_temple=13=town:7:13,tem_cripta:12:12|' +
   'in_house2=8=town:5:8|in_casino=16=town:8:16,casino_vip:15:3|in_house3=8=town:4:8|in_panetteria=12=town:6:12|in_sartoria=12=town:6:12|in_caserma=16=town:8:16,bar_dorm:2:14|' +
   'in_scuderia=14=town:7:14|in_osservatorio=12=town:6:12,oss_cupola:11:9|in_municipio=16=town:8:16,mun_piano:15:14|in_motel=16=town:8:16,in_motel2:2:8,in_motel2:15:8|' +
@@ -93,16 +94,49 @@ function nelGioco(ID) {
   VXP.on(ID, 'stato', d => { if (!d || typeof d !== 'object') return; S = d; fineT = Date.now() + (+d.resta || 0); disegna(); });
   VXP.on(ID, 'evento', d => {
     if (!d) return;
-    if (d.banner) opz(() => banner(d.banner, d.testo || '', d.icona || 'stella')); else if (d.testo) opz(() => msg(d.testo));
+    if (d.banner) opz(() => VXAnnuncio(d.banner, d.testo || '', d.icona || 'stella')); else if (d.testo) opz(() => msg(d.testo));
     if (d.suono) opz(() => jingle(d.suono, .12, 'triangle'));
   });
-  VXP.on(ID, 'fine', d => { S = null; disegna(); if (d && d.banner) opz(() => banner(d.banner, d.testo || '', 'trofeo')); });
+  VXP.on(ID, 'fine', d => { S = null; disegna(); if (d && d.banner) opz(() => VXAnnuncio(d.banner, d.testo || '', 'trofeo')); });
   setInterval(() => { if (S) disegna(); }, 250);
 }
 
+// ---------- annuncio a schermo, come «Giorno N» o il level up ----------
+// Nel gioco: VXAnnuncio(titolo, testo, icona, soloRegno) mostra uno stendardo al centro dello schermo, ma non a chi è in un posto
+// impegnativo (dungeon, Torre, fossa del Colosseo, battaglia in mare, missioni delle dimensioni, sogno, scena) o vicino a un boss
+// sveglio: a lui resta il messaggio in chat. Lo stesso codice è in tutti i plugin a eventi: lo usa la versione più nuova.
+function annuncioNelGioco() {
+  const V = 1;
+  if (globalThis.VXAnnuncio && globalThis.VXAnnuncio.v >= V) return;
+  const opz = f => { try { return f(); } catch (e) { return undefined; } };
+  const impegnato = () => {
+    if (!opz(() => started)) return 'scena';                                    // menu, caricamento, filmati
+    const z = opz(() => ZZ) || {}, k = String(opz(() => Zk) || '');
+    if (z.dg || /^twd_/.test(k)) return 'dungeon';
+    if (z.torre || /^torre\d+$/.test(k)) return 'torre';
+    if (/^dim_/.test(k) && k !== 'dim_hub') return 'dimensione';
+    if (opz(() => NAV)) return 'mare';
+    if (opz(() => DREAM)) return 'sogno';
+    if (opz(() => inPit(P.px, P.py))) return 'fossa';
+    if ((opz(() => CAM.t) || 0) > 0) return 'scena';
+    if (opz(() => ents.some(e => e.boss && e.hp > 0 && (e.al || e.wb) && dist(e, P) < 14))) return 'boss';
+    return '';
+  };
+  const VXAnnuncio = (titolo, testo, icona, soloRegno) => {
+    if (impegnato() || (soloRegno && opz(() => twOn()))) return false;
+    opz(() => banner(String(titolo || ''), String(testo || ''), icona || 'stella'));
+    if (opz(() => cineOK())) opz(() => { $('msg').style.display = 'none'; });  // lo stendardo prende il posto dell'avviso in alto
+    return true;
+  };
+  VXAnnuncio.v = V; VXAnnuncio.impegnato = impegnato;
+  globalThis.VXAnnuncio = VXAnnuncio;
+}
+// da mettere con api.client: definisce VXAnnuncio e mostra gli annunci che il plugin manda con l'evento «annuncio»
+const ANNUNCIO = id => '(' + annuncioNelGioco.toString() + ')();VXP.on(' + JSON.stringify(id) + ',"annuncio",d=>{if(d&&globalThis.VXAnnuncio)VXAnnuncio(d.titolo,d.testo,d.icona,d.regno)});';
+
 module.exports = {
   name: 'Guardie e ladri',
-  version: '1.2',
+  version: '1.4',
   author: 'Voxelia',
   description: 'Nascondino a squadre in un quartiere: i ladri si nascondono, le guardie li cercano (/guardie)',
   defaults: {
@@ -136,6 +170,9 @@ module.exports = {
   },
 
   setup(api) {
+    // annuncio a schermo (oltre alla chat) a tutti o a una stanza; regno: solo a chi gioca nel regno, non a Tomorrow
+    const schermo = (titolo, testo, icona, room, regno) => api.broadcast('annuncio', { titolo: String(titolo).slice(0, 60), testo: String(testo || '').slice(0, 120), icona, regno: regno ? 1 : 0 }, room);
+    api.client(ANNUNCIO(api.id));
     const C = api.config, ID = api.id, K = s => String(s || '').toLowerCase();
     const S = api.store;
     if (!S.g || typeof S.g !== 'object') S.g = {};                // nome in minuscolo → statistiche
@@ -207,6 +244,7 @@ module.exports = {
       const sec = num(C.iscrizioniSec, 90, 10, 1800);
       partite[room] = { room, q, fase: 'iscrizioni', fine: Date.now() + sec * SEC, iscritti: [], gioc: new Map(), avviso: 0, aperta: chi || '' };
       api.announce('🚨 Guardie e ladri nel quartiere «' + q.nome + '»: iscrizioni aperte per ' + mm(sec * SEC) + '! Scrivi /guardie entra (oppure /guardie entra ladro o guardia).', room);
+      schermo('Guardie e ladri', 'Iscrizioni aperte nel quartiere «' + q.nome + '» · /guardie entra', 'spade', room);
       api.log('iscrizioni aperte nella stanza ' + room + ' (' + q.k + ')' + (chi ? ' da ' + chi : ''));
       return '';
     }

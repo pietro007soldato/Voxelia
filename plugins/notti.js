@@ -1,9 +1,42 @@
 // Notti di caccia: ogni tot notti del mondo parte un evento con esperienza moltiplicata e una gara.
 // Boss di dungeon e vittorie nel Colosseo danno punti; all'alba chi ne ha di più vince un premio.
 // Un giorno del mondo dura 24 minuti veri, quindi una notte dalle 22 alle 5 dura circa 7 minuti.
+// ---------- annuncio a schermo, come «Giorno N» o il level up ----------
+// Nel gioco: VXAnnuncio(titolo, testo, icona, soloRegno) mostra uno stendardo al centro dello schermo, ma non a chi è in un posto
+// impegnativo (dungeon, Torre, fossa del Colosseo, battaglia in mare, missioni delle dimensioni, sogno, scena) o vicino a un boss
+// sveglio: a lui resta il messaggio in chat. Lo stesso codice è in tutti i plugin a eventi: lo usa la versione più nuova.
+function annuncioNelGioco() {
+  const V = 1;
+  if (globalThis.VXAnnuncio && globalThis.VXAnnuncio.v >= V) return;
+  const opz = f => { try { return f(); } catch (e) { return undefined; } };
+  const impegnato = () => {
+    if (!opz(() => started)) return 'scena';                                    // menu, caricamento, filmati
+    const z = opz(() => ZZ) || {}, k = String(opz(() => Zk) || '');
+    if (z.dg || /^twd_/.test(k)) return 'dungeon';
+    if (z.torre || /^torre\d+$/.test(k)) return 'torre';
+    if (/^dim_/.test(k) && k !== 'dim_hub') return 'dimensione';
+    if (opz(() => NAV)) return 'mare';
+    if (opz(() => DREAM)) return 'sogno';
+    if (opz(() => inPit(P.px, P.py))) return 'fossa';
+    if ((opz(() => CAM.t) || 0) > 0) return 'scena';
+    if (opz(() => ents.some(e => e.boss && e.hp > 0 && (e.al || e.wb) && dist(e, P) < 14))) return 'boss';
+    return '';
+  };
+  const VXAnnuncio = (titolo, testo, icona, soloRegno) => {
+    if (impegnato() || (soloRegno && opz(() => twOn()))) return false;
+    opz(() => banner(String(titolo || ''), String(testo || ''), icona || 'stella'));
+    if (opz(() => cineOK())) opz(() => { $('msg').style.display = 'none'; });  // lo stendardo prende il posto dell'avviso in alto
+    return true;
+  };
+  VXAnnuncio.v = V; VXAnnuncio.impegnato = impegnato;
+  globalThis.VXAnnuncio = VXAnnuncio;
+}
+// da mettere con api.client: definisce VXAnnuncio e mostra gli annunci che il plugin manda con l'evento «annuncio»
+const ANNUNCIO = id => '(' + annuncioNelGioco.toString() + ')();VXP.on(' + JSON.stringify(id) + ',"annuncio",d=>{if(d&&globalThis.VXAnnuncio)VXAnnuncio(d.titolo,d.testo,d.icona,d.regno)});';
+
 module.exports = {
   name: 'Notti di caccia',
-  version: '1.1',
+  version: '1.2',
   author: 'Voxelia',
   description: 'Eventi notturni con XP moltiplicata e una gara a punti: /evento',
   defaults: {
@@ -19,6 +52,9 @@ module.exports = {
   },
 
   setup(api) {
+    // annuncio a schermo (oltre alla chat) a tutti o a una stanza; regno: solo a chi gioca nel regno, non a Tomorrow
+    const schermo = (titolo, testo, icona, room, regno) => api.broadcast('annuncio', { titolo: String(titolo).slice(0, 60), testo: String(testo || '').slice(0, 120), icona, regno: regno ? 1 : 0 }, room);
+    api.client(ANNUNCIO(api.id));
     const C = api.config, chiave = n => String(n).toLowerCase();
     const st = () => api.store;   // st().ev = evento in corso: { notte, xpPrima, xpEvento, punti: { chiave: { nome, p } } }
     const RARITA = ['comune', 'non comune', 'raro', 'epico'];
@@ -82,7 +118,9 @@ module.exports = {
       const a = controlla();
       // preavviso un'ora del mondo prima
       if (C.preavviso && !a.notte && evento(a.giorno) && a.h >= C.oraInizio - 1 && a.h < C.oraInizio && avvisato !== a.giorno) {
-        avvisato = a.giorno; api.announce('🌒 Tra poco cala la notte: sarà una notte di caccia con XP ×' + Math.min(5, api.server.cfg.xpm * C.moltiplicatoreXp) + '!');
+        avvisato = a.giorno; const xp = Math.min(5, api.server.cfg.xpm * C.moltiplicatoreXp);
+        api.announce('🌒 Tra poco cala la notte: sarà una notte di caccia con XP ×' + xp + '!');
+        schermo('Tra poco cala la notte', 'Sarà una notte di caccia con XP ×' + xp, 'luna');
       }
     });
 
@@ -112,8 +150,8 @@ module.exports = {
     });
 
     // nel gioco: un titolo grande all'inizio e alla fine
-    api.client('VXP.on(' + JSON.stringify(api.id) + ', "inizio", d => banner("Notte di caccia", "XP ×" + d.xp + " fino all\'alba", "stella"));' +
-      'VXP.on(' + JSON.stringify(api.id) + ', "fine", () => banner("L\'alba", "La notte di caccia è finita", "stella"));');
+    api.client('VXP.on(' + JSON.stringify(api.id) + ', "inizio", d => VXAnnuncio("Notte di caccia", "XP ×" + d.xp + " fino all\'alba", "stella"));' +
+      'VXP.on(' + JSON.stringify(api.id) + ', "fine", () => VXAnnuncio("L\'alba", "La notte di caccia è finita", "stella"));');
 
     // all'avvio e ogni 5 secondi: inizia, riprende o chiude l'evento secondo l'ora del mondo
     function controlla() {

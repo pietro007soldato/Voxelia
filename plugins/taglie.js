@@ -19,9 +19,42 @@ const POOL = [
   { id: 'dungeon_entra', testo: 'Entra in 3 dungeon diversi', ev: 'zone', n: 3, unico: true, ok: (p, zona) => zona.split('@')[0] in DUNGEON && zona.split('@')[0] }
 ];
 
+// ---------- annuncio a schermo, come «Giorno N» o il level up ----------
+// Nel gioco: VXAnnuncio(titolo, testo, icona, soloRegno) mostra uno stendardo al centro dello schermo, ma non a chi è in un posto
+// impegnativo (dungeon, Torre, fossa del Colosseo, battaglia in mare, missioni delle dimensioni, sogno, scena) o vicino a un boss
+// sveglio: a lui resta il messaggio in chat. Lo stesso codice è in tutti i plugin a eventi: lo usa la versione più nuova.
+function annuncioNelGioco() {
+  const V = 1;
+  if (globalThis.VXAnnuncio && globalThis.VXAnnuncio.v >= V) return;
+  const opz = f => { try { return f(); } catch (e) { return undefined; } };
+  const impegnato = () => {
+    if (!opz(() => started)) return 'scena';                                    // menu, caricamento, filmati
+    const z = opz(() => ZZ) || {}, k = String(opz(() => Zk) || '');
+    if (z.dg || /^twd_/.test(k)) return 'dungeon';
+    if (z.torre || /^torre\d+$/.test(k)) return 'torre';
+    if (/^dim_/.test(k) && k !== 'dim_hub') return 'dimensione';
+    if (opz(() => NAV)) return 'mare';
+    if (opz(() => DREAM)) return 'sogno';
+    if (opz(() => inPit(P.px, P.py))) return 'fossa';
+    if ((opz(() => CAM.t) || 0) > 0) return 'scena';
+    if (opz(() => ents.some(e => e.boss && e.hp > 0 && (e.al || e.wb) && dist(e, P) < 14))) return 'boss';
+    return '';
+  };
+  const VXAnnuncio = (titolo, testo, icona, soloRegno) => {
+    if (impegnato() || (soloRegno && opz(() => twOn()))) return false;
+    opz(() => banner(String(titolo || ''), String(testo || ''), icona || 'stella'));
+    if (opz(() => cineOK())) opz(() => { $('msg').style.display = 'none'; });  // lo stendardo prende il posto dell'avviso in alto
+    return true;
+  };
+  VXAnnuncio.v = V; VXAnnuncio.impegnato = impegnato;
+  globalThis.VXAnnuncio = VXAnnuncio;
+}
+// da mettere con api.client: definisce VXAnnuncio e mostra gli annunci che il plugin manda con l'evento «annuncio»
+const ANNUNCIO = id => '(' + annuncioNelGioco.toString() + ')();VXP.on(' + JSON.stringify(id) + ',"annuncio",d=>{if(d&&globalThis.VXAnnuncio)VXAnnuncio(d.titolo,d.testo,d.icona,d.regno)});';
+
 module.exports = {
   name: 'Taglie del giorno',
-  version: '1.2',
+  version: '1.3',
   author: 'Voxelia',
   description: 'Ogni giorno nuove taglie per tutti: /taglie per vederle',
   defaults: {
@@ -29,10 +62,14 @@ module.exports = {
     premio: { oro: 300, xp: 300 },               // per ogni taglia
     premioDifficile: { oro: 600, xp: 600 },      // per le taglie più lunghe
     premioTutte: { oro: 500, oggetto: 2 },       // bonus quando le completi tutte
-    promemoria: true
+    promemoria: true,
+    annunciaNuove: true                          // a mezzanotte UTC, in chat e a schermo
   },
 
   setup(api) {
+    // annuncio a schermo (oltre alla chat) a tutti o a una stanza; regno: solo a chi gioca nel regno, non a Tomorrow
+    const schermo = (titolo, testo, icona, room, regno) => api.broadcast('annuncio', { titolo: String(titolo).slice(0, 60), testo: String(testo || '').slice(0, 120), icona, regno: regno ? 1 : 0 }, room);
+    api.client(ANNUNCIO(api.id));
     const C = api.config, chiave = n => String(n).toLowerCase();
     const oggi = () => { const d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5); };
 
@@ -113,15 +150,26 @@ module.exports = {
           dai(p, pr);
           p.tell('Taglia completata: ' + t.testo + '! Premio: ' + testo(pr) + '.');
           api.announce('🎯 ' + p.name + ' ha completato la taglia "' + t.testo + '"', p.room);
+          if (e.fatte.length < T.length) p.send('annuncio', { titolo: 'Taglia completata!', testo: t.testo + ' · ' + testo(pr), icona: 'spunta' });
           if (e.fatte.length === T.length) {
             dai(p, C.premioTutte);
             api.announce('🏆 ' + p.name + ' ha completato tutte le taglie di oggi!', p.room);
             p.tell('Tutte le taglie di oggi completate! Bonus: ' + testo(C.premioTutte) + '.');
+            p.send('annuncio', { titolo: 'Tutte le taglie di oggi!', testo: 'Bonus: ' + testo(C.premioTutte), icona: 'corona' });
           }
         } else p.tell('Taglia "' + t.testo + '": ' + e.prog[t.id] + '/' + t.n);
       }
       if (cambiato) api.save();
     }
+
+    // a mezzanotte UTC escono le taglie nuove: lo dice a chi è online
+    let giornoVisto = oggi();
+    api.every(30000, () => {
+      const g = oggi(); if (g === giornoVisto) return; giornoVisto = g;
+      if (!C.annunciaNuove || !api.players().some(p => !finto(p))) return;
+      api.announce('🎯 Sono uscite le taglie di oggi: scrivi /taglie per vederle!');
+      schermo('Nuove taglie', 'Le taglie di oggi sono pronte · /taglie', 'pergamena');
+    });
 
     api.on('dungeon', (p, d) => avanza(p, 'dungeon', d));
     api.on('arena', vincitore => avanza(vincitore, 'arena'));

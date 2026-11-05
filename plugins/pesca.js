@@ -39,12 +39,45 @@ function nelGioco(ID) {
     return r;
   };
   VXP.on(ID, 'avviso', d => { try { msg(d.testo); } catch (e) {} });
-  VXP.on(ID, 'banner', d => { try { banner(d.titolo, d.testo, 'stella'); } catch (e) {} });
+  VXP.on(ID, 'banner', d => { try { VXAnnuncio(d.titolo, d.testo, 'stella'); } catch (e) {} });
 }
+
+// ---------- annuncio a schermo, come «Giorno N» o il level up ----------
+// Nel gioco: VXAnnuncio(titolo, testo, icona, soloRegno) mostra uno stendardo al centro dello schermo, ma non a chi è in un posto
+// impegnativo (dungeon, Torre, fossa del Colosseo, battaglia in mare, missioni delle dimensioni, sogno, scena) o vicino a un boss
+// sveglio: a lui resta il messaggio in chat. Lo stesso codice è in tutti i plugin a eventi: lo usa la versione più nuova.
+function annuncioNelGioco() {
+  const V = 1;
+  if (globalThis.VXAnnuncio && globalThis.VXAnnuncio.v >= V) return;
+  const opz = f => { try { return f(); } catch (e) { return undefined; } };
+  const impegnato = () => {
+    if (!opz(() => started)) return 'scena';                                    // menu, caricamento, filmati
+    const z = opz(() => ZZ) || {}, k = String(opz(() => Zk) || '');
+    if (z.dg || /^twd_/.test(k)) return 'dungeon';
+    if (z.torre || /^torre\d+$/.test(k)) return 'torre';
+    if (/^dim_/.test(k) && k !== 'dim_hub') return 'dimensione';
+    if (opz(() => NAV)) return 'mare';
+    if (opz(() => DREAM)) return 'sogno';
+    if (opz(() => inPit(P.px, P.py))) return 'fossa';
+    if ((opz(() => CAM.t) || 0) > 0) return 'scena';
+    if (opz(() => ents.some(e => e.boss && e.hp > 0 && (e.al || e.wb) && dist(e, P) < 14))) return 'boss';
+    return '';
+  };
+  const VXAnnuncio = (titolo, testo, icona, soloRegno) => {
+    if (impegnato() || (soloRegno && opz(() => twOn()))) return false;
+    opz(() => banner(String(titolo || ''), String(testo || ''), icona || 'stella'));
+    if (opz(() => cineOK())) opz(() => { $('msg').style.display = 'none'; });  // lo stendardo prende il posto dell'avviso in alto
+    return true;
+  };
+  VXAnnuncio.v = V; VXAnnuncio.impegnato = impegnato;
+  globalThis.VXAnnuncio = VXAnnuncio;
+}
+// da mettere con api.client: definisce VXAnnuncio e mostra gli annunci che il plugin manda con l'evento «annuncio»
+const ANNUNCIO = id => '(' + annuncioNelGioco.toString() + ')();VXP.on(' + JSON.stringify(id) + ',"annuncio",d=>{if(d&&globalThis.VXAnnuncio)VXAnnuncio(d.titolo,d.testo,d.icona,d.regno)});';
 
 module.exports = {
   name: 'Gara di pesca',
-  version: '1.1',
+  version: '1.2',
   author: 'Voxelia',
   description: 'Albo dei record per ogni specie, gare di pesca a tempo con premi e annuncio dei pesci leggendari',
   defaults: {
@@ -58,6 +91,9 @@ module.exports = {
   },
 
   setup(api) {
+    // annuncio a schermo (oltre alla chat) a tutti o a una stanza; regno: solo a chi gioca nel regno, non a Tomorrow
+    const schermo = (titolo, testo, icona, room, regno) => api.broadcast('annuncio', { titolo: String(titolo).slice(0, 60), testo: String(testo || '').slice(0, 120), icona, regno: regno ? 1 : 0 }, room);
+    api.client(ANNUNCIO(api.id));
     const C = api.config, S = api.store;
     S.rec = S.rec || {}; S.pes = S.pes || {}; S.premi = S.premi || {};
     if (S.gara === undefined) S.gara = null;

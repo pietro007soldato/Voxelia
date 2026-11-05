@@ -11,9 +11,42 @@
 // le vittorie invece sono quelle verificate dal server per i punti arena (colpo recente dell'avversario).
 // Il server conta una sola vittoria ogni 30 secondi sulla stessa coppia: se due sfidanti si erano appena battuti
 // fuori dal torneo, devono semplicemente combattere di nuovo.
+// ---------- annuncio a schermo, come «Giorno N» o il level up ----------
+// Nel gioco: VXAnnuncio(titolo, testo, icona, soloRegno) mostra uno stendardo al centro dello schermo, ma non a chi è in un posto
+// impegnativo (dungeon, Torre, fossa del Colosseo, battaglia in mare, missioni delle dimensioni, sogno, scena) o vicino a un boss
+// sveglio: a lui resta il messaggio in chat. Lo stesso codice è in tutti i plugin a eventi: lo usa la versione più nuova.
+function annuncioNelGioco() {
+  const V = 1;
+  if (globalThis.VXAnnuncio && globalThis.VXAnnuncio.v >= V) return;
+  const opz = f => { try { return f(); } catch (e) { return undefined; } };
+  const impegnato = () => {
+    if (!opz(() => started)) return 'scena';                                    // menu, caricamento, filmati
+    const z = opz(() => ZZ) || {}, k = String(opz(() => Zk) || '');
+    if (z.dg || /^twd_/.test(k)) return 'dungeon';
+    if (z.torre || /^torre\d+$/.test(k)) return 'torre';
+    if (/^dim_/.test(k) && k !== 'dim_hub') return 'dimensione';
+    if (opz(() => NAV)) return 'mare';
+    if (opz(() => DREAM)) return 'sogno';
+    if (opz(() => inPit(P.px, P.py))) return 'fossa';
+    if ((opz(() => CAM.t) || 0) > 0) return 'scena';
+    if (opz(() => ents.some(e => e.boss && e.hp > 0 && (e.al || e.wb) && dist(e, P) < 14))) return 'boss';
+    return '';
+  };
+  const VXAnnuncio = (titolo, testo, icona, soloRegno) => {
+    if (impegnato() || (soloRegno && opz(() => twOn()))) return false;
+    opz(() => banner(String(titolo || ''), String(testo || ''), icona || 'stella'));
+    if (opz(() => cineOK())) opz(() => { $('msg').style.display = 'none'; });  // lo stendardo prende il posto dell'avviso in alto
+    return true;
+  };
+  VXAnnuncio.v = V; VXAnnuncio.impegnato = impegnato;
+  globalThis.VXAnnuncio = VXAnnuncio;
+}
+// da mettere con api.client: definisce VXAnnuncio e mostra gli annunci che il plugin manda con l'evento «annuncio»
+const ANNUNCIO = id => '(' + annuncioNelGioco.toString() + ')();VXP.on(' + JSON.stringify(id) + ',"annuncio",d=>{if(d&&globalThis.VXAnnuncio)VXAnnuncio(d.titolo,d.testo,d.icona,d.regno)});';
+
 module.exports = {
   name: 'Torneo dell\'arena',
-  version: '1.1',
+  version: '1.2',
   author: 'Voxelia',
   description: 'Tornei a eliminazione diretta nel Colosseo, con tabellone, premi e albo d\'oro',
   defaults: {
@@ -35,6 +68,9 @@ module.exports = {
   },
 
   setup(api) {
+    // annuncio a schermo (oltre alla chat) a tutti o a una stanza; regno: solo a chi gioca nel regno, non a Tomorrow
+    const schermo = (titolo, testo, icona, room, regno) => api.broadcast('annuncio', { titolo: String(titolo).slice(0, 60), testo: String(testo || '').slice(0, 120), icona, regno: regno ? 1 : 0 }, room);
+    api.client(ANNUNCIO(api.id));
     const C = api.config, K = n => String(n || '').toLowerCase(), MIN = 60000;
     const S = api.store; S.t = S.t || {}; S.albo = S.albo || []; S.vittorie = S.vittorie || {}; S.sospesi = S.sospesi || {};
     const num = (v, a, b, d) => { v = Math.round(+v); return isFinite(v) ? Math.max(a, Math.min(b, v)) : d; };
@@ -266,9 +302,9 @@ module.exports = {
 
     // ---------- codice nel gioco: stendardi per chiamata e vittoria ----------
     api.client('(function(){const ID=' + JSON.stringify(api.id) + ';' +
-      'VXP.on(ID,"chiamata",d=>{banner("Torneo: tocca a te!","Contro "+d.contro+" · entra nel Colosseo entro "+d.minuti+" min","spade");if(typeof clog==="function")clog("","Torneo: tocca a te contro "+d.contro+"! Vai nella fossa del Colosseo.",{sys:1,adm:1})});' +
-      'VXP.on(ID,"iscrizioni",d=>banner("Torneo dell\'arena","Iscrizioni aperte · scrivi /torneo iscrivi","trofeo"));' +
-      'VXP.on(ID,"vincitore",d=>banner("Campione dell\'arena",d.nome+" vince il torneo","trofeo"));})();');
+      'VXP.on(ID,"chiamata",d=>{VXAnnuncio("Torneo: tocca a te!","Contro "+d.contro+" · entra nel Colosseo entro "+d.minuti+" min","spade");if(typeof clog==="function")clog("","Torneo: tocca a te contro "+d.contro+"! Vai nella fossa del Colosseo.",{sys:1,adm:1})});' +
+      'VXP.on(ID,"iscrizioni",d=>VXAnnuncio("Torneo dell\'arena","Iscrizioni aperte · scrivi /torneo iscrivi","trofeo"));' +
+      'VXP.on(ID,"vincitore",d=>VXAnnuncio("Campione dell\'arena",d.nome+" vince il torneo","trofeo"));})();');
 
     // ---------- pagine web ----------
     const e = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' })[c]);
